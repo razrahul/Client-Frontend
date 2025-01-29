@@ -1,21 +1,26 @@
-import { useState } from 'react'
-
-import Navbar from './containters/Navbar'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import routing components
+import Navbar from "./containters/Navbar"; // Import Navbar
+import Home from "./containters/Home"; // Import Home component
+import EmployeeTable from "./containters/EmployeeTable"; // Import EmployeeTable component
 
 function App() {
   return (
     <Router>
-      <div >
+      <div className="flex h-screen">
+        {/* Navbar with Sidebar (static part) */}
         <Navbar />
-        <div >
+
+        {/* Main content */}
+        <div className="flex-1 p-4">
           <Routes>
-            <Route path="/home" element={<h1 className="text-7xl font-bold underline text-red-500">Hello world!</h1>} />
-            {/* Add more routes here */}
+            <Route path="/" element={<Home />} />
+            <Route path="/statistics-1" element={<EmployeeTable />} /> {/* Route for EmployeeTable */}
+            {/* Add more routes for other components as needed */}
           </Routes>
         </div>
       </div>
     </Router>
-  )
+  );
 }
-export default App
+
+export default App;
