@@ -51,7 +51,7 @@ export default function Navbar() {
               icon={<BarChart size={20} />}
               text="Statistics"
               section="statistics"
-              toggleDropdown={toggleDropdown}
+              toggleDropdown={toggleDropdown} // ✅ Only pass it here
               isActive={activeDropdown === "statistics"}
             >
               <SidebarItem
@@ -64,7 +64,7 @@ export default function Navbar() {
                 text="Statistics 2"
               />
             </SidebarItem>
-            <SidebarItem icon={<Boxes size={20} />} text="Inventory" />
+            <SidebarItem icon={<Boxes size={20} />} text="Inventory" to="/area" />
             <SidebarItem icon={<Package size={20} />} text="Orders" />
             <SidebarItem icon={<Receipt size={20} />} text="Billing" />
             <hr className="my-3" />
@@ -119,7 +119,7 @@ export function SidebarItem({ icon, text, active, alert, section, children, togg
   const { expanded } = useContext(SidebarContext);
 
   const Content = (
-    <div className="flex items-center" onClick={() => toggleDropdown(section)}>
+    <div className="flex items-center" onClick={() => section && toggleDropdown(section)}>
       {icon}
       <span className={`overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0"}`}>
         {text}
@@ -131,7 +131,7 @@ export function SidebarItem({ icon, text, active, alert, section, children, togg
   return (
     <li className="relative flex flex-col items-start py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group">
       {to ? (
-        <Link to={to}>{Content}</Link> // Wrap with Link if "to" is passed
+        <Link to={to} className="w-full block">{Content}</Link> // Wrap with Link if "to" is passed
       ) : (
         Content // Otherwise just render the content normally
       )}
