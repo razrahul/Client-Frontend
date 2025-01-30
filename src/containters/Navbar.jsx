@@ -1,6 +1,6 @@
-import { MoreVertical, ChevronLast, ChevronFirst, LogOut, LayoutDashboard, BarChart, UserCircle, Boxes, Package, Receipt, Settings, LifeBuoy } from "lucide-react";
+import { MoreVertical, ChevronLast, ChevronFirst, LogOut, LayoutDashboard, BarChart, UserCircle, Boxes, Package, Receipt, Settings, LifeBuoy } from "lucide-react"; // Add all necessary imports
 import { useState, useContext, createContext } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; // Import Link for routing
 
 // Create SidebarContext
 const SidebarContext = createContext();
@@ -10,12 +10,12 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState(null); // Track which dropdown is open
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-  // Function to toggle the sidebar dropdown
+  // Function to toggle the sidebar dropdown 
   const toggleDropdown = (section) => {
     setActiveDropdown((prev) => (prev === section ? null : section));
   };
 
-  // Logout function
+  // Logout function 
   const handleLogout = () => {
     console.log("Logged out!");
     // Add your logout functionality here
@@ -43,7 +43,7 @@ export default function Navbar() {
         <SidebarContext.Provider value={{ expanded }}>
           <ul className="flex-1 px-3">
             <SidebarItem
-              icon={<LayoutDashboard size={20} />}
+              icon={<LayoutDashboard size={20} />} // LayoutDashboard icon
               text="Dashboard"
               to="/"
             />
@@ -51,20 +51,20 @@ export default function Navbar() {
               icon={<BarChart size={20} />}
               text="Statistics"
               section="statistics"
-              toggleDropdown={toggleDropdown} // Pass toggleDropdown here
+              toggleDropdown={toggleDropdown} // ✅ Only pass it here
               isActive={activeDropdown === "statistics"}
             >
               <SidebarItem
                 icon={<UserCircle size={18} />}
                 text="Statistics 1"
-                to="/statistics-1"
+                to="/statistics-1" // Link to /statistics-1
               />
               <SidebarItem
                 icon={<UserCircle size={18} />}
                 text="Statistics 2"
               />
             </SidebarItem>
-            <SidebarItem icon={<Boxes size={20} />} text="Inventory" />
+            <SidebarItem icon={<Boxes size={20} />} text="Inventory" to="/area" />
             <SidebarItem icon={<Package size={20} />} text="Orders" />
             <SidebarItem icon={<Receipt size={20} />} text="Billing" />
             <hr className="my-3" />
@@ -91,19 +91,19 @@ export default function Navbar() {
             </div>
             <MoreVertical
               size={20}
-              onClick={() => setShowProfileMenu((prev) => !prev)}
+              onClick={() => setShowProfileMenu((prev) => !prev)} // Toggle profile menu visibility
               className="cursor-pointer"
             />
           </div>
 
-          {/* Profile Menu */}
+          {/* Profile Menu  */}
           {showProfileMenu && (
             <div className="absolute top-0 right-0 bg-white shadow-lg rounded-md w-40">
               <button
                 className="w-full text-left py-2 px-3 text-sm text-white bg-red-500 hover:bg-red-600 rounded-md flex items-center justify-start space-x-2"
                 onClick={handleLogout}
               >
-                <LogOut size={16} />
+                <LogOut size={16} /> {/* Add logout icon */}
                 <span>Logout</span>
               </button>
             </div>
@@ -114,18 +114,12 @@ export default function Navbar() {
   );
 }
 
-// SidebarItem Component
+// SidebarItem Component 
 export function SidebarItem({ icon, text, active, alert, section, children, toggleDropdown, isActive, to }) {
   const { expanded } = useContext(SidebarContext);
 
-  const handleClick = () => {
-    if (toggleDropdown && section) {
-      toggleDropdown(section); // Only call toggleDropdown if it exists and section is defined
-    }
-  };
-
   const Content = (
-    <div className="flex items-center" onClick={handleClick}>
+    <div className="flex items-center" onClick={() => section && toggleDropdown(section)}>
       {icon}
       <span className={`overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0"}`}>
         {text}
@@ -137,9 +131,9 @@ export function SidebarItem({ icon, text, active, alert, section, children, togg
   return (
     <li className="relative flex flex-col items-start py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group">
       {to ? (
-        <Link to={to}>{Content}</Link>
+        <Link to={to} className="w-full block">{Content}</Link> // Wrap with Link if "to" is passed
       ) : (
-        Content
+        Content // Otherwise just render the content normally
       )}
 
       {alert && (

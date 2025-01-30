@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Im
 import Navbar from "./containters/Navbar"; // Import Navbar
 import Home from "./containters/Home"; // Import Home component
 import EmployeeTable from "./containters/EmployeeTable"; // Import EmployeeTable component
+import AreaTable from "./pages/Area/AreaTable"; // Import AreaTable component
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/statistics-1" element={<EmployeeTable />} /> {/* Route for EmployeeTable */}
+            <Route path="/area" element={<AreaTable />} />
             {/* Add more routes for other components as needed */}
           </Routes>
         </div>
