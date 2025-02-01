@@ -29,6 +29,9 @@ const TABS = [
 
 const TABLE_HEAD = ["Name", "Department", "Phone", "Actions"];
 
+//Table is added in it 
+
+
 const EmployeeTable = () => {
   const [rows, setRows] = useState([
     { name: "John Doe", department: "Administration", phone: "(171) 555-2222" },
