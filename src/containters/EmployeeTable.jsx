@@ -1,175 +1,331 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import {
+  MagnifyingGlassIcon,
+  ChevronUpDownIcon,
+} from "@heroicons/react/24/outline";
+import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import {
+  Card,
+  CardHeader,
+  Input,
+  Typography,
+  Button,
+  CardBody,
+  Chip,
+  CardFooter,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+  IconButton,
+  Tooltip,
+} from "@material-tailwind/react";
+
+const TABS = [
+  { label: "All", value: "all" },
+  { label: "Monitored", value: "monitored" },
+  { label: "Unmonitored", value: "unmonitored" },
+];
+
+const TABLE_HEAD = ["Name", "Department", "Phone", "Actions"];
 
 const EmployeeTable = () => {
   const [rows, setRows] = useState([
-    { name: 'John Doe', department: 'Administration', phone: '(171) 555-2222' },
-    { name: 'Peter Parker', department: 'Customer Service', phone: '(313) 555-5735' },
-    { name: 'Fran Wilson', department: 'Human Resources', phone: '(503) 555-9931' }
+    { name: "John Doe", department: "Administration", phone: "(171) 555-2222" },
+    {
+      name: "Peter Parker",
+      department: "Customer Service",
+      phone: "(313) 555-5735",
+    },
+    {
+      name: "Fran Wilson",
+      department: "Human Resources",
+      phone: "(503) 555-9931",
+    },
+    {
+      name: "Jane Smith",
+      department: "Administration",
+      phone: "(123) 555-4567",
+    },
+    {
+      name: "Alice Johnson",
+      department: "Customer Service",
+      phone: "(456) 555-7890",
+    },
+    {
+      name: "Bob Brown",
+      department: "Human Resources",
+      phone: "(789) 555-1234",
+    },
+    {
+      name: "Bob Brown",
+      department: "Human Resources",
+      phone: "(789) 555-1234",
+    },
+    {
+      name: "Bob Brown",
+      department: "Human Resources",
+      phone: "(789) 555-1234",
+    },
   ]);
-  const [newRow, setNewRow] = useState({ name: '', department: '', phone: '' });
-  const [isAdding, setIsAdding] = useState(false);
-  const [editIndex, setEditIndex] = useState(null); // Track which row is being edited
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deleteIndex, setDeleteIndex] = useState(null); // Index for deleting
 
-  const handleAddRow = () => {
-    if (newRow.name && newRow.department && newRow.phone) {
-      setRows([...rows, newRow]);
-      setNewRow({ name: '', department: '', phone: '' });
-      setIsAdding(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortConfig, setSortConfig] = useState({
+    key: "name",
+    direction: "asc",
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 5;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
+  const [newRow, setNewRow] = useState({ name: "", department: "", phone: "" });
+
+  const filteredRows = rows.filter(
+    (row) =>
+      row.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      row.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      row.phone.includes(searchTerm)
+  );
+
+  const sortedRows = [...filteredRows].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) {
+      return sortConfig.direction === "asc" ? -1 : 1;
     }
+    if (a[sortConfig.key] > b[sortConfig.key]) {
+      return sortConfig.direction === "asc" ? 1 : -1;
+    }
+    return 0;
+  });
+
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = sortedRows.slice(indexOfFirstRow, indexOfLastRow);
+
+  const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+
+  const handleSort = (column) => {
+    const direction = sortConfig.direction === "asc" ? "desc" : "asc";
+    setSortConfig({ key: column, direction });
+  };
+
+  const handleOpenModal = (index = null) => {
+    if (index !== null) {
+      setEditIndex(index);
+      setNewRow(rows[index]);
+    } else {
+      setEditIndex(null);
+      setNewRow({ name: "", department: "", phone: "" });
+    }
+    setIsModalOpen(true);
+  };
+
+  const handleSaveRow = () => {
+    if (editIndex !== null) {
+      const updatedRows = [...rows];
+      updatedRows[editIndex] = newRow;
+      setRows(updatedRows);
+    } else {
+      setRows([...rows, newRow]);
+    }
+    setIsModalOpen(false);
   };
 
   const handleDeleteRow = (index) => {
-    setShowDeleteConfirm(true); // Show delete confirmation
-    setDeleteIndex(index); // Store the index to delete
-  };
-
-  const confirmDelete = () => {
-    const updatedRows = rows.filter((_, rowIndex) => rowIndex !== deleteIndex);
+    const updatedRows = rows.filter((_, i) => i !== index);
     setRows(updatedRows);
-    setShowDeleteConfirm(false);
-    setDeleteIndex(null); // Reset delete index
   };
 
-  const cancelDelete = () => {
-    setShowDeleteConfirm(false); // Hide the delete confirmation modal
-    setDeleteIndex(null);
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-  const handleEditRow = (index) => {
-    setNewRow(rows[index]); // Set the newRow state to the selected row's data
-    setIsAdding(true); // Open the form in edit mode
-    setEditIndex(index); // Track the row being edited
-  };
-
-  const handleUpdateRow = () => {
-    if (newRow.name && newRow.department && newRow.phone) {
-      const updatedRows = [...rows];
-      updatedRows[editIndex] = newRow; // Replace the old row with the new one
-      setRows(updatedRows);
-      setNewRow({ name: '', department: '', phone: '' });
-      setIsAdding(false);
-      setEditIndex(null); // Reset edit index after updating
-    }
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="overflow-x-auto">
-        <div className="bg-white shadow-md rounded-lg p-6">
-          <div className="flex justify-between items-center pb-4 mb-4 border-b">
-            <h2 className="text-2xl font-semibold">Employee <b>Details</b></h2>
-            <button
-              type="button"
-              className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full hover:bg-blue-600 transition"
-              onClick={() => {
-                setIsAdding(true);
-                setEditIndex(null); // Clear edit index for new entry
-              }}
-            >
-              <i className="fa fa-plus mr-2"></i> Add New
-            </button>
+    <>
+      <Card className="h-full w-full shadow-md">
+        <CardHeader
+          floated={false}
+          shadow={false}
+          className="rounded-none border-b p-4"
+        >
+          <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
+            <div>
+              <Typography variant="h5" color="blue-gray">
+                Employee Details
+              </Typography>
+              <Typography color="gray" className="mt-1 text-sm">
+                Manage employee information here
+              </Typography>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outlined" size="sm">
+                View All
+              </Button>
+              <Button
+                className="flex items-center gap-2 bg-blue-600 text-white"
+                size="sm"
+                onClick={() => handleOpenModal()}
+              >
+                <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> Add
+                Employee
+              </Button>
+            </div>
           </div>
-
-          <table className="min-w-full table-auto">
+          <div className="mt-4 flex flex-col items-center gap-4 md:flex-row md:justify-between">
+            <div className="relative w-full md:w-72">
+              {/* Search Icon inside Input */}
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+              <Input
+                type="text"
+                placeholder="Search employees..."
+                className="pl-10 w-full border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+        </CardHeader>
+        <CardBody className="overflow-x-auto p-4">
+          <table className="w-full table-auto border-collapse">
             <thead>
-              <tr className="bg-gray-100">
-                <th className="px-4 py-2 text-left">Name</th>
-                <th className="px-4 py-2 text-left">Department</th>
-                <th className="px-4 py-2 text-left">Phone</th>
-                <th className="px-4 py-2">Actions</th>
+              <tr className="bg-gray-100 text-left">
+                {TABLE_HEAD.map((head, index) => (
+                  <th
+                    key={head}
+                    className="p-3 border-b cursor-pointer"
+                    onClick={() => handleSort(head.toLowerCase())}
+                  >
+                    <Typography
+                      variant="small"
+                      className="flex items-center gap-2 font-medium text-gray-700"
+                    >
+                      {head}{" "}
+                      {index !== TABLE_HEAD.length - 1 && (
+                        <ChevronUpDownIcon
+                          strokeWidth={2}
+                          className="h-4 w-4"
+                        />
+                      )}
+                    </Typography>
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
-              {/* Show form if adding or editing */}
-              {(isAdding || editIndex !== null) && (
-                <tr>
-                  <td>
-                    <input
-                      type="text"
-                      className="form-control w-full py-2 px-3 border border-gray-300 rounded-md"
-                      value={newRow.name}
-                      onChange={(e) => setNewRow({ ...newRow, name: e.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      className="form-control w-full py-2 px-3 border border-gray-300 rounded-md"
-                      value={newRow.department}
-                      onChange={(e) => setNewRow({ ...newRow, department: e.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      className="form-control w-full py-2 px-3 border border-gray-300 rounded-md"
-                      value={newRow.phone}
-                      onChange={(e) => setNewRow({ ...newRow, phone: e.target.value })}
-                    />
-                  </td>
-                  <td className="flex space-x-2">
-                    <button
-                      className="bg-green-500 text-white py-2 px-4 rounded-full hover:bg-green-600 transition"
-                      onClick={editIndex === null ? handleAddRow : handleUpdateRow}
-                    >
-                      {editIndex === null ? 'Add' : 'Update'}
-                    </button>
-                  </td>
-                </tr>
-              )}
-
-              {/* Table rows */}
-              {rows.map((row, index) => (
-                <tr key={index} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-2">{row.name}</td>
-                  <td className="px-4 py-2">{row.department}</td>
-                  <td className="px-4 py-2">{row.phone}</td>
-                  <td className="px-4 py-2 flex space-x-2">
-                    <button
-                      className="bg-yellow-500 text-white py-2 px-4 rounded-full hover:bg-yellow-600 transition"
-                      onClick={() => handleEditRow(index)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="bg-red-500 text-white py-2 px-4 rounded-full hover:bg-red-600 transition"
-                      onClick={() => handleDeleteRow(index)}
-                    >
-                      Delete
-                    </button>
+              {currentRows.map((row, index) => (
+                <tr key={index} className="hover:bg-gray-50">
+                  <td className="p-3">{row.name}</td>
+                  <td className="p-3">{row.department}</td>
+                  <td className="p-3">{row.phone}</td>
+                  <td className="p-3">
+                    <Tooltip content="Edit">
+                      <IconButton onClick={() => handleOpenModal(index)}>
+                        <PencilIcon className="h-4 w-4 text-gray-600" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip content="Delete">
+                      <IconButton onClick={() => handleDeleteRow(index)}>
+                        <UserPlusIcon className="h-4 w-4 text-red-600" />
+                      </IconButton>
+                    </Tooltip>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-      </div>
-
-      {/* Delete Confirmation Popup */}
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-            <h3 className="text-xl mb-4">Are you sure you want to delete this row?</h3>
-            <div className="flex space-x-4">
-              <button
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-                onClick={confirmDelete}
-              >
-                Yes, Delete
-              </button>
-              <button
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400"
-                onClick={cancelDelete}
-              >
-                Cancel
-              </button>
-            </div>
+        </CardBody>
+        <CardFooter className="flex items-center justify-between border-t p-4">
+          <Typography variant="small" className="text-gray-700">
+            Page {currentPage} of {totalPages}
+          </Typography>
+          <div className="flex gap-2">
+            <Button
+              variant="outlined"
+              size="sm"
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outlined"
+              size="sm"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
           </div>
+        </CardFooter>
+      </Card>
+
+      {/* Modal for Add/Edit Employee */}
+      <Dialog
+        open={isModalOpen}
+        handler={() => setIsModalOpen(false)}
+        className="fixed inset-0 flex items-center justify-center z-50"
+      >
+        <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 flex flex-col space-y-4">
+          <DialogHeader className="text-center text-xl font-semibold text-gray-900">
+            {editIndex !== null ? "Edit Employee" : "Add Employee"}
+          </DialogHeader>
+
+          <DialogBody className="flex flex-col space-y-4">
+            <div>
+              <Typography variant="small">Name</Typography>
+              <Input
+                value={newRow.name}
+                onChange={(e) => setNewRow({ ...newRow, name: e.target.value })}
+                className="mt-2 w-full"
+                size="lg"
+              />
+            </div>
+            <div>
+              <Typography variant="small">Department</Typography>
+              <Input
+                value={newRow.department}
+                onChange={(e) =>
+                  setNewRow({ ...newRow, department: e.target.value })
+                }
+                className="mt-2 w-full"
+                size="lg"
+              />
+            </div>
+            <div>
+              <Typography variant="small">Phone</Typography>
+              <Input
+                value={newRow.phone}
+                onChange={(e) =>
+                  setNewRow({ ...newRow, phone: e.target.value })
+                }
+                className="mt-2 w-full"
+                size="lg"
+              />
+            </div>
+          </DialogBody>
+
+          <DialogFooter className="flex justify-center space-x-2">
+            <Button
+              onClick={handleSaveRow}
+              color="blue"
+              size="sm"
+              disabled={!newRow.name || !newRow.department || !newRow.phone}
+            >
+              Save
+            </Button>
+            <Button
+              onClick={() => setIsModalOpen(false)}
+              color="blue"
+              size="sm"
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
         </div>
-      )}
-    </div>
+      </Dialog>
+    </>
   );
 };
 
