@@ -119,6 +119,10 @@ const EmployeeTable = () => {
     setIsModalOpen(true);
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   const handleSaveRow = () => {
     if (editIndex !== null) {
       const updatedRows = [...rows];
@@ -160,6 +164,7 @@ const EmployeeTable = () => {
                 Manage employee information here
               </Typography>
             </div>
+
             <div className="flex gap-2">
               <Button variant="outlined" size="sm">
                 View All
@@ -173,6 +178,7 @@ const EmployeeTable = () => {
                 Employee
               </Button>
             </div>
+
           </div>
           <div className="mt-4 flex flex-col items-center gap-4 md:flex-row md:justify-between">
             <div className="relative w-full md:w-72">
@@ -262,12 +268,14 @@ const EmployeeTable = () => {
       </Card>
 
       {/* Modal for Add/Edit Employee */}
-      <Dialog
+      {/* <Dialog
         open={isModalOpen}
-        handler={() => setIsModalOpen(false)}
-        className="fixed inset-0 flex items-center justify-center z-50"
+        onClose={handleCloseModal}
+        //handler={() => setIsModalOpen(false)}
+        className="fixed inset-0 z-50 flex items-center justify-center"
       >
-        <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 flex flex-col space-y-4">
+        <div className="fixed inset-0 bg-black bg-opacity-20" />
+        <div className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-6 flex flex-col space-y-4 z-10">
           <DialogHeader className="text-center text-xl font-semibold text-gray-900">
             {editIndex !== null ? "Edit Employee" : "Add Employee"}
           </DialogHeader>
@@ -324,7 +332,61 @@ const EmployeeTable = () => {
             </Button>
           </DialogFooter>
         </div>
-      </Dialog>
+      </Dialog> */}
+
+{isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+            <h2 className="text-xl font-semibold text-center">Add Employee</h2>
+            <div className="mt-4">
+              <div className="mb-4">
+                <label className="block">Name</label>
+                <input
+                  type="text"
+                  value={newRow.name}
+                  onChange={(e) => setNewRow({ ...newRow, name: e.target.value })}
+                  className="w-full p-2 border border-gray-300 rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block">Department</label>
+                <input
+                  type="text"
+                  value={newRow.department}
+                  onChange={(e) =>
+                    setNewRow({ ...newRow, department: e.target.value })
+                  }
+                  className="w-full p-2 border border-gray-300 rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block">Phone</label>
+                <input
+                  type="text"
+                  value={newRow.phone}
+                  onChange={(e) => setNewRow({ ...newRow, phone: e.target.value })}
+                  className="w-full p-2 border border-gray-300 rounded"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={handleSaveRow}
+                className="bg-blue-600 text-white p-2 rounded"
+              >
+                Save
+              </button>
+              <button
+                onClick={handleCloseModal}
+                className="bg-gray-600 text-white p-2 rounded"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

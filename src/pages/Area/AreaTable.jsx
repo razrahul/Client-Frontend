@@ -32,7 +32,7 @@ const TABS = [
 
 const TABLE_HEAD = ["Member", "Function", "Status", "Employed", ""];
 
- import TABLE_ROWS from "./data.js"
+import TABLE_ROWS from "./data.js";
 
 function AreaTable() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -102,6 +102,7 @@ function AreaTable() {
     }
     setIsModalOpen(true);
   };
+  
 
   const handleSaveMember = () => {
     if (editMember) {
@@ -292,9 +293,9 @@ function AreaTable() {
           </div>
         </CardFooter>
       </Card>
-      //model for add/edit member
+      {/* //model for add/edit member
       <Card className="h-full w-12 shadow-md flex items-center justify-center">
-        {/* Modal for Add/Edit Member */}
+        //Modal for Add/Edit Member 
         <Dialog
           open={isModalOpen}
           handler={handleCloseModal}
@@ -352,7 +353,72 @@ function AreaTable() {
             </Button>
           </DialogFooter>
         </Dialog>
-      </Card>
+      </Card>*/}
+      //modified by parminder(belowcode)
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Modal content */}
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+            <DialogHeader className="text-center">
+              {editMember ? "Edit Member" : "Add Member"}
+            </DialogHeader>
+
+            <DialogBody className="p-4">
+              <div className="space-y-4">
+                <div>
+                  <Typography variant="small">Name</Typography>
+                  <Input
+                    value={newMember.name}
+                    onChange={(e) =>
+                      setNewMember({ ...newMember, name: e.target.value })
+                    }
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </div>
+                <div>
+                  <Typography variant="small">Email</Typography>
+                  <Input
+                    value={newMember.email}
+                    onChange={(e) =>
+                      setNewMember({ ...newMember, email: e.target.value })
+                    }
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </div>
+                <div>
+                  <Typography variant="small">Job</Typography>
+                  <Input
+                    value={newMember.job}
+                    onChange={(e) =>
+                      setNewMember({ ...newMember, job: e.target.value })
+                    }
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </div>
+                <div>
+                  <Typography variant="small">Organization</Typography>
+                  <Input
+                    value={newMember.org}
+                    onChange={(e) =>
+                      setNewMember({ ...newMember, org: e.target.value })
+                    }
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </div>
+              </div>
+            </DialogBody>
+
+            <DialogFooter className="flex justify-between mt-4">
+              <Button variant="filled" className="bg-blue-600  text-white p-2 rounded" onClick={handleSaveMember}>
+                Save
+              </Button>
+              <Button variant="outlined" className="bg-gray-600  text-white p-2 rounded" onClick={handleCloseModal}>
+                Cancel
+              </Button>
+            </DialogFooter>
+          </div>
+        </div>
+      )}
     </>
   );
 }
