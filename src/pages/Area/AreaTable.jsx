@@ -32,9 +32,13 @@ const TABS = [
 
 const TABLE_HEAD = ["Member", "Function", "Status", "Employed", ""];
 
-import TABLE_ROWS from "./data.js";
+//import TABLE_ROWS from "./data.js";
+import { TABLE_ROWS as initialTableRows } from './data.js';
 
 function AreaTable() {
+  //
+  const [tableRows, setTableRows] = useState(initialTableRows);
+  //
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
     key: "name",
@@ -52,7 +56,7 @@ function AreaTable() {
   });
 
   // Search filter
-  const filteredRows = TABLE_ROWS.filter(
+  const filteredRows = tableRows.filter(
     (row) =>
       row.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       row.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -98,25 +102,36 @@ function AreaTable() {
       setNewMember(member); // Fill fields with current data for editing
     } else {
       setEditMember(null); // New member, no editing
-      setNewMember({ name: "", email: "", job: "", org: "" });
+      setNewMember({ name: "", email: "", job: "", org: "", online: false, date: "aajtak" });
     }
     setIsModalOpen(true);
-  };
-  
-
-  const handleSaveMember = () => {
-    if (editMember) {
-      // Edit member logic (update existing member)
-      // Replace editMember in TABLE_ROWS with newMember
-    } else {
-      // Add new member logic
-      // Add newMember to TABLE_ROWS
-    }
-    setIsModalOpen(false);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleSaveMember = () => {
+    if (editMember) {
+      const updatedMembers = tableRows.map((member) =>
+        member.id === editMember.id ? { ...member, ...newMember } : member
+      );
+      setTableRows (updatedMembers);
+
+      console.log("Member updated:", newMember);
+    } else {
+      const newMemberWithId = { ...newMember, id: generateUniqueId() }; // assuming you want to generate a unique ID
+      //setTableRows.push(newMemberWithId);
+      setTableRows([...tableRows, newMemberWithId]); 
+
+      console.log("New member added:", newMemberWithId);
+    }
+
+    setIsModalOpen(false);
+  };
+
+  const generateUniqueId = () => {
+    return "_" + Math.random().toString(36).substr(2, 9);
   };
 
   return (
@@ -198,7 +213,7 @@ function AreaTable() {
             </thead>
             <tbody>
               {currentRows.map(
-                ({ name, email, job, org, online, date }, index) => {
+                ({ name, email, job, org, online, date,id }, index) => {
                   const isLast = index === currentRows.length - 1;
                   const rowClass = isLast ? "p-3" : "p-3 border-b";
 
@@ -247,16 +262,17 @@ function AreaTable() {
                         <Tooltip content="Edit User">
                           <IconButton
                             variant="text"
-                            onClick={() =>
+                            onClick={() => {
                               handleOpenModal({
+                                id,
                                 name,
                                 email,
                                 job,
                                 org,
                                 online,
-                                date,
-                              })
-                            }
+                                date
+                              });
+                            }}
                           >
                             <PencilIcon className="h-4 w-4 text-gray-600" />
                           </IconButton>
@@ -409,10 +425,18 @@ function AreaTable() {
             </DialogBody>
 
             <DialogFooter className="flex justify-between mt-4">
-              <Button variant="filled" className="bg-blue-600  text-white p-2 rounded" onClick={handleSaveMember}>
+              <Button
+                variant="filled"
+                className="bg-blue-600  text-white p-2 rounded"
+                onClick={handleSaveMember}
+              >
                 Save
               </Button>
-              <Button variant="outlined" className="bg-gray-600  text-white p-2 rounded" onClick={handleCloseModal}>
+              <Button
+                variant="outlined"
+                className="bg-gray-600  text-white p-2 rounded"
+                onClick={handleCloseModal}
+              >
                 Cancel
               </Button>
             </DialogFooter>

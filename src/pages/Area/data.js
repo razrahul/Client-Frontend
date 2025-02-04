@@ -1,4 +1,4 @@
-const TABLE_ROWS = [
+export const TABLE_ROWS = [
     {
       name: "John Michael-1",
       email: "john@creative-tim.com",
@@ -137,4 +137,3 @@ const TABLE_ROWS = [
     },
   ];
 
-  export default TABLE_ROWS;
