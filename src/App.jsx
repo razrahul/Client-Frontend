@@ -3,6 +3,7 @@ import Navbar from "./containters/Navbar"; // Import Navbar
 import Home from "./containters/Home"; // Import Home component
 import EmployeeTable from "./containters/EmployeeTable"; // Import EmployeeTable component
 import AreaTable from "./pages/Area/AreaTable"; // Import AreaTable component
+import TeacherTable from "./pages/Teacher/Teacher"
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/statistics-1" element={<EmployeeTable />} /> {/* Route for EmployeeTable */}
             <Route path="/area" element={<AreaTable />} />
+            <Route path="/teacher" element={<TeacherTable />} />
             {/* Add more routes for other components as needed */}
           </Routes>
         </div>
