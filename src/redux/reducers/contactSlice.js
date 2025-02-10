@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   loading: false,
   contacts: [],
-  conatct: {},
+  contact: {},
   status: "idle",
   error: null,
 };
@@ -23,7 +23,7 @@ const contactSlice = createSlice({
     },
     fetchContactsSuccess: (state, action) => {
       state.loading = false;
-      state.contacts = action.payload.contactForms;
+      state.contacts = action.payload.contactForms || action.payload;
     },
     getContact: (state, action) => {
       state.loading = false;

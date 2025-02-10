@@ -66,7 +66,7 @@ export default function Navbar() {
             </SidebarItem>
             <SidebarItem icon={<Boxes size={20} />} text="Inventory" to="/area" />
             <SidebarItem icon={<Package size={20} />} text="Teacher" to="/teacher" />
-            <SidebarItem icon={<Receipt size={20} />} text="Billing" />
+            <SidebarItem icon={<Receipt size={20} />} text="Forms" to="/forms" />
             <hr className="my-3" />
             <SidebarItem icon={<Settings size={20} />} text="Settings" />
             <SidebarItem icon={<LifeBuoy size={20} />} text="Help" />

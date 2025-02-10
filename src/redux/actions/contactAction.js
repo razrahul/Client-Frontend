@@ -1,7 +1,6 @@
 import axios from "axios";
 
 const server = import.meta.env.VITE_BACKEND_URL;
-
 import {
     contactRequest,
     fetchContactsSuccess,
@@ -18,7 +17,6 @@ export const getAllContactForms = () => async (dispatch) => {
         dispatch(contactRequest());
 
         const { data } = await axios.get(`${server}/getAllContactForms`);
-
         dispatch(fetchContactsSuccess(data));
     } catch (error) {
         return async (dispatch) => {
