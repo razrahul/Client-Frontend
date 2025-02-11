@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const ModalOpenTeacher = ({
   open,
@@ -8,47 +8,39 @@ const ModalOpenTeacher = ({
   setFormData,
   isEditing,
 }) => {
-  // CSS styles for modal positioning
-  const styles = `
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
+  const [subjectsInput, setSubjectsInput] = useState(formData.subject || "");
 
-    .modal-content {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-  `;
+  const areas = ["chandigarh", "delhi", "mumbai", "pune"];
+
+  const handleSubjectChange = (e) => {
+    setSubjectsInput(e.target.value); // Update the local state for subjects input
+  };
 
   const handleSubmit = () => {
-    console.log("Form Data:", formData);
+    setFormData({
+      ...formData,
+      subject: subjectsInput.split(",").map((sub) => sub.trim()),
+    });
+
+    console.log("Updated Form Data:", formData);
+
     handleSave();
   };
 
+  useEffect(() => {
+    setSubjectsInput(formData.subject ? formData.subject.join(", ") : "");
+  }, [formData.subject]);
+
   return (
     <>
-      <style>{styles}</style>
       {open && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 bg-white rounded-lg shadow-lg max-h-[80vh] w-full sm:w-4/5 md:w-2/3 overflow-auto">
             <h2 className="text-2xl mb-4">
               {isEditing ? "Edit Teacher" : "Add Teacher"}
             </h2>
 
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label>Name</label>
                 <input
@@ -61,18 +53,71 @@ const ModalOpenTeacher = ({
               </div>
 
               <div>
-                <label>Subjects</label>
+                <label>Email</label>
                 <input
+                  type="email"
                   className="w-full p-2 border rounded"
-                  value={formData.subject}
+                  value={formData.email}
                   onChange={(e) =>
-                    setFormData({ ...formData, subject: e.target.value })
+                    setFormData({ ...formData, email: e.target.value })
                   }
                 />
               </div>
 
               <div>
-                <label>Hourly Rate</label>
+                <label>Mobile No</label>
+                <input
+                  type="text"
+                  className="w-full p-2 border rounded"
+                  value={formData.mobileNo}
+                  onChange={(e) =>
+                    setFormData({ ...formData, mobileNo: e.target.value })
+                  }
+                />
+              </div>
+
+              <div>
+                <label>About Us</label>
+                <textarea
+                  className="w-full p-2 border rounded"
+                  value={formData.aboutUs}
+                  onChange={(e) =>
+                    setFormData({ ...formData, aboutUs: e.target.value })
+                  }
+                />
+              </div>
+
+              <div>
+                <label>Area</label>
+                <select
+                  className="w-full p-2 border rounded"
+                  value={formData.area || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, area: e.target.value })
+                  }
+                >
+                  <option value="">Select Area</option>
+                  {areas.map((area, index) => (
+                    <option key={index} value={area}>
+                      {area}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label>Subjects</label>
+                <input
+                  type="text"
+                  className="w-full p-2 border rounded"
+                  value={subjectsInput}
+                  onChange={handleSubjectChange}
+                  placeholder="Enter subjects separated by commas (e.g., Math, Physics)"
+                />
+              </div>
+
+              <div>
+                <label>Charge Rate</label>
                 <input
                   type="number"
                   className="w-full p-2 border rounded"
@@ -84,34 +129,15 @@ const ModalOpenTeacher = ({
               </div>
 
               <div>
-                <label>City</label>
+                <label>Image URL</label>
                 <input
+                  type="text"
                   className="w-full p-2 border rounded"
-                  value={formData.city?.name || ""}
+                  value={formData.image}
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      city: { ...formData.city, name: e.target.value },
-                    })
+                    setFormData({ ...formData, image: e.target.value })
                   }
                 />
-              </div>
-
-              <div>
-                <label>Status</label>
-                <select
-                  className="w-full p-2 border rounded"
-                  value={formData.isLive ? "online" : "offline"}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      isLive: e.target.value === "online",
-                    })
-                  }
-                >
-                  <option value="online">Online</option>
-                  <option value="offline">Offline</option>
-                </select>
               </div>
             </div>
 

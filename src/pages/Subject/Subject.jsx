@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useTeacherData } from "../../hook/teacherData.js";
-import TeacherRow from "../../components/teacher/TeacherTableRow.jsx";
-import ModalOpenTeacher from "../../components/teacher/ModalOpenTeacher.jsx";
+import { useSubjectData } from "../../hook/subjectData.js";
+import SubjectRow from "../../components/subject/SubjectTableRow.jsx";
+import ModalOpenSubject from "../../components/subject/ModalOpenSubject.jsx";
 import {
   MagnifyingGlassIcon,
   ChevronUpDownIcon,
@@ -16,30 +16,15 @@ import {
   CardFooter,
 } from "@material-tailwind/react";
 
-const TABLE_HEAD = [
-  "Name",
-  "Email",
-  "Mobile No",
-  "About Us",
-  "Area",
-  "Subject",
-  "Charge Rate",
-  "Image",
-  "Action",
-];
-
+const TABLE_HEAD = ["Name", "Is Live", "Action"];
 
 const sortKeyMap = {
   Name: "name",
-  Subjects: "subject",
   Status: "isLive",
-  Location: "city.name",
-  Rate: "chargeRate",
-  Joined: "createdAt",
 };
 
-function TeacherTable() {
-  const teachers = useTeacherData();
+function SubjectTable() {
+  const subjects = useSubjectData();
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -50,39 +35,37 @@ function TeacherTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    subject: "",
-    chargeRate: 0,
-    city: { name: "" },
     isLive: true,
   });
   const [editingId, setEditingId] = useState(null);
 
   const rowsPerPage = 6;
 
-  useEffect(() => {
-    if (teachers) {
-      setTableRows(teachers);
-    }
-  }, [teachers]);
+  // Sort key map for sorting columns
+  const sortKeyMap = {
+    name: "name",
+    createdAt: "createdAt",
+    // Add other sort keys as needed
+  };
 
-  // Improved search function
-  const filteredRows = tableRows.filter((teacher) => {
+  useEffect(() => {
+    if (Array.isArray(subjects)) {
+      setTableRows(subjects);
+    }
+  }, [subjects]);
+
+  const filteredRows = tableRows.filter((subject) => {
     const searchLower = searchTerm.toLowerCase();
-    return (
-      teacher.name.toLowerCase().includes(searchLower) ||
-      teacher.subject.toLowerCase().includes(searchLower) ||
-      teacher.city.name.toLowerCase().includes(searchLower) ||
-      (teacher.area?.name || "").toLowerCase().includes(searchLower)
-    );
+    return subject.name && subject.name.toLowerCase().includes(searchLower); // Ensure subject.name exists
   });
 
-  // Enhanced sorting logic
   const sortedRows = [...filteredRows].sort((a, b) => {
-    const getNestedValue = (obj, key) =>
-      key.split(".").reduce((o, k) => (o || {})[k], obj);
+    const aValue = a[sortConfig.key];
+    const bValue = b[sortConfig.key];
 
-    const aValue = getNestedValue(a, sortConfig.key);
-    const bValue = getNestedValue(b, sortConfig.key);
+    if (aValue === undefined || bValue === undefined) {
+      return 0; // Prevent errors if the key does not exist
+    }
 
     if (sortConfig.key === "createdAt") {
       return sortConfig.direction === "asc"
@@ -90,7 +73,7 @@ function TeacherTable() {
         : new Date(bValue) - new Date(aValue);
     }
 
-    if (typeof aValue === "number" && typeof bValue === "number") {
+    if (typeof aValue === "boolean" && typeof bValue === "boolean") {
       return sortConfig.direction === "asc" ? aValue - bValue : bValue - aValue;
     }
 
@@ -99,7 +82,6 @@ function TeacherTable() {
       : String(bValue).localeCompare(String(aValue));
   });
 
-  // Pagination logic
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = sortedRows.slice(indexOfFirstRow, indexOfLastRow);
@@ -112,22 +94,16 @@ function TeacherTable() {
     setSortConfig({ key, direction });
   };
 
-  const handleOpenModal = (teacher = null) => {
-    if (teacher) {
+  const handleOpenModal = (subject = null) => {
+    if (subject) {
       setFormData({
-        name: teacher.name,
-        subject: teacher.subject,
-        chargeRate: teacher.chargeRate,
-        city: teacher.city,
-        isLive: teacher.isLive,
+        name: subject.name,
+        isLive: subject.isLive,
       });
-      setEditingId(teacher._id);
+      setEditingId(subject._id);
     } else {
       setFormData({
         name: "",
-        subject: "",
-        chargeRate: 0,
-        city: { name: "" },
         isLive: true,
       });
       setEditingId(null);
@@ -135,21 +111,23 @@ function TeacherTable() {
     setIsModalOpen(true);
   };
 
-  const handleSaveTeacher = () => {
+  const handleSaveSubject = () => {
+    const newSubject = {
+      ...formData,
+      _id: editingId ? editingId : `temp-${Math.random().toString(36).substr(2, 9)}`,
+      createdAt: editingId ? tableRows.find((subject) => subject._id === editingId).createdAt : new Date().toISOString(),
+    };
+
     if (editingId) {
       setTableRows(
-        tableRows.map((teacher) =>
-          teacher._id === editingId ? { ...teacher, ...formData } : teacher
+        tableRows.map((subject) =>
+          subject._id === editingId ? { ...subject, ...formData } : subject
         )
       );
     } else {
-      const newTeacher = {
-        ...formData,
-        _id: `temp-${Math.random().toString(36).substr(2, 9)}`,
-        createdAt: new Date().toISOString(),
-      };
-      setTableRows([...tableRows, newTeacher]);
+      setTableRows([...tableRows, newSubject]);
     }
+
     setIsModalOpen(false);
   };
 
@@ -158,16 +136,18 @@ function TeacherTable() {
       setCurrentPage(newPage);
     }
   };
-
+  if (subjects.length === 0) {
+    return <div>Loading...</div>; // Or any loading indicator
+  }
   return (
     <>
       <Card className="h-full w-full shadow-md">
         <CardHeader floated={false} className="border-b p-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
             <div>
-              <Typography variant="h5">Teacher List</Typography>
+              <Typography variant="h5">Subject List</Typography>
               <Typography color="gray" className="mt-1 text-sm">
-                Manage and view teacher information
+                Manage and view subject information
               </Typography>
             </div>
             <div className="flex gap-2">
@@ -176,11 +156,10 @@ function TeacherTable() {
                 size="sm"
                 onClick={() => handleOpenModal()}
               >
-                <UserPlusIcon className="h-4 w-4" /> Add Teacher
+                <UserPlusIcon className="h-4 w-4" /> Add Subject
               </Button>
             </div>
           </div>
-            {/* //Searching box */}
           <div className="relative mt-4 w-full md:w-72">
             <input
               type="text"
@@ -212,11 +191,11 @@ function TeacherTable() {
               </tr>
             </thead>
             <tbody>
-              {currentRows.map((teacher) => (
-                <TeacherRow
-                  key={teacher._id}
-                  teacher={teacher}
-                  onEdit={() => handleOpenModal(teacher)}
+              {currentRows.map((subject) => (
+                <SubjectRow
+                  key={subject._id}
+                  subject={subject}
+                  onEdit={() => handleOpenModal(subject)}
                 />
               ))}
             </tbody>
@@ -248,10 +227,10 @@ function TeacherTable() {
         </CardFooter>
       </Card>
 
-      <ModalOpenTeacher
+      <ModalOpenSubject
         open={isModalOpen}
         handleClose={() => setIsModalOpen(false)}
-        handleSave={handleSaveTeacher}
+        handleSave={handleSaveSubject}
         formData={formData}
         setFormData={setFormData}
         isEditing={!!editingId}
@@ -260,4 +239,4 @@ function TeacherTable() {
   );
 }
 
-export default TeacherTable;
+export default SubjectTable;

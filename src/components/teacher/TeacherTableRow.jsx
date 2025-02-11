@@ -3,16 +3,34 @@ import { Chip, Typography, IconButton, Tooltip } from "@material-tailwind/react"
 import { PencilIcon } from "@heroicons/react/24/solid";
 
 const TeacherRow = ({ teacher, onEdit }) => {
-  const { _id, name, subject, isLive, city, area, chargeRate, createdAt } = teacher;
+  const { _id, name, email, mobileNo, aboutUs, area, subject, chargeRate, image, createdAt } = teacher;
 
   return (
     <tr key={_id} className="hover:bg-gray-50">
       <td className="p-3 border-b">
-        <div className="flex flex-col">
-          <Typography variant="small" className="font-medium text-gray-800">
-            {name}
-          </Typography>
-        </div>
+        <Typography variant="small" className="font-medium text-gray-800">
+          {name}
+        </Typography>
+      </td>
+      <td className="p-3 border-b">
+        <Typography variant="small" className="text-gray-600">
+          {email}
+        </Typography>
+      </td>
+      <td className="p-3 border-b">
+        <Typography variant="small" className="text-gray-600">
+          {mobileNo}
+        </Typography>
+      </td>
+      <td className="p-3 border-b">
+        <Typography variant="small" className="text-gray-600">
+          {aboutUs}
+        </Typography>
+      </td>
+      <td className="p-3 border-b">
+        <Typography variant="small" className="text-gray-600">
+          {area?.name || "-"}
+        </Typography>
       </td>
       <td className="p-3 border-b">
         <Typography variant="small" className="text-gray-600">
@@ -20,32 +38,16 @@ const TeacherRow = ({ teacher, onEdit }) => {
         </Typography>
       </td>
       <td className="p-3 border-b">
-        <Chip
-          variant="ghost"
-          size="sm"
-          value={isLive ? "Online" : "Offline"}
-          color={isLive ? "green" : "blue-gray"}
-        />
-      </td>
-      <td className="p-3 border-b">
-        <div className="flex flex-col">
-          <Typography variant="small" className="text-gray-800">
-          {city?.name || null}
-          </Typography>
-          <Typography variant="small" className="text-gray-600">
-          {area?.name || "-"}
-          </Typography>
-        </div>
-      </td>
-      <td className="p-3 border-b">
         <Typography variant="small" className="text-gray-800">
           ₹{chargeRate}/hr
         </Typography>
       </td>
       <td className="p-3 border-b">
-        <Typography variant="small" className="text-gray-800">
-          {new Date(createdAt).toLocaleDateString()}
-        </Typography>
+        {image ? (
+          <img src={image} alt="Teacher Image" className="h-12 w-12 rounded-full object-cover" />
+        ) : (
+          <div className="h-12 w-12 bg-gray-200 rounded-full"></div>
+        )}
       </td>
       <td className="p-3 border-b">
         <Tooltip content="Edit Teacher">

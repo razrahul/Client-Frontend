@@ -7,6 +7,7 @@ import {
   BookText,
   BookPlus,
   LandPlot,
+  BookCopy,
 } from "lucide-react"; // Add all necessary imports
 import { Link } from "react-router-dom"; // Import Link for routing
 
@@ -39,6 +40,7 @@ export default function Navbar() {
           />
           <SidebarItem icon={<BookText size={20} />} text="Forms" to="/forms" />
           <SidebarItem icon={<LandPlot size={20} />} text="Area" to="/area" />
+          <SidebarItem icon={<BookCopy  size={20} />} text="Subject" to="/subject" />
           <hr className="my-3" />
           <SidebarItem icon={<Settings size={20} />} text="Settings" />
           <SidebarItem icon={<LifeBuoy size={20} />} text="Help" />
