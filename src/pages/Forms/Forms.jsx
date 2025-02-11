@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useFormsData } from "../../hook/formsData.js";
-import FormRow from "../../components/forms/TableRow.jsx";
+import FormRow from "../../components/forms/FormTableRow.jsx";
 import ModalOpenForm from "../../components/forms/ModalOpenForm.jsx";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { UserPlusIcon, PencilIcon } from "@heroicons/react/24/solid";

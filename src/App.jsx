@@ -1,10 +1,11 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import routing components
-import Navbar from "./containters/Navbar"; // Import Navbar
-import Home from "./containters/Home"; // Import Home component
-import EmployeeTable from "./containters/EmployeeTable"; // Import EmployeeTable component
-import AreaTable from "./pages/Area/AreaTable"; // Import AreaTable component
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; 
+import Navbar from "./containters/Navbar"; 
+import Home from "./containters/Home"; 
+import EmployeeTable from "./containters/EmployeeTable";
+import Student from "./pages/student/student";
 import TeacherTable from "./pages/Teacher/Teacher"
 import FormsTable from "./pages/Forms/Forms";
+import AreaTable from "./pages/Area/area"; 
 
 function App() {
   return (
@@ -18,9 +19,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/statistics-1" element={<EmployeeTable />} /> {/* Route for EmployeeTable */}
-            <Route path="/area" element={<AreaTable />} />
+            <Route path="/student" element={<Student />} />
             <Route path="/teacher" element={<TeacherTable />} />
             <Route path="/forms" element={<FormsTable/>} />
+            <Route path="/area" element={<AreaTable />} />
             {/* Add more routes for other components as needed */}
           </Routes>
         </div>

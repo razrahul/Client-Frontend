@@ -1,251 +1,241 @@
-import React, { useState } from "react";
-import { MagnifyingGlassIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
-import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import React, { useState, useEffect } from "react";
+import { useAreaData } from "../../hook/areaData.js";
+import AreaRow from "../../components/area/AreaTableRow.jsx";
+import ModalOpenArea from "../../components/area/ModalOpenArea.jsx";
+import {
+  MagnifyingGlassIcon,
+  ChevronUpDownIcon,
+} from "@heroicons/react/24/outline";
+import { UserPlusIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
-  Input,
   Typography,
-  Button, //comm
+  Button,
   CardBody,
-  Chip,
   CardFooter,
-  Tooltip,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-  IconButton
 } from "@material-tailwind/react";
 
-const TABS = [
-  { label: "All", value: "all" },
-  { label: "Monitored", value: "monitored" },
-  { label: "Unmonitored", value: "unmonitored" },
+const TABLE_HEAD = [
+  "Area Name",
+  "Status",
+  "Created", 
+  "Action",
 ];
 
-const TABLE_HEAD = ["Member", "Function", "Status", "Employed", ""];
-
-const TABLE_ROWS = [
-  { name: "John Michael-1", email: "john@creative-tim.com", job: "Manager", org: "Organization", online: true, date: "23/04/18" },
-  { name: "Alice Johnson", email: "alice@example.com", job: "Developer", org: "Tech Inc.", online: false, date: "15/05/19" },
-  // Add more rows as needed
-];
+const sortKeyMap = {
+  Name: "name",
+  Status: "isLive",
+  Created: "createdAt",
+};
 
 function AreaTable() {
+  const areas = useAreaData();
+  const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortConfig, setSortConfig] = useState({ key: "name", direction: "asc" });
+  const [sortConfig, setSortConfig] = useState({
+    key: "name",
+    direction: "asc",
+  });
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 6;
-  const [isModalOpen, setIsModalOpen] = useState(false); // To control modal visibility
-  const [editMember, setEditMember] = useState(null); // To store member data for editing
-  const [newMember, setNewMember] = useState({ name: "", email: "", job: "", org: "" });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    isLive: true,
+    cityId: [],
+  });
+  const [editingId, setEditingId] = useState(null);
 
-  const filteredRows = TABLE_ROWS.filter((row) =>
-    row.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    row.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    row.job.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    row.org.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const rowsPerPage = 6;
+
+  useEffect(() => {
+    if (areas) {
+      setTableRows(areas);
+    }
+  }, [areas]);
+
+  const filteredRows = tableRows.filter((area) => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      area.name.toLowerCase().includes(searchLower) ||
+      area.cityId.some((city) =>
+        city.name.toLowerCase().includes(searchLower)
+      )
+    );
+  });
 
   const sortedRows = [...filteredRows].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === "asc" ? -1 : 1;
-    if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === "asc" ? 1 : -1;
-    return 0;
+    const aValue = a[sortConfig.key];
+    const bValue = b[sortConfig.key];
+
+    if (sortConfig.key === "createdAt") {
+      return sortConfig.direction === "asc"
+        ? new Date(aValue) - new Date(bValue)
+        : new Date(bValue) - new Date(aValue);
+    }
+
+    if (typeof aValue === "boolean" && typeof bValue === "boolean") {
+      return sortConfig.direction === "asc" ? aValue - bValue : bValue - aValue;
+    }
+
+    return sortConfig.direction === "asc"
+      ? String(aValue).localeCompare(String(bValue))
+      : String(bValue).localeCompare(String(aValue));
   });
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = sortedRows.slice(indexOfFirstRow, indexOfLastRow);
-
   const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
 
   const handleSort = (column) => {
-    const direction = sortConfig.direction === "asc" ? "desc" : "asc";
-    setSortConfig({ key: column, direction });
+    const key = sortKeyMap[column];
+    const direction =
+      sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
+    setSortConfig({ key, direction });
   };
 
-  const handleOpenModal = (member = null) => {
-    if (member) {
-      setEditMember(member); // Set member data for editing
-      setNewMember(member); // Fill fields with current data for editing
+  const handleOpenModal = (area = null) => {
+    if (area) {
+      setFormData({
+        name: area.name,
+        isLive: area.isLive,
+        cityId: area.cityId,
+      });
+      setEditingId(area._id);
     } else {
-      setEditMember(null); // New member, no editing
-      setNewMember({ name: "", email: "", job: "", org: "" });
+      setFormData({
+        name: "",
+        isLive: true,
+        cityId: [],
+      });
+      setEditingId(null);
     }
+
     setIsModalOpen(true);
   };
 
-  const handleSaveMember = () => {
-    if (editMember) {
-      // Edit member logic (update existing member)
-      // Replace editMember in TABLE_ROWS with newMember
+  const handleSaveArea = () => {
+    if (editingId) {
+      setTableRows(
+        tableRows.map((area) =>
+          area._id === editingId ? { ...area, ...formData } : area
+        )
+      );
     } else {
-      // Add new member logic
-      // Add newMember to TABLE_ROWS
+      const newArea = {
+        ...formData,
+        _id: `temp-${Math.random().toString(36).substr(2, 9)}`,
+        createdAt: new Date().toISOString(),
+      };
+      setTableRows([...tableRows, newArea]);
     }
+
     setIsModalOpen(false);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
   };
 
   return (
     <>
       <Card className="h-full w-full shadow-md">
-        {/* Card Header with Title and Buttons */}
-        <CardHeader floated={false} shadow={false} className="rounded-none border-b p-4">
+        <CardHeader floated={false} className="border-b p-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
             <div>
-              <Typography variant="h5" color="blue-gray">
-                Members List
-              </Typography>
+              <Typography variant="h5">Area List</Typography>
               <Typography color="gray" className="mt-1 text-sm">
-                See information about all members
+                Manage and view area information
               </Typography>
             </div>
             <div className="flex gap-2">
-              <Button variant="outlined" size="sm">
-                View All
-              </Button>
               <Button
                 className="flex items-center gap-2 bg-blue-600 text-white"
                 size="sm"
                 onClick={() => handleOpenModal()}
               >
-                <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> Add Member
+                <UserPlusIcon className="h-4 w-4" /> Add Area
               </Button>
             </div>
           </div>
+          <div className="relative mt-4 w-full md:w-72">
+            <input
+              type="text"
+              placeholder="Search"
+              className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <MagnifyingGlassIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+          </div>
         </CardHeader>
 
-        {/* Search Bar */}
-        <div className="p-4">
-          <Input
-            label="Search Members"
-            icon={<MagnifyingGlassIcon className="h-5 w-5 text-gray-600" />}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full"
-          />
-        </div>
-
-        {/* Table Body */}
-        <CardBody className="overflow-x-auto p-4">
-          <table className="w-full table-auto border-collapse">
+        <CardBody className="p-4">
+          <table className="w-full table-auto">
             <thead>
-              <tr className="bg-gray-100 text-left">
-                {TABLE_HEAD.map((head, index) => (
+              <tr className="bg-gray-100">
+                {TABLE_HEAD.map((head) => (
                   <th
                     key={head}
-                    className="p-3 border-b cursor-pointer"
-                    onClick={() => handleSort(head.toLowerCase())}
+                    className="p-3 cursor-pointer"
+                    onClick={() => handleSort(head)}
                   >
-                    <Typography variant="small" className="flex items-center gap-2 font-medium text-gray-700">
-                      {head}{" "}
-                      {index !== TABLE_HEAD.length - 1 && (
-                        <ChevronUpDownIcon strokeWidth={2} className="h-4 w-4" />
-                      )}
-                    </Typography>
+                    <div className="flex items-center gap-1">
+                      {head}
+                      <ChevronUpDownIcon className="h-4 w-4" />
+                    </div>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {currentRows.map(({ name, email, job, org, online, date }, index) => {
-                const isLast = index === currentRows.length - 1;
-                const rowClass = isLast ? "p-3" : "p-3 border-b";
-
-                return (
-                  <tr key={name} className="hover:bg-gray-50">
-                    <td className={rowClass}>
-                      <div className="flex flex-col">
-                        <Typography variant="small" className="font-medium text-gray-800">
-                          {name}
-                        </Typography>
-                        <Typography variant="small" className="text-gray-600">{email}</Typography>
-                      </div>
-                    </td>
-                    <td className={rowClass}>
-                      <div className="flex flex-col">
-                        <Typography variant="small" className="font-medium text-gray-800">{job}</Typography>
-                        <Typography variant="small" className="text-gray-600">{org}</Typography>
-                      </div>
-                    </td>
-                    <td className={rowClass}>
-                      <Chip
-                        variant="ghost"
-                        size="sm"
-                        value={online ? "Online" : "Offline"}
-                        color={online ? "green" : "blue-gray"}
-                      />
-                    </td>
-                    <td className={rowClass}>
-                      <Typography variant="small" className="text-gray-800">{date}</Typography>
-                    </td>
-                    <td className={rowClass}>
-                      <Tooltip content="Edit User">
-                        <IconButton variant="text" onClick={() => handleOpenModal({ name, email, job, org, online, date })}>
-                          <PencilIcon className="h-4 w-4 text-gray-600" />
-                        </IconButton>
-                      </Tooltip>
-                    </td>
-                  </tr>
-                );
-              })}
+              {currentRows.map((area) => (
+                <AreaRow
+                  key={area._id}
+                  area={area}
+                  onEdit={() => handleOpenModal(area)}
+                />
+              ))}
             </tbody>
           </table>
         </CardBody>
 
-        {/* Pagination */}
         <CardFooter className="flex items-center justify-between border-t p-4">
-          {/* Pagination code */}
+          <Typography variant="small">
+            Page {currentPage} of {totalPages}
+          </Typography>
+          <div className="flex gap-2">
+            <Button
+              variant="outlined"
+              size="sm"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outlined"
+              size="sm"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
         </CardFooter>
       </Card>
 
-      {/* Modal for Add/Edit Member */}
-      <Dialog open={isModalOpen} handler={handleCloseModal}>
-        <DialogHeader>{editMember ? "Edit Member" : "Add Member"}</DialogHeader>
-        <DialogBody>
-          <div className="space-y-4">
-            <div>
-              <Typography variant="small">Name</Typography>
-              <Input
-                value={newMember.name}
-                onChange={(e) => setNewMember({ ...newMember, name: e.target.value })}
-              />
-            </div>
-            <div>
-              <Typography variant="small">Email</Typography>
-              <Input
-                value={newMember.email}
-                onChange={(e) => setNewMember({ ...newMember, email: e.target.value })}
-              />
-            </div>
-            <div>
-              <Typography variant="small">Job</Typography>
-              <Input
-                value={newMember.job}
-                onChange={(e) => setNewMember({ ...newMember, job: e.target.value })}
-              />
-            </div>
-            <div>
-              <Typography variant="small">Organization</Typography>
-              <Input
-                value={newMember.org}
-                onChange={(e) => setNewMember({ ...newMember, org: e.target.value })}
-              />
-            </div>
-          </div>
-        </DialogBody>
-        <DialogFooter>
-          <Button variant="outlined" color="gray" onClick={handleCloseModal}>Cancel</Button>
-          <Button variant="filled" color="blue" onClick={handleSaveMember}>
-            Save
-          </Button>
-        </DialogFooter>
-      </Dialog>
+      <ModalOpenArea
+        open={isModalOpen}
+        handleClose={() => setIsModalOpen(false)}
+        handleSave={handleSaveArea}
+        formData={formData}
+        setFormData={setFormData}
+        isEditing={!!editingId}
+      />
     </>
   );
 }

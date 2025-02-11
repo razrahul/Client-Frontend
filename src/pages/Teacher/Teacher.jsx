@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTeacherData } from "../../hook/teacherData.js";
-import TeacherRow from "../../components/teacher/TableRow.jsx";
+import TeacherRow from "../../components/teacher/TeacherTableRow.jsx";
 import ModalOpenTeacher from "../../components/teacher/ModalOpenTeacher.jsx";
 import {
   MagnifyingGlassIcon,
@@ -10,7 +10,6 @@ import { UserPlusIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
-  Input,
   Typography,
   Button,
   CardBody,
