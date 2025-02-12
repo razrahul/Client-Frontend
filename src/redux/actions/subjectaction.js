@@ -94,7 +94,7 @@ export const updateSubjectById = (id, subject) => async (dispatch) => {
 };
 
 // Delete Subject
-export const deleteSubject = (id) => async (dispatch) => {
+export const deleteSubjectById = (id) => async (dispatch) => {
     try {
         dispatch(subjectRequest());
 

@@ -4,6 +4,7 @@ import {
   getAllSubjects,
   createSubject,
   updateSubjectById,
+  deleteSubjectById,
 } from "../redux/actions/subjectaction"; // Import actions
 
 export const useSubjectData = () => {
@@ -21,6 +22,9 @@ export const useSubjectData = () => {
   const updateSubject = (id, updatedSubject) => {
     dispatch(updateSubjectById(id, updatedSubject));
   };
+  const deleteSubject = (id, deletedSubject) => {
+    dispatch(deleteSubjectById(id, deletedSubject));
+  };
 
-  return { subjects, addSubject, updateSubject };
+  return { subjects, addSubject, updateSubject,deleteSubject };
 };

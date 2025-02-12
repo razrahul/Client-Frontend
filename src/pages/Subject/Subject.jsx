@@ -16,12 +16,12 @@ import {
   CardBody,
   CardFooter,
 } from "@material-tailwind/react";
-import { PencilIcon } from "lucide-react";
+import { PencilIcon, TrashIcon } from "lucide-react"; // Import TrashIcon for delete button
 
 const TABLE_HEAD = ["Name", "Is Live", "Action"];
 
 function SubjectTable() {
-  const { subjects, addSubject, updateSubject } = useSubjectData();
+  const { subjects, addSubject, updateSubject, deleteSubject } = useSubjectData();
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -85,6 +85,13 @@ function SubjectTable() {
     setIsModalOpen(false); // Close modal after saving
   };
 
+  const handleDeleteSubject = (id) => {
+    // Call deleteSubject to remove the subject
+    deleteSubject(id);
+    // Remove the subject from the tableRows state (UI update)
+    setTableRows((prevRows) => prevRows.filter((subject) => subject._id !== id));
+  };
+
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
@@ -145,31 +152,27 @@ function SubjectTable() {
             <tbody>
               {currentRows.map((subject) => (
                 <tr key={subject._id} className="hover:bg-gray-50">
-                  {/* <td className="p-3 border-b">
-                  <Typography variant="small" className="font-medium text-gray-800">
-                    {name}
-                  </Typography>
-                </td> */}
                   <td className="p-3 text-left">
                     <strong>{subject.name || "No name provided"}</strong>
                   </td>
 
-                  {/* <td className="p-3 border-b">
-                  <Typography variant="small" className="text-gray-600">
-                    {isLive ? "Active" : "Inactive"}
-                  </Typography>
-                </td> */}
-
                   <td className="p-3 text-left">
                     <strong>{subject.isLive ? "Active" : "Inactive"}</strong>
                   </td>
-                  <td className="p-3 border-b">
+                  <td className="p-3 border-b flex gap-2">
                     <Button
                       className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
                       size="sm"
                       onClick={() => handleOpenModal(subject)}
                     >
                       <PencilIcon className="h-5 w-5 " />
+                    </Button>
+                    <Button
+                      className="flex items-center gap-2 text-black hover:bg-red-600 hover:text-white"
+                      size="sm"
+                      onClick={() => handleDeleteSubject(subject._id)} // Call handleDeleteSubject on click
+                    >
+                      <TrashIcon className="h-5 w-5 " />
                     </Button>
                   </td>
                 </tr>
