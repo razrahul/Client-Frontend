@@ -19,7 +19,7 @@ import {
 const TABLE_HEAD = [
   "Name",
   "Email",
-  "Mobile No",
+  "Phone",
   "About Us",
   "Area",
   "Subject",

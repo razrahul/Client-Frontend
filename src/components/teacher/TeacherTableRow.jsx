@@ -1,9 +1,26 @@
 import React from "react";
-import { Chip, Typography, IconButton, Tooltip } from "@material-tailwind/react";
+import {
+  Chip,
+  Typography,
+  IconButton,
+  Tooltip,
+} from "@material-tailwind/react";
 import { PencilIcon } from "@heroicons/react/24/solid";
+import PropTypes from "prop-types"; // Import PropTypes
 
 const TeacherRow = ({ teacher, onEdit }) => {
-  const { _id, name, email, mobileNo, aboutUs, area, subject, chargeRate, image, createdAt } = teacher;
+  const { _id, name, email, phone, aboutUs, area, subject, chargeRate, image } =
+    teacher;
+
+  const numericChargeRate =
+    typeof chargeRate === "string" ? parseFloat(chargeRate) : chargeRate;
+  const displaySubject = Array.isArray(subject)
+    ? subject.map((sub) => sub.name).join(", ") // Extract the 'name' field and join
+    : subject;
+
+  console.log("Subject Prop:", subject);
+  console.log("Display Subject:", displaySubject);
+  console.log("Charge Rate:", numericChargeRate); // Check if it's correctly parsed as a number
 
   return (
     <tr key={_id} className="hover:bg-gray-50">
@@ -19,7 +36,7 @@ const TeacherRow = ({ teacher, onEdit }) => {
       </td>
       <td className="p-3 border-b">
         <Typography variant="small" className="text-gray-600">
-          {mobileNo}
+          {phone}
         </Typography>
       </td>
       <td className="p-3 border-b">
@@ -34,17 +51,22 @@ const TeacherRow = ({ teacher, onEdit }) => {
       </td>
       <td className="p-3 border-b">
         <Typography variant="small" className="text-gray-600">
-          {subject}
+          {displaySubject}
+        </Typography>
+      </td>
+
+      <td className="p-3 border-b">
+        <Typography variant="small" className="text-gray-600">
+          ₹{numericChargeRate}/hr{" "}
         </Typography>
       </td>
       <td className="p-3 border-b">
-        <Typography variant="small" className="text-gray-800">
-          ₹{chargeRate}/hr
-        </Typography>
-      </td>
-      <td className="p-3 border-b">
-        {image ? (
-          <img src={image} alt="Teacher Image" className="h-12 w-12 rounded-full object-cover" />
+        {image?.url ? (
+          <img
+            src={image.url} // Use the `url` property of the image object
+            alt="Teacher Image"
+            className="h-12 w-12 rounded-full object-cover"
+          />
         ) : (
           <div className="h-12 w-12 bg-gray-200 rounded-full"></div>
         )}
@@ -58,6 +80,35 @@ const TeacherRow = ({ teacher, onEdit }) => {
       </td>
     </tr>
   );
+};
+
+TeacherRow.propTypes = {
+  teacher: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    phone: PropTypes.number.isRequired,
+    aboutUs: PropTypes.string.isRequired,
+    area: PropTypes.object,
+    subject: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string.isRequired,
+        })
+      ),
+    ]).isRequired,
+    chargeRate: PropTypes.oneOfType([
+      PropTypes.number, // number type
+      PropTypes.string, // string type
+    ]).isRequired,
+    image: PropTypes.shape({
+      public_id: PropTypes.string,
+      url: PropTypes.string, // Update image prop to an object with `url`
+    }),
+    createdAt: PropTypes.string.isRequired,
+  }).isRequired,
+  onEdit: PropTypes.func.isRequired,
 };
 
 export default TeacherRow;

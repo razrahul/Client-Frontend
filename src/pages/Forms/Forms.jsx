@@ -55,7 +55,7 @@ function FormsTable() {
       contact.number.toLowerCase().includes(searchLower) ||
       contact.whatsappNumber.toLowerCase().includes(searchLower) ||
       contact.class.toLowerCase().includes(searchLower) ||
-      contact.subjectList.join(" ").toLowerCase().includes(searchLower) ||
+      contact.subjectList.join("").toLowerCase().includes(searchLower) ||
       contact.timeslot.toLowerCase().includes(searchLower) ||
       contact.feeRange.toLowerCase().includes(searchLower)
     );
@@ -138,40 +138,46 @@ function FormsTable() {
                     {head}
                   </th>
                 ))}
-                <th className="p-3 text-left">Action</th>{" "}
+                <th className="p-3 text-left">Action</th>{""}
               </tr>
             </thead>
             <tbody>
               {currentRows.map((contact) => (
                 <tr key={contact._id} className="border-b">
                   <td className="p-3 text-left">
-                    <strong>{contact.name}</strong>
+                    <strong>{contact.name || "No name provided"}</strong>
                     <br />
-                    {contact.email}
+                    {contact.email || "No email provided"}
                   </td>
                   <td className="p-3 text-left">
-                    <strong>{contact.number}</strong>
+                    <strong>{contact.number || "No number provided"}</strong>
                     <br />
-                    WhatsApp: {contact.whatsappNumber}
+                    WhatsApp: {contact.whatsappNumber || "No WhatsApp provided"}
                   </td>
                   <td className="p-3 text-left">
-                    <strong>Class: {contact.class}</strong>
+                    <strong>
+                      Class:-{contact.class || "No class provided"}
+                    </strong>
                     <br />
-                    Subjects: {contact.subjectList.join(", ")}
+                    Subjects:-{""}
+                    {contact.subjectList.length > 0
+                      ? contact.subjectList.join(", ")
+                      : "No subjects provided"}
                   </td>
                   <td className="p-3 text-left">
-                    <strong>Time: {contact.timeslot}</strong>
+                    <strong>
+                      Time:{contact.timeslot || "No timeslot provided"}
+                    </strong>
                     <br />
-                    Charges: {contact.feeRange}
+                    Charges:{contact.feeRange || "No fee range provided"}
                   </td>
                   <td className="p-3 text-left">
                     <Button
-                      className="flex items-center gap-2  text-black hover:bg-blue-600 hover:text-white"
+                      className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
                       size="sm"
                       onClick={() => handleOpenModal(contact)}
                     >
                       <PencilIcon className="h-5 w-5" />
-                      
                     </Button>
                   </td>
                 </tr>

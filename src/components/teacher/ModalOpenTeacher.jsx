@@ -69,9 +69,9 @@ const ModalOpenTeacher = ({
                 <input
                   type="text"
                   className="w-full p-2 border rounded"
-                  value={formData.mobileNo}
+                  value={formData.phone}
                   onChange={(e) =>
-                    setFormData({ ...formData, mobileNo: e.target.value })
+                    setFormData({ ...formData, phone: e.target.value })
                   }
                 />
               </div>
