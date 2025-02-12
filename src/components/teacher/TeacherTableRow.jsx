@@ -18,9 +18,6 @@ const TeacherRow = ({ teacher, onEdit }) => {
     ? subject.map((sub) => sub.name).join(", ") // Extract the 'name' field and join
     : subject;
 
-  console.log("Subject Prop:", subject);
-  console.log("Display Subject:", displaySubject);
-  console.log("Charge Rate:", numericChargeRate); // Check if it's correctly parsed as a number
 
   return (
     <tr key={_id} className="hover:bg-gray-50">

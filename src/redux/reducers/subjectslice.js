@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    subjects: [],  // List of all subjects
-    subject: {},   // A single subject, used for detail views or editing
-    loading: false, // Indicates loading state during API requests
-    error: null,    // Holds error message if API request fails
+    subjects: [],  
+    subject: {},   
+    loading: false, 
+    error: null,   
 };
 
 const subjectSlice = createSlice({
@@ -17,34 +17,34 @@ const subjectSlice = createSlice({
         },
         fetchSubjectsSuccess(state, action) {
             state.loading = false;
-            state.subjects = action.payload.subjects;  // Update subjects with the fetched data
+            state.subjects = action.payload.subjects;  
         },
         subjectFail(state, action) {
             state.loading = false;
-            state.error = action.payload;  // Store the error message
+            state.error = action.payload;  
         },
         getSubject(state, action) {
             state.loading = false;
-            state.subject = action.payload;  // Set the current subject, used for editing or details
+            state.subject = action.payload;  
         },
         addSubject(state, action) {
-            state.loading = false;  // Set loading to false after the subject is added
-            state.subjects.push(action.payload);  // Add the new subject to the list
+            state.loading = false;  
+            state.subjects.push(action.payload);  
         },
         updateSubject(state, action) {
-            state.loading = false;  // Set loading to false after the update is done
+            state.loading = false;  
             const index = state.subjects.findIndex(subject => subject._id === action.payload._id);
             if (index !== -1) {
-                state.subjects[index] = action.payload;  // Update the subject
+                state.subjects[index] = action.payload;  
             }
         },
         removeSubject(state, action) {
-            state.loading = false;  // Set loading to false after the removal is done
+            state.loading = false;  
             state.subjects = state.subjects.filter(subject => subject._id !== action.payload); // Remove subject by ID
         },
         resetSubjectState(state) {
-            state.subject = {}; // Reset the single subject state
-            state.error = null;  // Reset any errors
+            state.subject = {}; 
+            state.error = null;  
         },
     },
 });

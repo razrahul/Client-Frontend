@@ -9,7 +9,6 @@ const ModalOpenArea = ({
   isEditing,
 }) => {
   const handleSubmit = () => {
-    console.log("Form Data:", formData);
     handleSave();
   };
 
@@ -23,7 +22,8 @@ const ModalOpenArea = ({
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium">Area Name</label>
+                <label className="block text-sm font-medium text-gray-900">
+                Area Name</label>
               <input
                 className="w-full p-2 border rounded"
                 value={formData.name}
@@ -34,7 +34,7 @@ const ModalOpenArea = ({
               />
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium">Status</label>
               <select
                 className="w-full p-2 border rounded"
@@ -49,7 +49,7 @@ const ModalOpenArea = ({
                 <option value="online">Online</option>
                 <option value="offline">Offline</option>
               </select>
-            </div>
+            </div> */}
 
             {/* Add other fields here, such as cityId, if needed */}
           </div>
@@ -63,7 +63,7 @@ const ModalOpenArea = ({
             </button>
             <button
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              onClick={handleSubmit}
+              onClick={handleSave}
             >
               {isEditing ? "Update" : "Add"}
             </button>

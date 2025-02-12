@@ -1,6 +1,13 @@
 import React from "react";
 
-const ModalOpenSubject = ({ open, handleClose, handleSave, formData, setFormData, isEditing }) => {
+const ModalOpenSubject = ({
+  open,
+  handleClose,
+  handleSave,
+  formData,
+  setFormData,
+  isEditing,
+}) => {
   return (
     <>
       {open && (
@@ -11,18 +18,22 @@ const ModalOpenSubject = ({ open, handleClose, handleSave, formData, setFormData
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Subject Name</label>
+                <label className="block text-sm font-medium text-gray-900">
+                  Subject Name
+                </label>
                 <input
-                  type="text"
-                  className="mt-1 w-full border-gray-300 rounded-md p-2"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full p-2 border rounded"
+                value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  placeholder="Enter Subject name"
                 />
               </div>
             </div>
             <div className="mt-4 flex justify-between">
               <button
-                className="bg-gray-500 text-white px-4 py-2 rounded-md"
+                className="bg-gray-500 text-white px-4 py-2 rounded-md "
                 onClick={handleClose}
               >
                 Cancel

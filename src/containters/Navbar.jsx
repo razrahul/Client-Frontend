@@ -17,13 +17,10 @@ export default function Navbar() {
       <nav className="h-full flex flex-col bg-white border-r shadow-sm">
         <div className="p-4 pb-2 flex justify-between items-center">
           <div className="text-xl font-bold">Pinnacle Home Tuition</div>{" "}
-          {/* Replaced logo with text */}
         </div>
-
-        {/* Sidebar items */}
         <ul className="flex-1 px-3">
           <SidebarItem
-            icon={<LayoutDashboard size={20} />} // LayoutDashboard icon
+            icon={<LayoutDashboard size={20} />} 
             text="Dashboard"
             to="/"
           />
@@ -33,11 +30,7 @@ export default function Navbar() {
             text="Teacher"
             to="/teacher"
           />
-          <SidebarItem
-            icon={<BookPlus size={20} />}
-            text="Request Form"
-            to="/statistics-1"
-          />
+          
           <SidebarItem icon={<BookText size={20} />} text="Forms" to="/forms" />
           <SidebarItem icon={<LandPlot size={20} />} text="Area" to="/area" />
           <SidebarItem icon={<BookCopy  size={20} />} text="Subject" to="/subject" />

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { useSubjectData } from "../../hook/subjectData.js"; // Custom hook
+import { useSubjectData } from "../../hook/subjectData.js"; 
 import SubjectRow from "../../components/subject/SubjectTableRow.jsx";
 import ModalOpenSubject from "../../components/subject/ModalOpenSubject.jsx";
 import {
@@ -16,14 +15,23 @@ import {
   CardBody,
   CardFooter,
 } from "@material-tailwind/react";
-import { PencilIcon, TrashIcon } from "lucide-react"; // Import TrashIcon for delete button
+import { PencilIcon, TrashIcon } from "lucide-react"; 
 
 const TABLE_HEAD = ["Name", "Is Live", "Action"];
+
+const sortKeyMap = {
+  Name: "name",
+  "Is Live": "isLive",
+};
 
 function SubjectTable() {
   const { subjects, addSubject, updateSubject, deleteSubject } = useSubjectData();
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortConfig, setSortConfig] = useState({
+    key: "name",
+    direction: "asc",
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -38,17 +46,45 @@ function SubjectTable() {
   });
 
   const rowsPerPage = 6;
-  const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = filteredRows.slice(indexOfFirstRow, indexOfLastRow);
 
   useEffect(() => {
     if (Array.isArray(subjects)) {
       setTableRows(subjects);
     }
   }, [subjects]);
+
+  // Sorting logic
+  const sortedRows = [...filteredRows].sort((a, b) => {
+    const aValue = a[sortConfig.key];
+    const bValue = b[sortConfig.key];
+
+    if (sortConfig.key === "createdAt") {
+      return sortConfig.direction === "asc"
+        ? new Date(aValue) - new Date(bValue)
+        : new Date(bValue) - new Date(aValue);
+    }
+
+    if (typeof aValue === "boolean" && typeof bValue === "boolean") {
+      return sortConfig.direction === "asc" ? aValue - bValue : bValue - aValue;
+    }
+
+    return sortConfig.direction === "asc"
+      ? String(aValue).localeCompare(String(bValue))
+      : String(bValue).localeCompare(String(aValue));
+  });
+
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = sortedRows.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+
+  // Sorting handler
+  const handleSort = (column) => {
+    const key = sortKeyMap[column];
+    const direction =
+      sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
+    setSortConfig({ key, direction });
+  };
 
   const handleOpenModal = (subject = null) => {
     if (subject) {
@@ -75,20 +111,16 @@ function SubjectTable() {
     };
 
     if (editingId) {
-      // Update the subject
       updateSubject(editingId, updatedSubject);
     } else {
-      // Create new subject
       addSubject(updatedSubject);
     }
 
-    setIsModalOpen(false); // Close modal after saving
+    setIsModalOpen(false); 
   };
 
   const handleDeleteSubject = (id) => {
-    // Call deleteSubject to remove the subject
     deleteSubject(id);
-    // Remove the subject from the tableRows state (UI update)
     setTableRows((prevRows) => prevRows.filter((subject) => subject._id !== id));
   };
 
@@ -117,7 +149,7 @@ function SubjectTable() {
               <Button
                 className="flex items-center gap-2 bg-blue-600 text-white"
                 size="sm"
-                onClick={() => handleOpenModal()} // Open modal to add a new subject
+                onClick={() => handleOpenModal()} 
               >
                 <UserPlusIcon className="h-4 w-4" /> Add Subject
               </Button>
@@ -140,7 +172,11 @@ function SubjectTable() {
             <thead>
               <tr className="bg-gray-100">
                 {TABLE_HEAD.map((head) => (
-                  <th key={head} className="p-3 cursor-pointer">
+                  <th
+                    key={head}
+                    className="p-3 cursor-pointer"
+                    onClick={() => handleSort(head)}
+                  >
                     <div className="flex items-center gap-1">
                       {head}
                       <ChevronUpDownIcon className="h-4 w-4" />
@@ -159,7 +195,7 @@ function SubjectTable() {
                   <td className="p-3 text-left">
                     <strong>{subject.isLive ? "Active" : "Inactive"}</strong>
                   </td>
-                  <td className="p-3 border-b flex gap-2">
+                  <td className="p-3 border-b flex gap-2 text-decoration-line: none;">
                     <Button
                       className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
                       size="sm"
@@ -167,10 +203,11 @@ function SubjectTable() {
                     >
                       <PencilIcon className="h-5 w-5 " />
                     </Button>
+
                     <Button
-                      className="flex items-center gap-2 text-black hover:bg-red-600 hover:text-white"
+                      className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
                       size="sm"
-                      onClick={() => handleDeleteSubject(subject._id)} // Call handleDeleteSubject on click
+                      onClick={() => handleDeleteSubject(subject._id)} 
                     >
                       <TrashIcon className="h-5 w-5 " />
                     </Button>
@@ -209,10 +246,10 @@ function SubjectTable() {
       <ModalOpenSubject
         open={isModalOpen}
         handleClose={() => setIsModalOpen(false)}
-        handleSave={handleSaveSubject} // Call to save subject
+        handleSave={handleSaveSubject} 
         formData={formData}
         setFormData={setFormData}
-        isEditing={!!editingId} // If editing, true, otherwise false
+        isEditing={!!editingId} 
       />
     </>
   );

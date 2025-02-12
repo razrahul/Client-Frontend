@@ -15,22 +15,18 @@ import {
   CardBody,
   CardFooter,
 } from "@material-tailwind/react";
+import { PencilIcon, TrashIcon } from "lucide-react";
 
-const TABLE_HEAD = [
-  "Area Name",
-  "Status",
-  "Created", 
-  "Action",
-];
+const TABLE_HEAD = ["Area Name", "Status", "Created", "Action"];
 
 const sortKeyMap = {
-  Name: "name",
+  "Area Name": "name",
   Status: "isLive",
   Created: "createdAt",
 };
 
 function AreaTable() {
-  const areas = useAreaData();
+  const { areas, addArea, updateAreaById, deleteAreaById } = useAreaData();
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -46,6 +42,11 @@ function AreaTable() {
   });
   const [editingId, setEditingId] = useState(null);
 
+  const filteredRows = tableRows.filter((area) => {
+    const searchLower = searchTerm.toLowerCase();
+    return area.name && area.name.toLowerCase().includes(searchLower);
+  });
+
   const rowsPerPage = 6;
 
   useEffect(() => {
@@ -53,16 +54,6 @@ function AreaTable() {
       setTableRows(areas);
     }
   }, [areas]);
-
-  const filteredRows = tableRows.filter((area) => {
-    const searchLower = searchTerm.toLowerCase();
-    return (
-      area.name.toLowerCase().includes(searchLower) ||
-      area.cityId.some((city) =>
-        city.name.toLowerCase().includes(searchLower)
-      )
-    );
-  });
 
   const sortedRows = [...filteredRows].sort((a, b) => {
     const aValue = a[sortConfig.key];
@@ -116,22 +107,25 @@ function AreaTable() {
   };
 
   const handleSaveArea = () => {
+    const updatedArea = {
+      name: formData.name,
+      isLive: formData.isLive,
+      cityId: formData.cityId,
+      _id: editingId,
+    };
+
     if (editingId) {
-      setTableRows(
-        tableRows.map((area) =>
-          area._id === editingId ? { ...area, ...formData } : area
-        )
-      );
+      updateAreaById(editingId, updatedArea);
     } else {
-      const newArea = {
-        ...formData,
-        _id: `temp-${Math.random().toString(36).substr(2, 9)}`,
-        createdAt: new Date().toISOString(),
-      };
-      setTableRows([...tableRows, newArea]);
+      addArea(updatedArea);
     }
 
     setIsModalOpen(false);
+  };
+
+  const handleDeleteArea = (id) => {
+    deleteAreaById(id);
+    setTableRows((prevRows) => prevRows.filter((area) => area._id !== id));
   };
 
   const handlePageChange = (newPage) => {
@@ -139,6 +133,10 @@ function AreaTable() {
       setCurrentPage(newPage);
     }
   };
+
+  if (areas.length === 0) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -193,11 +191,41 @@ function AreaTable() {
             </thead>
             <tbody>
               {currentRows.map((area) => (
-                <AreaRow
-                  key={area._id}
-                  area={area}
-                  onEdit={() => handleOpenModal(area)}
-                />
+                <tr key={area._id} className="hover:bg-gray-50">
+                  <td className="p-3 text-left">
+                    <strong>{area.name || "No name provided"}</strong>
+                  </td>
+
+                  <td className="p-3 text-left">
+                    <strong>{area.isLive ? "Active" : "Inactive"}</strong>
+                  </td>
+
+                  <td className="p-3 text-left">
+                    <strong>
+                      {new Date(area.createdAt).toLocaleDateString()}
+                    </strong>
+                  </td>
+
+                  <td className="p-3 border-b flex gap-2 text-decoration-line: none;">
+                    {/* Edit Button */}
+                    <Button
+                      className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
+                      size="sm"
+                      onClick={() => handleOpenModal(area)}
+                    >
+                      <PencilIcon className="h-5 w-5 " />
+                    </Button>
+
+                    {/* Delete Button */}
+                    <Button
+                      className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
+                      size="sm"
+                      onClick={() => handleDeleteArea(area._id)}
+                    >
+                      <TrashIcon className="h-5 w-5 " />
+                    </Button>
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>

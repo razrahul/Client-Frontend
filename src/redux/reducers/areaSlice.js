@@ -15,7 +15,6 @@ const areaSlice = createSlice({
             state.loading = true;
             state.error = null;
         },
-        //get All Areas
         fetchAreasSuccess(state, action) {
             state.loading = false;
             state.areas = action.payload.areas;

@@ -21,9 +21,6 @@ const ModalOpenTeacher = ({
       ...formData,
       subject: subjectsInput.split(",").map((sub) => sub.trim()),
     });
-
-    console.log("Updated Form Data:", formData);
-
     handleSave();
   };
 

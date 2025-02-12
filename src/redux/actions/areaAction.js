@@ -44,6 +44,7 @@ export const createArea = (name) => async (dispatch) => {
     );
 
     dispatch(addArea(data));
+    dispatch(getAreas());
   } catch (error) {
     return async (dispatch) => {
       dispatch(
@@ -69,6 +70,8 @@ export const editArea = (id, name) => async (dispatch) => {
     );
 
     dispatch(updateArea(data));
+    dispatch(getAreas());
+
   } catch (error) {
     return async (dispatch) => {
       dispatch(
