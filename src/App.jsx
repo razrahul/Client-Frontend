@@ -6,7 +6,7 @@ import Student from "./pages/student/student";
 import TeacherTable from "./pages/Teacher/Teacher"
 import FormsTable from "./pages/Forms/Forms";
 import AreaTable from "./pages/Area/area"; 
-import SubjectTable from "./pages/subject/Subject";
+import SubjectTable from "./pages/Subject/Subject.jsx";
 
 function App() {
   return (
