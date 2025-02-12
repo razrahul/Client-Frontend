@@ -19,7 +19,11 @@ const SubjectRow = ({ subject, onEdit }) => {
       </td>
       <td className="p-3 border-b">
         <Tooltip content="Edit Subject">
-          <IconButton variant="text" onClick={() => onEdit(subject)}>
+          <IconButton 
+            variant="text" 
+            onClick={() => onEdit(subject)} 
+            className="cursor-pointer" // Adding cursor pointer for better UX
+          >
             <PencilIcon className="h-4 w-4 text-gray-600" />
           </IconButton>
         </Tooltip>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useSubjectData } from "../../hook/subjectData.js";
+import { useDispatch } from "react-redux";
+import { useSubjectData } from "../../hook/subjectData.js"; // Custom hook
 import SubjectRow from "../../components/subject/SubjectTableRow.jsx";
 import ModalOpenSubject from "../../components/subject/ModalOpenSubject.jsx";
 import {
@@ -15,22 +16,14 @@ import {
   CardBody,
   CardFooter,
 } from "@material-tailwind/react";
+import { PencilIcon } from "lucide-react";
 
 const TABLE_HEAD = ["Name", "Is Live", "Action"];
 
-const sortKeyMap = {
-  Name: "name",
-  Status: "isLive",
-};
-
 function SubjectTable() {
-  const subjects = useSubjectData();
+  const { subjects, addSubject, updateSubject } = useSubjectData();
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortConfig, setSortConfig] = useState({
-    key: "name",
-    direction: "asc",
-  });
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -39,60 +32,23 @@ function SubjectTable() {
   });
   const [editingId, setEditingId] = useState(null);
 
-  const rowsPerPage = 6;
+  const filteredRows = tableRows.filter((subject) => {
+    const searchLower = searchTerm.toLowerCase();
+    return subject.name && subject.name.toLowerCase().includes(searchLower);
+  });
 
-  // Sort key map for sorting columns
-  const sortKeyMap = {
-    name: "name",
-    createdAt: "createdAt",
-    // Add other sort keys as needed
-  };
+  const rowsPerPage = 6;
+  const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredRows.slice(indexOfFirstRow, indexOfLastRow);
 
   useEffect(() => {
     if (Array.isArray(subjects)) {
       setTableRows(subjects);
     }
   }, [subjects]);
-
-  const filteredRows = tableRows.filter((subject) => {
-    const searchLower = searchTerm.toLowerCase();
-    return subject.name && subject.name.toLowerCase().includes(searchLower); // Ensure subject.name exists
-  });
-
-  const sortedRows = [...filteredRows].sort((a, b) => {
-    const aValue = a[sortConfig.key];
-    const bValue = b[sortConfig.key];
-
-    if (aValue === undefined || bValue === undefined) {
-      return 0; // Prevent errors if the key does not exist
-    }
-
-    if (sortConfig.key === "createdAt") {
-      return sortConfig.direction === "asc"
-        ? new Date(aValue) - new Date(bValue)
-        : new Date(bValue) - new Date(aValue);
-    }
-
-    if (typeof aValue === "boolean" && typeof bValue === "boolean") {
-      return sortConfig.direction === "asc" ? aValue - bValue : bValue - aValue;
-    }
-
-    return sortConfig.direction === "asc"
-      ? String(aValue).localeCompare(String(bValue))
-      : String(bValue).localeCompare(String(aValue));
-  });
-
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = sortedRows.slice(indexOfFirstRow, indexOfLastRow);
-  const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-
-  const handleSort = (column) => {
-    const key = sortKeyMap[column];
-    const direction =
-      sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
-    setSortConfig({ key, direction });
-  };
 
   const handleOpenModal = (subject = null) => {
     if (subject) {
@@ -112,23 +68,21 @@ function SubjectTable() {
   };
 
   const handleSaveSubject = () => {
-    const newSubject = {
-      ...formData,
-      _id: editingId ? editingId : `temp-${Math.random().toString(36).substr(2, 9)}`,
-      createdAt: editingId ? tableRows.find((subject) => subject._id === editingId).createdAt : new Date().toISOString(),
+    const updatedSubject = {
+      name: formData.name,
+      isLive: formData.isLive,
+      _id: editingId,
     };
 
     if (editingId) {
-      setTableRows(
-        tableRows.map((subject) =>
-          subject._id === editingId ? { ...subject, ...formData } : subject
-        )
-      );
+      // Update the subject
+      updateSubject(editingId, updatedSubject);
     } else {
-      setTableRows([...tableRows, newSubject]);
+      // Create new subject
+      addSubject(updatedSubject);
     }
 
-    setIsModalOpen(false);
+    setIsModalOpen(false); // Close modal after saving
   };
 
   const handlePageChange = (newPage) => {
@@ -136,9 +90,11 @@ function SubjectTable() {
       setCurrentPage(newPage);
     }
   };
+
   if (subjects.length === 0) {
-    return <div>Loading...</div>; // Or any loading indicator
+    return <div>Loading...</div>;
   }
+
   return (
     <>
       <Card className="h-full w-full shadow-md">
@@ -154,7 +110,7 @@ function SubjectTable() {
               <Button
                 className="flex items-center gap-2 bg-blue-600 text-white"
                 size="sm"
-                onClick={() => handleOpenModal()}
+                onClick={() => handleOpenModal()} // Open modal to add a new subject
               >
                 <UserPlusIcon className="h-4 w-4" /> Add Subject
               </Button>
@@ -177,11 +133,7 @@ function SubjectTable() {
             <thead>
               <tr className="bg-gray-100">
                 {TABLE_HEAD.map((head) => (
-                  <th
-                    key={head}
-                    className="p-3 cursor-pointer"
-                    onClick={() => handleSort(head)}
-                  >
+                  <th key={head} className="p-3 cursor-pointer">
                     <div className="flex items-center gap-1">
                       {head}
                       <ChevronUpDownIcon className="h-4 w-4" />
@@ -192,11 +144,35 @@ function SubjectTable() {
             </thead>
             <tbody>
               {currentRows.map((subject) => (
-                <SubjectRow
-                  key={subject._id}
-                  subject={subject}
-                  onEdit={() => handleOpenModal(subject)}
-                />
+                <tr key={subject._id} className="hover:bg-gray-50">
+                  {/* <td className="p-3 border-b">
+                  <Typography variant="small" className="font-medium text-gray-800">
+                    {name}
+                  </Typography>
+                </td> */}
+                  <td className="p-3 text-left">
+                    <strong>{subject.name || "No name provided"}</strong>
+                  </td>
+
+                  {/* <td className="p-3 border-b">
+                  <Typography variant="small" className="text-gray-600">
+                    {isLive ? "Active" : "Inactive"}
+                  </Typography>
+                </td> */}
+
+                  <td className="p-3 text-left">
+                    <strong>{subject.isLive ? "Active" : "Inactive"}</strong>
+                  </td>
+                  <td className="p-3 border-b">
+                    <Button
+                      className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
+                      size="sm"
+                      onClick={() => handleOpenModal(subject)}
+                    >
+                      <PencilIcon className="h-5 w-5 " />
+                    </Button>
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>
@@ -211,7 +187,7 @@ function SubjectTable() {
               variant="outlined"
               size="sm"
               onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
+              disabled={currentPage <= 1}
             >
               Previous
             </Button>
@@ -219,7 +195,7 @@ function SubjectTable() {
               variant="outlined"
               size="sm"
               onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage >= totalPages}
             >
               Next
             </Button>
@@ -230,10 +206,10 @@ function SubjectTable() {
       <ModalOpenSubject
         open={isModalOpen}
         handleClose={() => setIsModalOpen(false)}
-        handleSave={handleSaveSubject}
+        handleSave={handleSaveSubject} // Call to save subject
         formData={formData}
         setFormData={setFormData}
-        isEditing={!!editingId}
+        isEditing={!!editingId} // If editing, true, otherwise false
       />
     </>
   );

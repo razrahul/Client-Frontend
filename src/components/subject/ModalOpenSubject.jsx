@@ -4,8 +4,8 @@ const ModalOpenSubject = ({ open, handleClose, handleSave, formData, setFormData
   return (
     <>
       {open && (
-        <div className="modal-overlay">
-          <div className="modal-content fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 bg-white rounded-lg shadow-lg max-h-[80vh] w-full sm:w-4/5 md:w-2/3 overflow-auto">
+        <div className="modal-overlay fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
+          <div className="modal-content p-6 bg-white rounded-lg shadow-lg max-w-lg w-full">
             <h2 className="text-2xl mb-4">
               {isEditing ? "Edit Subject" : "Add New Subject"}
             </h2>
@@ -18,17 +18,6 @@ const ModalOpenSubject = ({ open, handleClose, handleSave, formData, setFormData
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Status</label>
-                <select
-                  className="mt-1 w-full border-gray-300 rounded-md p-2"
-                  value={formData.isLive}
-                  onChange={(e) => setFormData({ ...formData, isLive: e.target.value === 'true' })}
-                >
-                  <option value={true}>Active</option>
-                  <option value={false}>Inactive</option>
-                </select>
               </div>
             </div>
             <div className="mt-4 flex justify-between">
