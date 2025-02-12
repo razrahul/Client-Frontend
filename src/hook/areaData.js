@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAreas,createArea,editArea,deleteArea } from "../redux/actions/areaAction";
+import { getAreas,createArea,editArea,deleteArea,toggleAreaLiveStatus } from "../redux/actions/areaAction";
 
 export const useAreaData = () => {
   const { areas } = useSelector((state) => state.area);
@@ -21,5 +21,9 @@ export const useAreaData = () => {
       dispatch(deleteArea(id, deletedArea));
     };
 
-  return {areas, addArea, updateAreaById, deleteAreaById};
+    const toggleLiveStatus = (id) => {
+      dispatch(toggleAreaLiveStatus(id));
+    };
+
+  return {areas, addArea, updateAreaById, deleteAreaById, toggleLiveStatus};
 };

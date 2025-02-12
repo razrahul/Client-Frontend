@@ -38,6 +38,13 @@ const areaSlice = createSlice({
                 state.areas[index] = action.payload;
             }
         },
+
+        toggleAreaLiveStatus(state, action) {
+            const index = state.areas.findIndex(area => area._id === action.payload._id);
+            if (index !== -1) {
+                state.areas[index].isLive = !state.areas[index].isLive; // Toggle live status
+            }
+        },
     },
 });
 

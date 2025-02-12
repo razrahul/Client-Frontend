@@ -15,7 +15,7 @@ import {
   CardBody,
   CardFooter,
 } from "@material-tailwind/react";
-import { PencilIcon, TrashIcon } from "lucide-react";
+import { PencilIcon, ToggleLeft, ToggleRight, TrashIcon } from "lucide-react";
 
 const TABLE_HEAD = ["Area Name", "Status", "Created", "Action"];
 
@@ -26,7 +26,8 @@ const sortKeyMap = {
 };
 
 function AreaTable() {
-  const { areas, addArea, updateAreaById, deleteAreaById } = useAreaData();
+  const { areas, addArea, updateAreaById, deleteAreaById, toggleLiveStatus } =
+    useAreaData();
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -134,6 +135,9 @@ function AreaTable() {
     }
   };
 
+  const handleToggleLiveStatus = (id) => {
+    toggleLiveStatus(id);
+  };
   if (areas.length === 0) {
     return <div>Loading...</div>;
   }
@@ -198,6 +202,13 @@ function AreaTable() {
 
                   <td className="p-3 text-left">
                     <strong>{area.isLive ? "Active" : "Inactive"}</strong>
+                    <span onClick={() => handleToggleLiveStatus(area._id)}>
+                      {area.isLive ? (
+                        <ToggleRight className="text-blue-600 cursor-pointer" />
+                      ) : (
+                        <ToggleLeft className="text-black cursor-pointer" />
+                      )}
+                    </span>
                   </td>
 
                   <td className="p-3 text-left">
@@ -207,7 +218,6 @@ function AreaTable() {
                   </td>
 
                   <td className="p-3 border-b flex gap-2 text-decoration-line: none;">
-                    {/* Edit Button */}
                     <Button
                       className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
                       size="sm"
@@ -216,7 +226,6 @@ function AreaTable() {
                       <PencilIcon className="h-5 w-5 " />
                     </Button>
 
-                    {/* Delete Button */}
                     <Button
                       className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
                       size="sm"

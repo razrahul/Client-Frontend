@@ -99,3 +99,22 @@ export const deleteArea = (id) => async (dispatch) => {
     };
   }
 };
+
+
+export const toggleAreaLiveStatus = (id) => async (dispatch) => {
+  try {
+    dispatch(areaReaquest());
+
+    const { data } = await axios.patch(`${server}/updateLiveStatus/area/${id}`);
+
+    dispatch(updateArea(data)); // Directly use 'data' if it's the area
+
+    dispatch(getAreas());
+
+  } catch (error) {
+    dispatch(
+      areaFail(error.response?.data?.message || 'Error updating area live status')
+    );
+  }
+};
+

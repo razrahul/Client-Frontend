@@ -6,7 +6,6 @@ const initialState = {
     loading: false, 
     error: null,   
 };
-
 const subjectSlice = createSlice({
     name: "subject",
     initialState,
@@ -17,34 +16,36 @@ const subjectSlice = createSlice({
         },
         fetchSubjectsSuccess(state, action) {
             state.loading = false;
-            state.subjects = action.payload.subjects;  
+            state.subjects = action.payload.subjects;
         },
         subjectFail(state, action) {
             state.loading = false;
-            state.error = action.payload;  
+            state.error = action.payload;
         },
         getSubject(state, action) {
             state.loading = false;
-            state.subject = action.payload;  
+            state.subject = action.payload;
         },
         addSubject(state, action) {
-            state.loading = false;  
-            state.subjects.push(action.payload);  
+            state.loading = false;
+            state.subjects.push(action.payload);
         },
         updateSubject(state, action) {
-            state.loading = false;  
-            const index = state.subjects.findIndex(subject => subject._id === action.payload._id);
+            state.loading = false;
+            const updatedSubject = action.payload;
+            const index = state.subjects.findIndex(subject => subject._id === updatedSubject._id);
+
             if (index !== -1) {
-                state.subjects[index] = action.payload;  
+                state.subjects[index] = action.payload;
             }
         },
         removeSubject(state, action) {
-            state.loading = false;  
-            state.subjects = state.subjects.filter(subject => subject._id !== action.payload); // Remove subject by ID
+            state.loading = false;
+            state.subjects = state.subjects.filter(subject => subject._id !== action.payload);
         },
         resetSubjectState(state) {
-            state.subject = {}; 
-            state.error = null;  
+            state.subject = {};
+            state.error = null;
         },
     },
 });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSubjectData } from "../../hook/subjectData.js"; 
+import { useSubjectData } from "../../hook/subjectData.js";
 import SubjectRow from "../../components/subject/SubjectTableRow.jsx";
 import ModalOpenSubject from "../../components/subject/ModalOpenSubject.jsx";
 import {
@@ -15,17 +15,23 @@ import {
   CardBody,
   CardFooter,
 } from "@material-tailwind/react";
-import { PencilIcon, TrashIcon } from "lucide-react"; 
+import { PencilIcon, ToggleLeft, ToggleRight, TrashIcon } from "lucide-react";
 
-const TABLE_HEAD = ["Name", "Is Live", "Action"];
+const TABLE_HEAD = ["Name", "Status", "Action"];
 
 const sortKeyMap = {
   Name: "name",
-  "Is Live": "isLive",
+  Status: "isLive",
 };
 
 function SubjectTable() {
-  const { subjects, addSubject, updateSubject, deleteSubject } = useSubjectData();
+  const {
+    subjects,
+    addSubject,
+    updateSubject,
+    deleteSubject,
+    toggleSubjectLiveStatus,
+  } = useSubjectData();
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -116,12 +122,24 @@ function SubjectTable() {
       addSubject(updatedSubject);
     }
 
-    setIsModalOpen(false); 
+    setIsModalOpen(false);
+  };
+
+  const handleDeleteSubjectWithConfirmation = (subjectId) => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this subject?"
+    );
+
+    if (isConfirmed) {
+      handleDeleteSubject(subjectId);
+    }
   };
 
   const handleDeleteSubject = (id) => {
     deleteSubject(id);
-    setTableRows((prevRows) => prevRows.filter((subject) => subject._id !== id));
+    setTableRows((prevRows) =>
+      prevRows.filter((subject) => subject._id !== id)
+    );
   };
 
   const handlePageChange = (newPage) => {
@@ -129,7 +147,9 @@ function SubjectTable() {
       setCurrentPage(newPage);
     }
   };
-
+  const handleToggleLive = (id) => {
+    toggleSubjectLiveStatus(id);
+  };
   if (subjects.length === 0) {
     return <div>Loading...</div>;
   }
@@ -149,7 +169,7 @@ function SubjectTable() {
               <Button
                 className="flex items-center gap-2 bg-blue-600 text-white"
                 size="sm"
-                onClick={() => handleOpenModal()} 
+                onClick={() => handleOpenModal()}
               >
                 <UserPlusIcon className="h-4 w-4" /> Add Subject
               </Button>
@@ -194,7 +214,20 @@ function SubjectTable() {
 
                   <td className="p-3 text-left">
                     <strong>{subject.isLive ? "Active" : "Inactive"}</strong>
+
+                    {/* Toggle Icon */}
+                    <span
+                      onClick={() => handleToggleLive(subject._id)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {subject.isLive ? (
+                        <ToggleRight className="text-blue-600" />
+                      ) : (
+                        <ToggleLeft className="text-black" />
+                      )}
+                    </span>
                   </td>
+
                   <td className="p-3 border-b flex gap-2 text-decoration-line: none;">
                     <Button
                       className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
@@ -207,9 +240,11 @@ function SubjectTable() {
                     <Button
                       className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
                       size="sm"
-                      onClick={() => handleDeleteSubject(subject._id)} 
+                      onClick={() =>
+                        handleDeleteSubjectWithConfirmation(subject._id)
+                      }
                     >
-                      <TrashIcon className="h-5 w-5 " />
+                      <TrashIcon className="h-5 w-5" />
                     </Button>
                   </td>
                 </tr>
@@ -246,10 +281,10 @@ function SubjectTable() {
       <ModalOpenSubject
         open={isModalOpen}
         handleClose={() => setIsModalOpen(false)}
-        handleSave={handleSaveSubject} 
+        handleSave={handleSaveSubject}
         formData={formData}
         setFormData={setFormData}
-        isEditing={!!editingId} 
+        isEditing={!!editingId}
       />
     </>
   );

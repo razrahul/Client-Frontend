@@ -107,3 +107,20 @@ export const deleteSubjectById = (id) => async (dispatch) => {
         );
     }
 };
+
+// Update Live Status of Subject
+export const updateSubjectLiveStatus = (id) => async (dispatch) => {
+    try {
+        dispatch(subjectRequest());
+
+        const { data } = await axios.patch(`${server}/subject/updatelive/${id}`);
+
+        // Dispatch an updateSubject action to toggle the isLive property
+        dispatch(updateSubject(data.subject));
+        dispatch(getAllSubjects());
+    } catch (error) {
+        dispatch(
+            subjectFail(error.response?.data?.message || "Failed to update live status")
+        );
+    }
+};

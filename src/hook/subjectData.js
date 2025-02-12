@@ -5,6 +5,7 @@ import {
   createSubject,
   updateSubjectById,
   deleteSubjectById,
+  updateSubjectLiveStatus,
 } from "../redux/actions/subjectaction"; // Import actions
 
 export const useSubjectData = () => {
@@ -25,6 +26,9 @@ export const useSubjectData = () => {
   const deleteSubject = (id, deletedSubject) => {
     dispatch(deleteSubjectById(id, deletedSubject));
   };
+  const toggleSubjectLiveStatus = (id) => {
+    dispatch(updateSubjectLiveStatus(id)); // Dispatch the new action to toggle isLive
+  };
 
-  return { subjects, addSubject, updateSubject,deleteSubject };
+  return { subjects, addSubject, updateSubject,deleteSubject,toggleSubjectLiveStatus };
 };
