@@ -59,6 +59,7 @@ export const createSubject = (subject) => async (dispatch) => {
         );
 
         dispatch(addSubject(data));
+        dispatch(getAllSubjects());
     } catch (error) {
         dispatch(
             subjectFail(error.response?.data?.message || "Failed to create subject")
