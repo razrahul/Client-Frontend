@@ -149,7 +149,7 @@ const EmployeeTable = () => {
 
   return (
     <>
-      <Card className="h-full w-full shadow-md">
+      <Card className="h-full w-full ">
         <CardHeader
           floated={false}
           shadow={false}
@@ -178,7 +178,6 @@ const EmployeeTable = () => {
                 Employee
               </Button>
             </div>
-
           </div>
           <div className="mt-4 flex flex-col items-center gap-4 md:flex-row md:justify-between">
             <div className="relative w-full md:w-72">
@@ -334,7 +333,7 @@ const EmployeeTable = () => {
         </div>
       </Dialog> */}
 
-{isModalOpen && (
+      {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
             <h2 className="text-xl font-semibold text-center">Add Employee</h2>
@@ -344,7 +343,9 @@ const EmployeeTable = () => {
                 <input
                   type="text"
                   value={newRow.name}
-                  onChange={(e) => setNewRow({ ...newRow, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewRow({ ...newRow, name: e.target.value })
+                  }
                   className="w-full p-2 border border-gray-300 rounded"
                 />
               </div>
@@ -364,7 +365,9 @@ const EmployeeTable = () => {
                 <input
                   type="text"
                   value={newRow.phone}
-                  onChange={(e) => setNewRow({ ...newRow, phone: e.target.value })}
+                  onChange={(e) =>
+                    setNewRow({ ...newRow, phone: e.target.value })
+                  }
                   className="w-full p-2 border border-gray-300 rounded"
                 />
               </div>

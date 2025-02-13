@@ -51,7 +51,7 @@ function SubjectTable() {
     return subject.name && subject.name.toLowerCase().includes(searchLower);
   });
 
-  const rowsPerPage = 6;
+  const rowsPerPage = import.meta.env.VITE_ROW_PER_PAGE;
 
   useEffect(() => {
     if (Array.isArray(subjects)) {
@@ -156,7 +156,7 @@ function SubjectTable() {
 
   return (
     <>
-      <Card className="h-full w-full shadow-md">
+      <Card className="h-full w-full ">
         <CardHeader floated={false} className="border-b p-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
             <div>

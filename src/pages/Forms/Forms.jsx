@@ -105,7 +105,7 @@ function FormsTable() {
 
   return (
     <>
-      <Card className="h-full w-full shadow-md">
+      <Card className="h-full w-full ">
         <CardHeader floated={false} className="border-b p-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
             <Typography variant="h5">Form List</Typography>
@@ -138,7 +138,8 @@ function FormsTable() {
                     {head}
                   </th>
                 ))}
-                <th className="p-3 text-left">Action</th>{""}
+                <th className="p-3 text-left">Action</th>
+                {""}
               </tr>
             </thead>
             <tbody>
