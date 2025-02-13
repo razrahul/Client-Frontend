@@ -15,7 +15,7 @@ const ModalOpenArea = ({
   return (
     open && (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-        <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg">
+        <div className="bg-white p-6 rounded-lg  w-full max-w-lg">
           <h2 className="text-2xl mb-4">
             {isEditing ? "Edit Area" : "Add Area"}
           </h2>

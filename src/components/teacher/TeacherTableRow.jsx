@@ -18,46 +18,45 @@ const TeacherRow = ({ teacher, onEdit }) => {
     ? subject.map((sub) => sub.name).join(", ") // Extract the 'name' field and join
     : subject;
 
-
   return (
     <tr key={_id} className="hover:bg-gray-50">
-      <td className="p-3 border-b">
+      <td className="p-3 ">
         <Typography variant="small" className="font-medium text-gray-800">
           {name}
         </Typography>
       </td>
-      <td className="p-3 border-b">
+      <td className="p-3 ">
         <Typography variant="small" className="text-gray-600">
           {email}
         </Typography>
       </td>
-      <td className="p-3 border-b">
+      <td className="p-3 ">
         <Typography variant="small" className="text-gray-600">
           {phone}
         </Typography>
       </td>
-      <td className="p-3 border-b">
+      <td className="p-3 ">
         <Typography variant="small" className="text-gray-600">
           {aboutUs}
         </Typography>
       </td>
-      <td className="p-3 border-b">
+      <td className="p-3 ">
         <Typography variant="small" className="text-gray-600">
           {area?.name || "-"}
         </Typography>
       </td>
-      <td className="p-3 border-b">
+      <td className="p-3 ">
         <Typography variant="small" className="text-gray-600">
           {displaySubject}
         </Typography>
       </td>
 
-      <td className="p-3 border-b">
+      <td className="p-3 ">
         <Typography variant="small" className="text-gray-600">
           ₹{numericChargeRate}/hr{" "}
         </Typography>
       </td>
-      <td className="p-3 border-b">
+      <td className="p-3 ">
         {image?.url ? (
           <img
             src={image.url} // Use the `url` property of the image object
@@ -68,7 +67,7 @@ const TeacherRow = ({ teacher, onEdit }) => {
           <div className="h-12 w-12 bg-gray-200 rounded-full"></div>
         )}
       </td>
-      <td className="p-3 border-b">
+      <td className="p-3 ">
         <Tooltip content="Edit Teacher">
           <IconButton variant="text" onClick={() => onEdit(teacher)}>
             <PencilIcon className="h-4 w-4 text-gray-600" />

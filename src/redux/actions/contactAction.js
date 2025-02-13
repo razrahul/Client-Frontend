@@ -104,6 +104,8 @@ export const deleteContact = (id) => async (dispatch) => {
         });
 
         dispatch(removeContact(id, data));
+        dispatch(getAllContactForms());
+
     } catch (error) {
         return async (dispatch) => {
             dispatch(

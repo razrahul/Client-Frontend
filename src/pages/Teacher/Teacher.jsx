@@ -28,7 +28,6 @@ const TABLE_HEAD = [
   "Action",
 ];
 
-
 const sortKeyMap = {
   Name: "name",
   Subjects: "subject",
@@ -161,8 +160,8 @@ function TeacherTable() {
 
   return (
     <>
-      <Card className="h-full w-full shadow-md">
-        <CardHeader floated={false} className="border-b p-4">
+      <Card className="h-full w-full ">
+        <CardHeader floated={false} className=" p-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
             <div>
               <Typography variant="h5">Teacher List</Typography>
@@ -180,7 +179,7 @@ function TeacherTable() {
               </Button>
             </div>
           </div>
-            {/* //Searching box */}
+          {/* //Searching box */}
           <div className="relative mt-4 w-full md:w-72">
             <input
               type="text"

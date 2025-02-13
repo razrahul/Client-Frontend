@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllContactForms } from "../redux/actions/contactAction";
+import { getAllContactForms,deleteContact } from "../redux/actions/contactAction";
 
 export const useFormsData = () => {
   const { contacts } = useSelector((state) => state.contact);
@@ -10,5 +10,9 @@ export const useFormsData = () => {
     dispatch(getAllContactForms());
   }, [dispatch]);
 
-  return contacts;
+const deleteAreaById = (id, deletedForm) => {
+      dispatch(deleteContact(id, deletedForm));
+    };
+
+  return {contacts,deleteAreaById};
 };
