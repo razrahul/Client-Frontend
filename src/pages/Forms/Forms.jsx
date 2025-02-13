@@ -53,7 +53,7 @@ function FormsTable() {
   useEffect(() => {
     if (contacts) {
       setTableRows(contacts);
-    }
+    } 
   }, [contacts]);
 
   const filteredRows = tableRows.filter((contact) => {
