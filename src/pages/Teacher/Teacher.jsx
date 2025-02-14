@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useTeacherData } from "../../hook/teacherData.js";
-import TeacherRow from "../../components/teacher/TeacherTableRow.jsx";
-import ModalOpenTeacher from "../../components/teacher/ModalOpenTeacher.jsx";
-import {
-  MagnifyingGlassIcon,
-  ChevronUpDownIcon,
-} from "@heroicons/react/24/outline";
+import { Button, Input, Modal, Select, Option, Checkbox, Textarea } from "@material-tailwind/react";
+import { MagnifyingGlassIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
-import {
-  Card,
-  CardHeader,
-  Typography,
-  Button,
-  CardBody,
-  CardFooter,
-} from "@material-tailwind/react";
+import { Card, CardHeader, Typography, CardBody, CardFooter } from "@material-tailwind/react";
+
+import { useTeacherData } from "../../hook/teacherData.js";
 
 const TABLE_HEAD = [
   "Name",
@@ -38,7 +28,8 @@ const sortKeyMap = {
 };
 
 function TeacherTable() {
-  const teachers = useTeacherData();
+console.log(TeacherTable); // Check if the component is being correctly imported
+  const { teachers, addTeacher, subjects, areas } = useTeacherData();
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -49,22 +40,26 @@ function TeacherTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    subject: "",
+    subject: [],
     chargeRate: 0,
     city: { name: "" },
     isLive: true,
+    aboutUs: "",
   });
   const [editingId, setEditingId] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [selectedSubjects, setSelectedSubjects] = useState(formData.subject);
+  const [selectedArea, setSelectedArea] = useState(formData.city?.name || "");
 
   const rowsPerPage = 6;
 
   useEffect(() => {
-    if (teachers) {
-      setTableRows(teachers);
+    const teacherList = teachers.teachers || [];
+    if (Array.isArray(teacherList) && teacherList.length > 0) {
+      setTableRows(teacherList);
     }
   }, [teachers]);
 
-  // Improved search function
   const filteredRows = tableRows.filter((teacher) => {
     const searchLower = searchTerm.toLowerCase();
     return (
@@ -75,11 +70,9 @@ function TeacherTable() {
     );
   });
 
-  // Enhanced sorting logic
   const sortedRows = [...filteredRows].sort((a, b) => {
     const getNestedValue = (obj, key) =>
       key.split(".").reduce((o, k) => (o || {})[k], obj);
-
     const aValue = getNestedValue(a, sortConfig.key);
     const bValue = getNestedValue(b, sortConfig.key);
 
@@ -98,7 +91,6 @@ function TeacherTable() {
       : String(bValue).localeCompare(String(aValue));
   });
 
-  // Pagination logic
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = sortedRows.slice(indexOfFirstRow, indexOfLastRow);
@@ -119,15 +111,17 @@ function TeacherTable() {
         chargeRate: teacher.chargeRate,
         city: teacher.city,
         isLive: teacher.isLive,
+        aboutUs: teacher.aboutUs || "",
       });
       setEditingId(teacher._id);
     } else {
       setFormData({
         name: "",
-        subject: "",
+        subject: [],
         chargeRate: 0,
         city: { name: "" },
         isLive: true,
+        aboutUs: "",
       });
       setEditingId(null);
     }
@@ -144,10 +138,9 @@ function TeacherTable() {
     } else {
       const newTeacher = {
         ...formData,
-        _id: `temp-${Math.random().toString(36).substr(2, 9)}`,
-        createdAt: new Date().toISOString(),
+        image: imageFile ? URL.createObjectURL(imageFile) : "",
       };
-      setTableRows([...tableRows, newTeacher]);
+      addTeacher(newTeacher);
     }
     setIsModalOpen(false);
   };
@@ -156,6 +149,42 @@ function TeacherTable() {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
+  };
+
+  const handleSubjectChange = (subjectId) => {
+    setSelectedSubjects((prevSelected) =>
+      prevSelected.includes(subjectId)
+        ? prevSelected.filter((id) => id !== subjectId)
+        : [...prevSelected, subjectId]
+    );
+    setFormData((prev) => ({ ...prev, subject: selectedSubjects }));
+  };
+
+  const handleAreaChange = (e) => {
+    const selectedArea = e.target.value;
+    setSelectedArea(selectedArea);
+    setFormData((prev) => ({ ...prev, city: { name: selectedArea } }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setImageFile(file);
+  };
+
+  const handleSubmit = () => {
+    if (!formData.name || !formData.subject.length || !formData.city.name) {
+      alert("Please fill all the fields.");
+      return;
+    }
+
+    const newTeacher = {
+      ...formData,
+      image: imageFile ? URL.createObjectURL(imageFile) : "",
+      chargeRate: formData.chargeRate || "100-200",
+    };
+
+    addTeacher(newTeacher);
+    handleSaveTeacher(); // Close the modal after saving
   };
 
   return (
@@ -179,7 +208,6 @@ function TeacherTable() {
               </Button>
             </div>
           </div>
-          {/* //Searching box */}
           <div className="relative mt-4 w-full md:w-72">
             <input
               type="text"
@@ -212,11 +240,31 @@ function TeacherTable() {
             </thead>
             <tbody>
               {currentRows.map((teacher) => (
-                <TeacherRow
-                  key={teacher._id}
-                  teacher={teacher}
-                  onEdit={() => handleOpenModal(teacher)}
-                />
+                <tr key={teacher._id}>
+                  <td>{teacher.name}</td>
+                  <td>{teacher.email}</td>
+                  <td>{teacher.phone}</td>
+                  <td>{teacher.aboutUs}</td>
+                  <td>{teacher.city.name}</td>
+                  <td>{teacher.subject.join(", ")}</td>
+                  <td>{teacher.chargeRate}</td>
+                  <td>
+                    <img
+                      src={teacher.image || "default.jpg"}
+                      alt={teacher.name}
+                      className="w-10 h-10 rounded-full"
+                    />
+                  </td>
+                  <td>
+                    <Button
+                      onClick={() => handleOpenModal(teacher)}
+                      color="blue"
+                      size="sm"
+                    >
+                      Edit
+                    </Button>
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>
@@ -247,16 +295,105 @@ function TeacherTable() {
         </CardFooter>
       </Card>
 
-      <ModalOpenTeacher
-        open={isModalOpen}
-        handleClose={() => setIsModalOpen(false)}
-        handleSave={handleSaveTeacher}
-        formData={formData}
-        setFormData={setFormData}
-        isEditing={!!editingId}
-      />
+      <Modal
+        size="lg"
+        active={isModalOpen}
+        toggler={() => setIsModalOpen(false)}
+      >
+        <div className="p-4">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-semibold">
+              {editingId ? "Edit Teacher" : "Add Teacher"}
+            </h3>
+            <Button
+              variant="text"
+              color="red"
+              onClick={() => setIsModalOpen(false)}
+            >
+              X
+            </Button>
+          </div>
+          <div className="space-y-4">
+            <Input
+              label="Teacher's Name"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Subjects
+              </label>
+              <div className="space-y-2">
+                {subjects.map((subject) => (
+                  <Checkbox
+                    key={subject._id}
+                    label={subject.name}
+                    checked={selectedSubjects.includes(subject._id)}
+                    onChange={() => handleSubjectChange(subject._id)}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Area
+              </label>
+              <Select
+                value={selectedArea}
+                onChange={handleAreaChange}
+                label="Select Area"
+              >
+                {areas.map((area) => (
+                  <Option key={area._id} value={area.name}>
+                    {area.name}
+                  </Option>
+                ))}
+              </Select>
+            </div>
+
+            <Input
+              label="Charge Rate"
+              type="text"
+              value={formData.chargeRate}
+              onChange={(e) =>
+                setFormData({ ...formData, chargeRate: e.target.value })
+              }
+            />
+
+            <Textarea
+              label="About Us"
+              value={formData.aboutUs}
+              onChange={(e) =>
+                setFormData({ ...formData, aboutUs: e.target.value })
+              }
+            />
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Upload Image
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  className="p-2 border border-gray-300 rounded-md"
+                />
+                {imageFile && <span>{imageFile.name}</span>}
+              </div>
+            </div>
+
+            <div className="mt-4 flex justify-end">
+              <Button onClick={handleSubmit} color="blue" size="lg">
+                {editingId ? "Update Teacher" : "Add Teacher"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 }
-
 export default TeacherTable;

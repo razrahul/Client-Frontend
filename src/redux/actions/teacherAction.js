@@ -22,11 +22,14 @@ export const getAllTeachers = () => async (dispatch) => {
 
         dispatch(fetchTeachersSuccess(data));
     } catch (error) {
-        return async (dispatch) => {
-            dispatch(
-                teacherFail(error.response?.data?.message || "Failed to fetch teacher")
-            );
-        };
+        // return async (dispatch) => {
+        //     dispatch(
+        //         teacherFail(error.response?.data?.message || "Failed to fetch teacher")
+        //     );
+        // };
+        dispatch(
+            teacherFail(error.response?.data?.message || "Failed to fetch teachers")
+          );
     }
 };
 
@@ -48,29 +51,75 @@ export const getTeacherById = (id) => async (dispatch) => {
 };
 
 //create Teacher
-export const createTeacher = (teacher) => async (dispatch) => {
+// export const createTeacher = (teacher) => async (dispatch) => {
+//     try {
+//         dispatch(teacherRequest());
+
+//         const { data } = await axios.post(`${server}/createTeacher`,
+//             teacher,
+//             {
+//                 headers: {
+//                     "Content-Type": "application/json",
+//                 },
+//                 withCredentials: true,
+//             }
+//         );
+
+//         dispatch(addTeacher(data));
+//     } catch (error) {
+//         return async (dispatch) => {
+//             dispatch(
+//                 teacherFail(error.response?.data?.message || "Failed to create teacher")
+//             );
+//         };
+//     }
+// };
+export const createTeacher = (teacher, imageFile) => async (dispatch) => {
     try {
-        dispatch(teacherRequest());
-
-        const { data } = await axios.post(`${server}/createTeacher`,
-            teacher,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                withCredentials: true,
-            }
-        );
-
-        dispatch(addTeacher(data));
+      dispatch(teacherRequest());  // Dispatching the initial loading action
+  
+      // Creating FormData to send the image along with the data
+      const formData = new FormData();
+      formData.append("name", teacher.name);
+      formData.append("email", teacher.email);
+      formData.append("phone", teacher.phone);
+      formData.append("aboutUs", teacher.aboutUs || "");
+      formData.append("chargeRate", teacher.chargeRate || "100-200");
+  
+      // Checking if the city and subject are valid
+      if (teacher.city && teacher.city._id) {
+        formData.append("city", teacher.city._id);
+      }
+  
+      if (teacher.subject && teacher.subject.length > 0) {
+        formData.append("subject", JSON.stringify(teacher.subject));
+      }
+  
+      if (imageFile) {
+        formData.append("image", imageFile);
+      } else {
+        console.warn("No image file selected!");
+      }
+  
+      // Making the API call
+      const { data } = await axios.post(`${server}/createTeacher`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      });
+  
+      // Dispatching a plain action with the response data
+      dispatch(addTeacher(data));  // addTeacher is assumed to be a normal action creator
     } catch (error) {
-        return async (dispatch) => {
-            dispatch(
-                teacherFail(error.response?.data?.message || "Failed to create teacher")
-            );
-        };
+      console.error("Error adding teacher:", error);
+      dispatch(teacherFail("Failed to add teacher. Please try again.")); // Dispatch failure action
     }
-};
+  };
+  
+
+
+
 
 //updae Teacher
 export const updateTeacherById = (id, teacher) => async (dispatch) => {

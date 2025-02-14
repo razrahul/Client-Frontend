@@ -107,6 +107,8 @@ export const deleteArea = (id) => async (dispatch) => {
     });
 
     dispatch(removeArea(id, data));
+    dispatch(getAreas());
+
   } catch (error) {
     return async (dispatch) => {
       dispatch(
