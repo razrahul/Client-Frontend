@@ -124,3 +124,18 @@ export const updateSubjectLiveStatus = (id) => async (dispatch) => {
         );
     }
 };
+
+export const getLiveSubjects = () => async (dispatch) => {
+    try {
+        dispatch(subjectRequest());
+
+        // API call to fetch live subjects
+        const { data } = await axios.get(`${server}/subject/live`);
+
+        dispatch(fetchSubjectsSuccess(data));
+    } catch (error) {
+        dispatch(
+            subjectFail(error.response?.data?.message || "Failed to fetch live subjects")
+        );
+    }
+};

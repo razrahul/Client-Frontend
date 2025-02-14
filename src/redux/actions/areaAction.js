@@ -12,6 +12,22 @@ import {
 } from "../reducers/areaSlice";
 
 //Get All Areas
+
+export const getLiveAreas = () => async (dispatch) => {
+  try {
+    dispatch(areaReaquest());
+    
+    // API call to fetch live areas
+    const { data } = await axios.get(`${server}/areas/live`);
+    
+    dispatch(fetchAreasSuccess(data));
+  } catch (error) {
+    dispatch(
+      areaFail(error.response?.data?.message || "Failed to fetch live areas")
+    );
+  }
+};
+
 export const getAreas = () => async (dispatch) => {
   try {
     dispatch(areaReaquest());

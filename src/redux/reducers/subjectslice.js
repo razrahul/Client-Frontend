@@ -34,9 +34,8 @@ const subjectSlice = createSlice({
             state.loading = false;
             const updatedSubject = action.payload;
             const index = state.subjects.findIndex(subject => subject._id === updatedSubject._id);
-
             if (index !== -1) {
-                state.subjects[index] = action.payload;
+                state.subjects[index] = updatedSubject;
             }
         },
         removeSubject(state, action) {
