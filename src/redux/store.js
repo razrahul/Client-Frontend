@@ -28,6 +28,7 @@ import citySlice from './reducers/citySlice';
 import teacherSlice from './reducers/teacherSlice';
 import contactSlice from './reducers/contactSlice';
 import subjectSlice from './reducers/subjectslice';
+import faqSlice from './reducers/faqSlice';
 
 
 const store = configureStore({
@@ -37,6 +38,7 @@ const store = configureStore({
     teacher: teacherSlice,
     contact: contactSlice,
     subject: subjectSlice,
+    faq: faqSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(thunk), // Ensure thunk is added to the middleware

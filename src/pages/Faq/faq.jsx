@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useAreaData } from "../../hook/areaData.js";
-import AreaRow from "../../components/area/AreaTableRow.jsx";
-import ModalOpenArea from "../../components/area/ModalOpenArea.jsx";
-import {
-  MagnifyingGlassIcon,
-  ChevronUpDownIcon,
-} from "@heroicons/react/24/outline";
+import { useFaqData } from "../../hook/faqData.js"; // Your custom hook for FAQ management
+import { MagnifyingGlassIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
+import ModalOpenFaq from "../../components/faq/ModalOpenFaq.jsx"; // Your modal component for FAQ
 import {
   Card,
   CardHeader,
@@ -17,29 +13,30 @@ import {
 } from "@material-tailwind/react";
 import { PencilIcon, ToggleLeft, ToggleRight, TrashIcon } from "lucide-react";
 
-const TABLE_HEAD = ["Area Name", "Status", "Created", "Action"];
+const TABLE_HEAD = ["Question", "Answer","Status", "Action"];
 
 const sortKeyMap = {
-  "Area Name": "name",
+  "Question": "question",
+  "Answer": "answer",
   Status: "isLive",
-  Created: "createdAt",
+
 };
 
-function AreaTable() {
-  const { areas, addArea, updateAreaById, deleteAreaById, toggleLiveStatus } =
-    useAreaData();
+function FaqTable() {
+  const { faqs, addFaq, updateFaqById, deleteFaqById,toggleLiveStatus } = useFaqData();
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
-    key: "name",
+    key: "question",
     direction: "asc",
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
+    question: "",
+    answer: "",
     isLive: true,
-    cityId: [],
+
   });
   const [editingId, setEditingId] = useState(null);
 
@@ -47,32 +44,22 @@ function AreaTable() {
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [subjectToDelete, setSubjectToDelete] = useState(null);
 
-  const filteredRows = tableRows.filter((area) => {
+  const filteredRows = tableRows.filter((faq) => {
     const searchLower = searchTerm.toLowerCase();
-    return area.name && area.name.toLowerCase().includes(searchLower);
+    return faq.question && faq.question.toLowerCase().includes(searchLower);
   });
 
   const rowsPerPage = import.meta.env.VITE_ROW_PER_PAGE;
 
   useEffect(() => {
-    if (areas) {
-      setTableRows(areas);
+    if (faqs) {
+      setTableRows(faqs);
     }
-  }, [areas]);
+  }, [faqs]);
 
   const sortedRows = [...filteredRows].sort((a, b) => {
     const aValue = a[sortConfig.key];
     const bValue = b[sortConfig.key];
-
-    if (sortConfig.key === "createdAt") {
-      return sortConfig.direction === "asc"
-        ? new Date(aValue) - new Date(bValue)
-        : new Date(bValue) - new Date(aValue);
-    }
-
-    if (typeof aValue === "boolean" && typeof bValue === "boolean") {
-      return sortConfig.direction === "asc" ? aValue - bValue : bValue - aValue;
-    }
 
     return sortConfig.direction === "asc"
       ? String(aValue).localeCompare(String(bValue))
@@ -91,19 +78,20 @@ function AreaTable() {
     setSortConfig({ key, direction });
   };
 
-  const handleOpenModal = (area = null) => {
-    if (area) {
+  const handleOpenModal = (faq = null) => {
+    if (faq) {
       setFormData({
-        name: area.name,
-        isLive: area.isLive,
-        cityId: area.cityId,
+        question: faq.question,
+        isLive: faq.isLive,
+        answer: faq.answer,
       });
-      setEditingId(area._id);
+      setEditingId(faq._id);
     } else {
       setFormData({
-        name: "",
+        question: "",
+        answer: "",
         isLive: true,
-        cityId: [],
+
       });
       setEditingId(null);
     }
@@ -111,26 +99,26 @@ function AreaTable() {
     setIsModalOpen(true);
   };
 
-  const handleSaveArea = () => {
-    const updatedArea = {
-      name: formData.name,
+  const handleSaveFaq = () => {
+    const updatedFaq = {
+      question: formData.question,
+      answer: formData.answer,
       isLive: formData.isLive,
-      cityId: formData.cityId,
       _id: editingId,
     };
 
     if (editingId) {
-      updateAreaById(editingId, updatedArea);
+      updateFaqById(editingId, updatedFaq);
     } else {
-      addArea(updatedArea);
+      addFaq(updatedFaq);
     }
 
     setIsModalOpen(false);
   };
 
-  const handleDeleteArea = (id) => {
-    deleteAreaById(id);
-    setTableRows((prevRows) => prevRows.filter((area) => area._id !== id));
+  const handleDeleteFaq = (id) => {
+    deleteFaqById(id);
+    setTableRows((prevRows) => prevRows.filter((faq) => faq._id !== id));
     setIsConfirmationOpen(false); // Close the confirmation dialog after delete
   };
 
@@ -138,10 +126,6 @@ function AreaTable() {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
-  };
-
-  const handleToggleLiveStatus = (id) => {
-    toggleLiveStatus(id);
   };
 
   const openConfirmationDialog = (id) => {
@@ -154,7 +138,12 @@ function AreaTable() {
     setIsConfirmationOpen(false);
   };
 
-  if (areas.length === 0) {
+  const handleToggleLiveStatus = (id) => {
+    toggleLiveStatus(id);
+  };
+
+
+  if (faqs.length === 0) {
     return <div>Loading...</div>;
   }
 
@@ -164,9 +153,9 @@ function AreaTable() {
         <CardHeader floated={false} className=" p-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
             <div>
-              <Typography variant="h5">Area List</Typography>
+              <Typography variant="h5">FAQ List</Typography>
               <Typography color="gray" className="mt-1 text-sm">
-                Manage and view area information
+                Manage and view FAQ information
               </Typography>
             </div>
             <div className="flex gap-2">
@@ -175,7 +164,7 @@ function AreaTable() {
                 size="sm"
                 onClick={() => handleOpenModal()}
               >
-                <UserPlusIcon className="h-4 w-4" /> Add Area
+                <UserPlusIcon className="h-4 w-4" /> Add FAQ
               </Button>
             </div>
           </div>
@@ -210,34 +199,29 @@ function AreaTable() {
               </tr>
             </thead>
             <tbody>
-              {currentRows.map((area) => (
-                <tr key={area._id} className="hover:bg-gray-50">
+              {currentRows.map((faq) => (
+                <tr key={faq._id} className="hover:bg-gray-50">
                   <td className="p-3 text-left">
-                    <strong>{area.name || "No name provided"}</strong>
+                    <strong>{faq.question || "No question provided"}</strong>
                   </td>
-
                   <td className="p-3 text-left">
-                    <strong>{area.isLive ? "Active" : "Inactive"}</strong>
-                    <span onClick={() => handleToggleLiveStatus(area._id)}>
-                      {area.isLive ? (
+                    <strong>{faq.answer || "No answer provided"}</strong>
+                  </td>
+                  <td className="p-3 text-left">
+                    <strong>{faq.isLive ? "Active" : "Inactive"}</strong>
+                    <span onClick={() => handleToggleLiveStatus(faq._id)}>
+                      {faq.isLive ? (
                         <ToggleRight className="text-blue-600 cursor-pointer" />
                       ) : (
                         <ToggleLeft className="text-black cursor-pointer" />
                       )}
                     </span>
                   </td>
-
-                  <td className="p-3 text-left">
-                    <strong>
-                      {new Date(area.createdAt).toLocaleDateString()}
-                    </strong>
-                  </td>
-
                   <td className="p-3 flex gap-2 text-decoration-line: none;">
                     <Button
                       className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
                       size="sm"
-                      onClick={() => handleOpenModal(area)}
+                      onClick={() => handleOpenModal(faq)}
                     >
                       <PencilIcon className="h-5 w-5 " />
                     </Button>
@@ -245,7 +229,7 @@ function AreaTable() {
                     <Button
                       className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
                       size="sm"
-                      onClick={() => openConfirmationDialog(area._id)}
+                      onClick={() => openConfirmationDialog(faq._id)}
                     >
                       <TrashIcon className="h-5 w-5 " />
                     </Button>
@@ -281,14 +265,15 @@ function AreaTable() {
         </CardFooter>
       </Card>
 
-      <ModalOpenArea
-        open={isModalOpen}
-        handleClose={() => setIsModalOpen(false)}
-        handleSave={handleSaveArea}
-        formData={formData}
-        setFormData={setFormData}
-        isEditing={!!editingId}
-      />
+      {/* Your modal component here */}
+      <ModalOpenFaq
+  open={isModalOpen}
+  handleClose={() => setIsModalOpen(false)}
+  handleSave={handleSaveFaq}
+  formData={formData}
+  setFormData={setFormData}
+  isEditing={!!editingId}
+/>
 
       {isConfirmationOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur confirm-dialog ">
@@ -311,7 +296,7 @@ function AreaTable() {
                 <button
                   className="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-red-200 text-red-700 rounded-lg font-semibold text-sm md:ml-2 md:order-2"
                   onClick={() => {
-                    handleDeleteArea(subjectToDelete);
+                    handleDeleteFaq(subjectToDelete);
                   }}
                 >
                   Delete
@@ -331,4 +316,4 @@ function AreaTable() {
   );
 }
 
-export default AreaTable;
+export default FaqTable;

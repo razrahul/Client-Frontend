@@ -7,6 +7,7 @@ import TeacherTable from "./pages/Teacher/TeacherTable.jsx"
 import FormsTable from "./pages/Forms/Forms";
 import AreaTable from "./pages/Area/area"; 
 import SubjectTable from "./pages/Subject/Subject.jsx";
+import FAQS from "./pages/Faq/faq";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path="/forms" element={<FormsTable/>} />
             <Route path="/area" element={<AreaTable />} />
             <Route path="/subject" element={<SubjectTable/>}/>
+            <Route path="/faq" element={<FAQS/>}/>
             {/* Add more routes for other components as needed */}
           </Routes>
         </div>
