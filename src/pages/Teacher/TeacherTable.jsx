@@ -46,17 +46,10 @@ function TeacherTable() {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    aboutUs: '',
-    city: { name: '' }, // Ensure city is initialized as an object
-    subject: [],
-    chargeRate: '', // Default value for charge rate
-    image: '',
-  });
+  
   const [editingId, setEditingId] = useState(null);
+
+  const [data, SetData] = useState("")
 
   const rowsPerPage = 6;
 
@@ -111,57 +104,14 @@ function TeacherTable() {
     setSortConfig({ key, direction });
   };
 
-  // const handleOpenModal = (teacher = null) => {
-  //   if (teacher) {
-  //     setFormData({
-  //       name: teacher.name,
-  //       subject: teacher.subject,
-  //       chargeRate: teacher.chargeRate,
-  //       city: teacher.city,
-  //       isLive: teacher.isLive,
-  //       aboutUs: teacher.aboutUs || "",
-  //     });
-  //     setEditingId(teacher._id);
-  //   } else {
-  //     setFormData({
-  //       name: "",
-  //       subject: [],
-  //       chargeRate: 0,
-  //       city: { name: "" },
-  //       isLive: true,
-  //       aboutUs: "",
-  //     });
-  //     setEditingId(null);
-  //   }
-  //   setIsModalOpen(true);
-  // };
+  
 
   const handleOpenModal = (teacher = null) => {
     if (teacher) {
-      setFormData({
-        name: teacher.name,
-        subject: teacher.subject,
-        chargeRate: teacher.chargeRate,
-        city: teacher.city,
-        isLive: teacher.isLive,
-        aboutUs: teacher.aboutUs || "",
-        email: teacher.email || "", 
-        phone: teacher.phone || "", 
-        image: teacher.image || "", 
-      });
+      SetData(teacher)
       setEditingId(teacher._id);
     } else {
-      setFormData({
-        name: "",
-        subject: [],
-        chargeRate: 0,
-        city: { name: "" },
-        isLive: true,
-        aboutUs: "",
-        email: "", 
-        phone: "", 
-        image: "", 
-      });
+      SetData("")
       setEditingId(null);
     }
     setIsModalOpen(true);
@@ -169,47 +119,7 @@ function TeacherTable() {
 
 
   const handleSaveTeacher = () => {
-    const teacherData = {
-      ...formData,
-      image: imageFile ? URL.createObjectURL(imageFile) : "", // add image if exists
-      chargeRate: formData.chargeRate || "100-200", // ensure charge rate is set
-    };
-  
-    if (editingId) {
-      // Updating the existing teacher
-      const updatedTeacher = {
-        ...teacherData,
-        _id: editingId, // Set the correct teacher ID
-      };
-  
-      // Call the API or action to update the teacher (e.g., `updateTeacher` API call)
-      // Example: updateTeacher(updatedTeacher);
-      setTableRows((prevRows) =>
-        prevRows.map((teacher) =>
-          teacher._id === editingId ? updatedTeacher : teacher
-        )
-      );
-    } else {
-      // Adding a new teacher
-      const newTeacher = {
-        ...teacherData,
-        _id: `temp-${Math.random().toString(36).substr(2, 9)}`, // generate a temporary ID
-        createdAt: new Date().toISOString(),
-      };
-  
-      // Call the addTeacher function to save the new teacher (using the API)
-      addTeacher(newTeacher) // Assuming addTeacher is the API call that adds the teacher to the database
-        .then((response) => {
-          // Handle success if needed, such as updating the UI or showing a success message
-          console.log('Teacher added successfully:', response);
-          setTableRows((prevRows) => [...prevRows, newTeacher]); // Add new teacher to the table rows
-        })
-        .catch((error) => {
-          // Handle errors if needed, such as showing an error message
-          console.error('Error adding teacher:', error);
-        });
-    }
-  
+   
     // Close the modal
     setIsModalOpen(false);
   };
@@ -300,13 +210,13 @@ function TeacherTable() {
                         />
                       </td>
                       <td>
-                        <Button
+                        <button
                           onClick={() => handleOpenModal(teacher)}
                           color="blue"
                           size="sm"
                         >
                           Edit
-                        </Button>
+                        </button>
                       </td>
                     </tr>
                   ))
@@ -349,8 +259,9 @@ function TeacherTable() {
         open={isModalOpen}
         handleClose={() => setIsModalOpen(false)}
         handleSave={handleSaveTeacher}
-        formData={formData}
-        setFormData={setFormData}
+        // formData={formData}
+        data={data}
+        // setFormData={setFormData}
         isEditing={!!editingId}
       />
     </>
