@@ -13,7 +13,10 @@ import {
   ChevronUpDownIcon,
 } from "@heroicons/react/24/outline";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
+import { PencilIcon, ToggleLeft, ToggleRight, TrashIcon } from "lucide-react";
 import { useTeacherData } from "../../hook/teacherData";
+import { deleteTeacher } from "../../redux/actions/teacherAction.js"
+import { useDispatch } from "react-redux";
 
 const TABLE_HEAD = [
   "Name",
@@ -123,6 +126,14 @@ function TeacherTable() {
     // Close the modal
     setIsModalOpen(false);
   };
+
+  const dispatch = useDispatch();
+
+  //delete teacher faunction
+  const handleDeleteTeacher = (id) =>{
+    console.log("Delete Teacher", id)
+    dispatch(deleteTeacher(id));
+  }
   
 
   const handlePageChange = (newPage) => {
@@ -209,14 +220,24 @@ function TeacherTable() {
                           className="w-10 h-10 rounded-full"
                         />
                       </td>
-                      <td>
-                        <button
+                      <td className="p-3 border-b flex gap-2 text-decoration-line: none;">
+                        <Button
+                          className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
                           onClick={() => handleOpenModal(teacher)}
                           color="blue"
                           size="sm"
                         >
-                          Edit
-                        </button>
+                          <PencilIcon className="h-5 w-5 " />
+                        </Button>
+
+                        <Button
+                          className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
+                          onClick={() => handleDeleteTeacher(teacher._id)}
+                          color="blue"
+                          size="sm"
+                        >
+                          <TrashIcon className="h-5 w-5 " />
+                        </Button>
                       </td>
                     </tr>
                   ))
