@@ -4,6 +4,7 @@ import citySlice from './reducers/citySlice';
 import teacherSlice from './reducers/teacherSlice.js';
 import contactSlice from './reducers/contactSlice';
 import subjectSlice from './reducers/subjectslice.js';
+import faqSlice from './reducers/faqslice.js';
 
 
 
@@ -15,7 +16,8 @@ const store = configureStore({
         city: citySlice,
         teacher: teacherSlice,
         contact: contactSlice,
-        subject: subjectSlice
+        subject: subjectSlice,
+        faq: faqSlice,
     },
 });
 
