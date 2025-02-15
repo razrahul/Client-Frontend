@@ -46,15 +46,12 @@ function SubjectTable() {
   });
   const [editingId, setEditingId] = useState(null);
 
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false); // State for confirmation modal
-  const [subjectToDelete, setSubjectToDelete] = useState(null); // Store the subject ID to delete
-
   const filteredRows = tableRows.filter((subject) => {
     const searchLower = searchTerm.toLowerCase();
     return subject.name && subject.name.toLowerCase().includes(searchLower);
   });
 
-  const rowsPerPage = import.meta.env.VITE_ROW_PER_PAGE;
+  const rowsPerPage = 6;
 
   useEffect(() => {
     if (Array.isArray(subjects)) {
@@ -128,27 +125,21 @@ function SubjectTable() {
     setIsModalOpen(false);
   };
 
-  // Handle delete confirmation modal open
-  const handleConfirmDelete = (subjectId) => {
-    setSubjectToDelete(subjectId);
-    setIsConfirmOpen(true);
-  };
+  const handleDeleteSubjectWithConfirmation = (subjectId) => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this subject?"
+    );
 
-  // Delete subject
-  const handleDeleteSubject = () => {
-    if (subjectToDelete) {
-      deleteSubject(subjectToDelete);
-      setTableRows((prevRows) =>
-        prevRows.filter((subject) => subject._id !== subjectToDelete)
-      );
+    if (isConfirmed) {
+      handleDeleteSubject(subjectId);
     }
-    setIsConfirmOpen(false);
   };
 
-  // Handle cancel deletion
-  const handleCancelDelete = () => {
-    setIsConfirmOpen(false);
-    setSubjectToDelete(null);
+  const handleDeleteSubject = (id) => {
+    deleteSubject(id);
+    setTableRows((prevRows) =>
+      prevRows.filter((subject) => subject._id !== id)
+    );
   };
 
   const handlePageChange = (newPage) => {
@@ -159,15 +150,14 @@ function SubjectTable() {
   const handleToggleLive = (id) => {
     toggleSubjectLiveStatus(id);
   };
-
   if (subjects.length === 0) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
-      <Card className="h-full w-full ">
-        <CardHeader floated={false} className=" p-4">
+      <Card className="h-full w-full shadow-md">
+        <CardHeader floated={false} className="border-b p-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
             <div>
               <Typography variant="h5">Subject List</Typography>
@@ -238,7 +228,7 @@ function SubjectTable() {
                     </span>
                   </td>
 
-                  <td className="p-3  flex gap-2 text-decoration-line: none;">
+                  <td className="p-3 border-b flex gap-2 text-decoration-line: none;">
                     <Button
                       className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
                       size="sm"
@@ -250,7 +240,9 @@ function SubjectTable() {
                     <Button
                       className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
                       size="sm"
-                      onClick={() => handleConfirmDelete(subject._id)} // Open confirmation modal
+                      onClick={() =>
+                        handleDeleteSubjectWithConfirmation(subject._id)
+                      }
                     >
                       <TrashIcon className="h-5 w-5" />
                     </Button>
@@ -294,42 +286,6 @@ function SubjectTable() {
         setFormData={setFormData}
         isEditing={!!editingId}
       />
-
-      {/* Confirmation Modal */}
-      {isConfirmOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur confirm-dialog ">
-          <div className="relative px-4 min-h-screen md:flex md:items-center md:justify-center">
-            <div className=" opacity-25 w-full h-full absolute z-10 inset-0"></div>
-            <div className="bg-white rounded-lg md:max-w-md md:mx-auto p-4 fixed inset-x-0 bottom-0 z-50 mb-4 mx-4 md:relative shadow-lg">
-              <div className="md:flex items-center">
-                <div className="rounded-full border border-gray-300 flex items-center justify-center w-16 h-16 flex-shrink-0 mx-auto">
-                  <i className="bx bx-error text-3xl">&#9888;</i>
-                </div>
-                <div className="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
-                  <p className="font-bold">Warning!</p>
-                  <p className="text-sm text-gray-700 mt-1">
-                    You will lose all of your data by deleting this. This action cannot be undone.
-                  </p>
-                </div>
-              </div>
-              <div className="text-center md:text-right mt-4 md:flex md:justify-end">
-                <button
-                  className="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-red-200 text-red-700 rounded-lg font-semibold text-sm md:ml-2 md:order-2"
-                  onClick={handleDeleteSubject} // Delete the subject
-                >
-                  Delete
-                </button>
-                <button
-                  className="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4 md:mt-0 md:order-1"
-                  onClick={handleCancelDelete} // Close the confirmation dialog
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
