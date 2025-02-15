@@ -15,8 +15,8 @@ import {
 import { UserPlusIcon } from "@heroicons/react/24/solid";
 import { PencilIcon, ToggleLeft, ToggleRight, TrashIcon } from "lucide-react";
 import { useTeacherData } from "../../hook/teacherData";
-import { deleteTeacher } from "../../redux/actions/teacherAction.js"
-import { useDispatch } from "react-redux";
+import { getAllTeachers, deleteTeacher } from "../../redux/actions/teacherAction.js"
+import { useDispatch, useSelector } from "react-redux";
 
 const TABLE_HEAD = [
   "Name",
@@ -40,7 +40,7 @@ const sortKeyMap = {
 };
 
 function TeacherTable() {
-  const { teachers, addTeacher, subjects, areas } = useTeacherData();
+  // const { teachers, addTeacher, subjects, areas } = useTeacherData();
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -55,6 +55,16 @@ function TeacherTable() {
   const [data, SetData] = useState("")
 
   const rowsPerPage = 6;
+
+  const dispatch = useDispatch();
+  const {teachers} = useSelector((state) => state.teacher)
+
+  useEffect(() => {
+    dispatch(getAllTeachers());
+   
+  }, [dispatch])
+  
+ 
 
   useEffect(() => {
     if (teachers && Array.isArray(teachers) && teachers.length > 0) {
@@ -121,13 +131,13 @@ function TeacherTable() {
 };
 
 
+
   const handleSaveTeacher = () => {
    
     // Close the modal
     setIsModalOpen(false);
   };
 
-  const dispatch = useDispatch();
 
   //delete teacher faunction
   const handleDeleteTeacher = (id) =>{
@@ -206,7 +216,7 @@ function TeacherTable() {
                       <td className="text-sm py-2 pl-2">
                         {teacher.aboutUs || "No about us available"}
                       </td>
-                      <td className="text-sm py-2 pl-2">{teacher.city?.name || "Unknown"}</td>
+                      <td className="text-sm py-2 pl-2">{teacher.area?.name || "Unknown"}</td>
                       <td className="text-sm py-2 pl-2">
                         {teacher.subject?.length > 0
                           ? teacher.subject.map((sub) => sub.name).join(", ")

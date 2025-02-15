@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllTeachers, createTeacher } from "../redux/actions/teacherAction";
+import { getAllTeachers, createTeacher, updateTeacherById, deleteTeacher } from "../redux/actions/teacherAction";
 import { getLiveSubjects } from "../redux/actions/subjectaction";
 import { getLiveAreas } from "../redux/actions/areaAction";
 
@@ -10,49 +10,42 @@ export const useTeacherData = () => {
   const { areas } = useSelector((state) => state.area); // Assuming areas are in this state
   const dispatch = useDispatch();
 
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     dispatch(getAllTeachers());
-    dispatch(getLiveSubjects());
-    dispatch(getLiveAreas());
   }, [dispatch]);
 
-  // Use effect to monitor when the data is available
-  useEffect(() => {
-    if (teachers.length > 0 && subjects.length > 0 && areas.length > 0) {
-      setLoading(false); // Set loading to false once all data is fetched
-    }
-  }, [teachers, subjects, areas]);
+  
+  
 
   // Add teacher function
-  const addTeacher = async(newTeacher) => {
-    try {
-      // Wait for the teacher to be added
-      await dispatch(createTeacher(newTeacher)); // Dispatch the async action
-      console.log("Teacher added successfully");
-    } catch (error) {
-      console.error("Failed to add teacher", error);
-    }
+  const addTeacher = async(fromData) => {
+    
+       dispatch(createTeacher(fromData)); // Dispatch the async action
+     
   };
 
-  // Fetch subjects by ID (if needed)
-  const getSubjectLiveId = (id) => {
-    dispatch(getLiveSubjects(id));
+  const updateTeacher = (id, fromData) => {
+    dispatch(updateTeacherById(id, fromData));
   };
 
-  // Fetch areas by ID (if needed)
-  const getLiveAreasId = (id) => {
-    dispatch(getLiveAreas(id));
+  const deleteTeacherHook = (id) => {
+    dispatch(deleteTeacher(id));
+    console.log("delete teacher",id);
+    
   };
+  
+
+ 
+  
 
   return {
     teachers,
-    subjects,
-    areas,
+    updateTeacher,
+    
     addTeacher,
-    getSubjectLiveId,
-    getLiveAreasId,
-    loading,
+    deleteTeacherHook
+    
+   
   };
 };
