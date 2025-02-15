@@ -67,10 +67,11 @@ function TeacherTable() {
  
 
   useEffect(() => {
-    if (teachers && Array.isArray(teachers) && teachers.length > 0) {
-      setTableRows((prevRows) => (prevRows.length === 0 ? teachers : prevRows));
-    } 
-  }, [teachers]);
+    if (teachers && Array.isArray(teachers)) {
+        setTableRows(teachers);
+    }
+}, [teachers]);
+
 
   const filteredRows = tableRows.filter((teacher) => {
     const sub = teacher.subject;
@@ -142,7 +143,9 @@ function TeacherTable() {
   //delete teacher faunction
   const handleDeleteTeacher = (id) =>{
     console.log("Delete Teacher", id)
-    dispatch(deleteTeacher(id));
+    dispatch(deleteTeacher(id)).then(() => {
+      dispatch(getAllTeachers()); // Re-fetch teachers after add
+  });
   }
   
 

@@ -3,7 +3,7 @@ import { Button, Input, Checkbox, Textarea } from "@material-tailwind/react";
 import { useAreaData } from "../../hook/areaData";
 import { useSubjectData } from "../../hook/subjectData";
 import { useDispatch } from "react-redux";
-import { createTeacher, updateTeacherById } from "../../redux/actions/teacherAction.js";
+import { createTeacher, updateTeacherById,  getAllTeachers } from "../../redux/actions/teacherAction.js";
 
 const ModalOpenTeacher = ({
   open,
@@ -97,7 +97,9 @@ const ModalOpenTeacher = ({
     formData.append("file", image);
 
     try {
-      dispatch(createTeacher(formData));
+      dispatch(createTeacher(formData)).then(() => {
+        dispatch(getAllTeachers()); // Re-fetch teachers after add
+      });;
       console.log("Submit successful");
       handleSave();
     } catch (error) {
@@ -128,7 +130,9 @@ const handleEditTeacher = async (e) => {
 
 
   try {
-   dispatch(updateTeacherById(data._id, formData)); // Assuming `data._id` contains the teacher ID
+   dispatch(updateTeacherById(data._id, formData)).then(() => {
+    dispatch(getAllTeachers()); // Re-fetch teachers after add
+   });; // Assuming `data._id` contains the teacher ID
     console.log("Update successful");
     handleSave(); // Close modal and refresh data
   } catch (error) {
