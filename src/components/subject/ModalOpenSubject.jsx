@@ -12,7 +12,7 @@ const ModalOpenSubject = ({
     <>
       {open && (
         <div className="modal-overlay fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
-          <div className="modal-content p-6 bg-white rounded-lg shadow-lg max-w-lg w-full">
+          <div className="modal-content p-6 bg-white rounded-lg  max-w-lg w-full">
             <h2 className="text-2xl mb-4">
               {isEditing ? "Edit Subject" : "Add New Subject"}
             </h2>
@@ -22,8 +22,8 @@ const ModalOpenSubject = ({
                   Subject Name
                 </label>
                 <input
-                className="w-full p-2 border rounded"
-                value={formData.name}
+                  className="w-full p-2 border rounded"
+                  value={formData.name}
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }

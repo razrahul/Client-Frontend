@@ -8,13 +8,14 @@ import {
   BookPlus,
   LandPlot,
   BookCopy,
+  TableOfContents,
 } from "lucide-react"; // Add all necessary imports
 import { Link } from "react-router-dom"; // Import Link for routing
 
 export default function Navbar() {
   return (
     <aside className="h-screen w-64">
-      <nav className="h-full flex flex-col bg-white border-r shadow-sm">
+      <nav className="h-full flex flex-col bg-white border-r ">
         <div className="p-4 pb-2 flex justify-between items-center">
           <div className="text-xl font-bold">Pinnacle Home Tuition</div>{" "}
         </div>
@@ -34,7 +35,7 @@ export default function Navbar() {
           <SidebarItem icon={<BookText size={20} />} text="Forms" to="/forms" />
           <SidebarItem icon={<LandPlot size={20} />} text="Area" to="/area" />
           <SidebarItem icon={<BookCopy  size={20} />} text="Subject" to="/subject" />
-          <SidebarItem icon={<BookCopy  size={20} />} text="FAQ's" to="/faq" />
+          <SidebarItem icon={<TableOfContents   size={20} />} text="FAQ's" to="/faq" />
           <hr className="my-3" />
           <SidebarItem icon={<Settings size={20} />} text="Settings" />
           <SidebarItem icon={<LifeBuoy size={20} />} text="Help" />

@@ -5,19 +5,19 @@ import { useSubjectData } from "../../hook/subjectData";
 import { useDispatch } from "react-redux";
 import Select from "react-select";
 import {
-  createTeacher,
-  updateTeacherById,
-  getAllTeachers,
-} from "../../redux/actions/teacherAction.js";
+  createStudent,
+  updateStudentById,
+  getAllStudents,
+} from "../../redux/actions/studentAction";
 
-const ModalOpenTeacher = ({
+const ModalOpenStudent = ({
   open,
   handleClose,
   handleSave,
   isEditing,
   data,
 }) => {
-  // console.log(data)
+  // Fetch areas and subjects like in the teacher modal
   const { areas } = useAreaData();
   const { subjects } = useSubjectData();
   const dispatch = useDispatch();
@@ -26,6 +26,8 @@ const ModalOpenTeacher = ({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [gender, setGender] = useState(""); // Gender state
+  const [className, setClassName] = useState(""); // Class state
   const [aboutUs, setAboutUs] = useState("");
   const [chargeRate, setChargeRate] = useState("");
   const [selectedSubjects, setSelectedSubjects] = useState([]);
@@ -33,10 +35,7 @@ const ModalOpenTeacher = ({
   const [image, setImage] = useState(null);
   const [imagePrev, setImagePrev] = useState("");
 
-  // console.log("page refresh")
-
-  // Effect: Reset form fields when modal opens
-  // Effect: Reset form fields when modal opens
+  // Effect to reset the form when the modal opens or data changes
   useEffect(() => {
     if (!open) return; // Prevent execution if modal is closed
 
@@ -44,17 +43,21 @@ const ModalOpenTeacher = ({
       setName(data?.name || "");
       setEmail(data?.email || "");
       setPhone(data?.phone || "");
+      setGender(data?.gender || "");
+      setClassName(data?.className || "");
       setAboutUs(data?.aboutUs || "");
       setChargeRate(data?.chargeRate || "");
-      setSelectedSubjects(data?.subject?.map((sub) => sub._id) || []);
+      setSelectedSubjects(data?.subjects?.map((sub) => sub._id) || []);
       setAreaId(data?.area?._id || "");
       setImage(null);
       setImagePrev(data?.image?.url || "");
     } else {
-      // Clear form only when opening for a new teacher
+      // Reset form if opening for a new student
       setName("");
       setEmail("");
       setPhone("");
+      setGender("");
+      setClassName("");
       setAboutUs("");
       setChargeRate("");
       setSelectedSubjects([]);
@@ -62,7 +65,7 @@ const ModalOpenTeacher = ({
       setImage(null);
       setImagePrev("");
     }
-  }, [open, isEditing, data]); // ✅ Dependencies are minimal now
+  }, [open, isEditing, data]);
 
   // Handle image change
   const handleImageChange = (e) => {
@@ -86,39 +89,47 @@ const ModalOpenTeacher = ({
     );
   };
 
-  // Handle form submission
+  // Handle form submission for creating a new student
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
+    console.log(name, email, phone, gender, className, aboutUs, chargeRate, selectedSubjects, areaId, image);
+
     formData.append("name", name);
     formData.append("email", email);
     formData.append("phone", phone);
+    formData.append("gender", gender); // Adding gender to form data
+    formData.append("className", className); // Adding class to form data
     formData.append("aboutUs", aboutUs);
     formData.append("chargeRate", chargeRate);
     formData.append("subjectId", selectedSubjects.join(","));
     formData.append("areaId", areaId);
     formData.append("file", image);
+    console.log([...formData]); // Log the FormData to see its contents
 
     try {
-      dispatch(createTeacher(formData)).then(() => {
-        dispatch(getAllTeachers()); // Re-fetch teachers after add
+      dispatch(createStudent(formData)).then(() => {
+        dispatch(getAllStudents()); // Re-fetch students after adding
       });
       console.log("Submit successful");
       handleSave();
     } catch (error) {
-      console.error("Error adding teacher:", error);
-      alert("Failed to add teacher.");
+      console.error("Error adding student:", error);
+      alert("Failed to add student.");
     }
   };
 
-  const handleEditTeacher = async (e) => {
+  // Handle form submission for editing an existing student
+  const handleEditStudent = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
     formData.append("phone", phone);
+    formData.append("gender", gender); // Adding gender to form data
+    formData.append("className", className); // Adding class to form data
     formData.append("aboutUs", aboutUs);
     formData.append("chargeRate", chargeRate);
     formData.append("subjectId", selectedSubjects.join(","));
@@ -126,20 +137,17 @@ const ModalOpenTeacher = ({
     if (image) {
       formData.append("file", image); // Only append image if a new one is selected
     }
-    // Debugging: Log FormData values
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
+    console.log("on edit" ,formData);
 
     try {
-      dispatch(updateTeacherById(data._id, formData)).then(() => {
-        dispatch(getAllTeachers()); // Re-fetch teachers after add
-      }); // Assuming `data._id` contains the teacher ID
+      dispatch(updateStudentById(data._id, formData)).then(() => {
+        dispatch(getAllStudents()); // Re-fetch students after update
+      });
       console.log("Update successful");
       handleSave(); // Close modal and refresh data
     } catch (error) {
-      console.error("Error updating teacher:", error);
-      alert("Failed to update teacher.");
+      console.error("Error updating student:", error);
+      alert("Failed to update student.");
     }
   };
 
@@ -147,9 +155,9 @@ const ModalOpenTeacher = ({
     <>
       {open && (
         <div className="modal-overlay fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
-          <div className="modal-content p-6 bg-white rounded-lg  max-w-4xl w-full">
+          <div className="modal-content p-6 bg-white rounded-lg max-w-4xl w-full">
             <h2 className="text-2xl mb-4">
-              {isEditing ? "Edit Teacher" : "Add Teacher"}
+              {isEditing ? "Edit Student" : "Add Student"}
             </h2>
 
             <div className="grid grid-cols-2 gap-4">
@@ -178,14 +186,34 @@ const ModalOpenTeacher = ({
                 />
               </div>
               <div className="col-span-1">
+                <label className="block text-sm font-medium">Gender</label>
+                <select
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="w-full"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div className="col-span-1">
+                <label className="block text-sm font-medium">Class</label>
+                <Input
+                  value={className}
+                  onChange={(e) => setClassName(e.target.value)}
+                  placeholder="Enter Class"
+                />
+              </div>
+              <div className="col-span-1">
                 <label className="block text-sm font-medium">About Us</label>
                 <Textarea
                   value={aboutUs}
                   onChange={(e) => setAboutUs(e.target.value)}
                 />
               </div>
-              
-              <div className="col-span-1 ">
+              <div className="col-span-1">
                 <label className="block text-sm font-medium">Subjects</label>
                 <div className="h-20 overflow-y-auto p-1 border rounded">
                   {subjects.map((subject) => (
@@ -213,7 +241,6 @@ const ModalOpenTeacher = ({
                   ))}
                 </select>
               </div>
-
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Charge Rate</label>
                 <Input
@@ -222,7 +249,6 @@ const ModalOpenTeacher = ({
                   placeholder="Enter Charge Rate"
                 />
               </div>
-
               <div className="col-span-1">
                 <label className="block text-sm font-medium">
                   Upload Image
@@ -245,9 +271,9 @@ const ModalOpenTeacher = ({
               </button>
               <button
                 className="bg-blue-600 text-white px-4 py-2 rounded-md"
-                onClick={isEditing ? handleEditTeacher : handleSubmit}
+                onClick={isEditing ? handleEditStudent : handleSubmit}
               >
-                {isEditing ? "Save Changes" : "Add Teacher"}
+                {isEditing ? "Save Changes" : "Add Student"}
               </button>
             </div>
           </div>
@@ -257,4 +283,4 @@ const ModalOpenTeacher = ({
   );
 };
 
-export default ModalOpenTeacher;
+export default ModalOpenStudent;

@@ -5,6 +5,7 @@ import teacherSlice from './reducers/teacherSlice.js';
 import contactSlice from './reducers/contactSlice';
 import subjectSlice from './reducers/subjectslice.js';
 import faqSlice from   './reducers/faqSlice.js';
+import studentSlice from './reducers/studentSlice.js';
 
 
 
@@ -14,6 +15,7 @@ const store = configureStore({
         // Add your reducers here
         area: areaSlice,
         city: citySlice,
+        student: studentSlice,
         teacher: teacherSlice,
         contact: contactSlice,
         subject: subjectSlice,

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useFaqData } from "../../hook/faqData.js"; // Your custom hook for FAQ management
-import { MagnifyingGlassIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
+import {
+  MagnifyingGlassIcon,
+  ChevronUpDownIcon,
+} from "@heroicons/react/24/outline";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
 import ModalOpenFaq from "../../components/faq/ModalOpenFaq.jsx"; // Your modal component for FAQ
 import {
@@ -13,18 +16,17 @@ import {
 } from "@material-tailwind/react";
 import { PencilIcon, ToggleLeft, ToggleRight, TrashIcon } from "lucide-react";
 
-const TABLE_HEAD = ["Question", "Answer","Status", "Action"];
+const TABLE_HEAD = ["Question", "Answer", "Status", "Action"];
 
 const sortKeyMap = {
-  "Question": "question",
-  "Answer": "answer",
+  Question: "question",
+  Answer: "answer",
   Status: "isLive",
-
 };
 
 function FaqTable() {
-  const { faqs, addFaq, updateFaqById, deleteFaqById,toggleLiveStatus } = useFaqData();
-  console.log(faqs)
+  const { faqs, addFaq, updateFaqById, deleteFaqById, toggleLiveStatus } =
+    useFaqData();
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -37,7 +39,6 @@ function FaqTable() {
     question: "",
     answer: "",
     isLive: true,
-
   });
   const [editingId, setEditingId] = useState(null);
 
@@ -92,7 +93,6 @@ function FaqTable() {
         question: "",
         answer: "",
         isLive: true,
-
       });
       setEditingId(null);
     }
@@ -142,7 +142,6 @@ function FaqTable() {
   const handleToggleLiveStatus = (id) => {
     toggleLiveStatus(id);
   };
-
 
   if (faqs.length === 0) {
     return <div>Loading...</div>;
@@ -268,19 +267,19 @@ function FaqTable() {
 
       {/* Your modal component here */}
       <ModalOpenFaq
-  open={isModalOpen}
-  handleClose={() => setIsModalOpen(false)}
-  handleSave={handleSaveFaq}
-  formData={formData}
-  setFormData={setFormData}
-  isEditing={!!editingId}
-/>
+        open={isModalOpen}
+        handleClose={() => setIsModalOpen(false)}
+        handleSave={handleSaveFaq}
+        formData={formData}
+        setFormData={setFormData}
+        isEditing={!!editingId}
+      />
 
       {isConfirmationOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur confirm-dialog ">
           <div className="relative px-4 min-h-screen md:flex md:items-center md:justify-center">
             <div className=" opacity-25 w-full h-full absolute z-10 inset-0"></div>
-            <div className="bg-white rounded-lg md:max-w-md md:mx-auto p-4 fixed inset-x-0 bottom-0 z-50 mb-4 mx-4 md:relative shadow-lg">
+            <div className="bg-white rounded-lg md:max-w-md md:mx-auto p-4 fixed inset-x-0 bottom-0 z-50 mb-4 mx-4 md:relative ">
               <div className="md:flex items-center">
                 <div className="rounded-full border border-gray-300 flex items-center justify-center w-16 h-16 flex-shrink-0 mx-auto">
                   <i className="bx bx-error text-3xl">&#9888;</i>

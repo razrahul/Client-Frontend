@@ -274,7 +274,7 @@ const EmployeeTable = () => {
         className="fixed inset-0 z-50 flex items-center justify-center"
       >
         <div className="fixed inset-0 bg-black bg-opacity-20" />
-        <div className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-6 flex flex-col space-y-4 z-10">
+        <div className="relative bg-white rounded-lg  w-full max-w-md p-6 flex flex-col space-y-4 z-10">
           <DialogHeader className="text-center text-xl font-semibold text-gray-900">
             {editIndex !== null ? "Edit Employee" : "Add Employee"}
           </DialogHeader>
@@ -335,7 +335,7 @@ const EmployeeTable = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+          <div className="bg-white rounded-lg  w-full max-w-md p-6">
             <h2 className="text-xl font-semibold text-center">Add Employee</h2>
             <div className="mt-4">
               <div className="mb-4">

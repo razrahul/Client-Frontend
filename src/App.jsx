@@ -2,11 +2,11 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./containters/Navbar"; 
 import Home from "./containters/Home"; 
 import EmployeeTable from "./containters/EmployeeTable";
-import Student from "./pages/student/student";
+import StudentTable from "./pages/student/studentTable.jsx";
 import TeacherTable from "./pages/Teacher/TeacherTable.jsx"
 import FormsTable from "./pages/Forms/Forms";
 import AreaTable from "./pages/Area/area"; 
-import SubjectTable from "./pages/Subject/Subject.jsx";
+import Subject from "./pages/Subject/Subject.jsx";
 import FAQS from "./pages/Faq/faq";
 
 function App() {
@@ -21,11 +21,11 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/statistics-1" element={<EmployeeTable />} /> {/* Route for EmployeeTable */}
-            <Route path="/student" element={<Student />} />
+            <Route path="/student" element={<StudentTable />} />
             <Route path="/teacher" element={<TeacherTable />} />
             <Route path="/forms" element={<FormsTable/>} />
             <Route path="/area" element={<AreaTable />} />
-            <Route path="/subject" element={<SubjectTable/>}/>
+            <Route path="/subject" element={<Subject/>}/>
             <Route path="/faq" element={<FAQS/>}/>
             {/* Add more routes for other components as needed */}
           </Routes>
