@@ -3,7 +3,7 @@ import { Button, Input, Checkbox, Textarea } from "@material-tailwind/react";
 import { useAreaData } from "../../hook/areaData";
 import { useSubjectData } from "../../hook/subjectData";
 import { useDispatch } from "react-redux";
-import Select from "react-select";
+// import Select from "react-select";
 import {
   createTeacher,
   updateTeacherById,
