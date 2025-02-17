@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   loading: false,
   areas: [],  // Stores all areas (including live areas)
+  liveAreas: [],  // Stores only live areas
   area: {},
   error: null,
 };
@@ -18,6 +19,10 @@ const areaSlice = createSlice({
     fetchAreasSuccess(state, action) {
       state.loading = false;
       state.areas = action.payload.areas;
+    },
+    getAllLiveAreasSuccess(state, action) {
+      state.loading = false;
+      state.liveAreas = action.payload.areas;
     },
     areaFail(state, action) {
       state.loading = false;
@@ -55,6 +60,7 @@ export const {
   removeArea,
   updateArea,
   toggleAreaLiveStatus,
+  getAllLiveAreasSuccess
 } = areaSlice.actions;
 
 export default areaSlice.reducer;

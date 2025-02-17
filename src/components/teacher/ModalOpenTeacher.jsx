@@ -18,7 +18,7 @@ const ModalOpenTeacher = ({
   data,
 }) => {
   // console.log(data)
-  const { areas } = useAreaData();
+  const { liveAreas: areas } = useAreaData();
   const { liveSubjects: subjects } = useSubjectData();
   const dispatch = useDispatch();
 

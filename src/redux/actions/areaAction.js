@@ -9,6 +9,7 @@ import {
   addArea,
   removeArea,
   updateArea,
+  getAllLiveAreasSuccess
 } from "../reducers/areaSlice";
 
 //Get All Areas
@@ -20,7 +21,7 @@ export const getLiveAreas = () => async (dispatch) => {
     // API call to fetch live areas
     const { data } = await axios.get(`${server}/areas/live`);
     
-    dispatch(fetchAreasSuccess(data));
+    dispatch(getAllLiveAreasSuccess(data));
   } catch (error) {
     dispatch(
       areaFail(error.response?.data?.message || "Failed to fetch live areas")
