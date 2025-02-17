@@ -10,6 +10,7 @@ import {
     removeSubject,
     updateSubject,
     getSubject,
+    getAllLiveSubjects
 } from "../reducers/subjectslice";
 
 // Get all Subjects
@@ -132,7 +133,7 @@ export const getLiveSubjects = () => async (dispatch) => {
         // API call to fetch live subjects
         const { data } = await axios.get(`${server}/subject/live`);
 
-        dispatch(fetchSubjectsSuccess(data));
+        dispatch(getAllLiveSubjects(data));
     } catch (error) {
         dispatch(
             subjectFail(error.response?.data?.message || "Failed to fetch live subjects")

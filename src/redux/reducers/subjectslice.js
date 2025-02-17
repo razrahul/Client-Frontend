@@ -1,7 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { ListVideo } from "lucide-react";
 
 const initialState = {
-    subjects: [],  
+    subjects: [],
+    liveSubjects: [],  
     subject: {},   
     loading: false, 
     error: null,   
@@ -17,6 +19,10 @@ const subjectSlice = createSlice({
         fetchSubjectsSuccess(state, action) {
             state.loading = false;
             state.subjects = action.payload.subjects;
+        },
+        getAllLiveSubjects(state, action) {
+            state.loading = false;
+            state.liveSubjects = action.payload.subjects;
         },
         subjectFail(state, action) {
             state.loading = false;
@@ -58,6 +64,7 @@ export const {
     updateSubject,
     removeSubject,
     resetSubjectState,
+    getAllLiveSubjects
 } = subjectSlice.actions;
 
 export default subjectSlice.reducer;

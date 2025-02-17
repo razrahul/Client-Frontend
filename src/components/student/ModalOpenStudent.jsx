@@ -19,7 +19,7 @@ const ModalOpenStudent = ({
 }) => {
   // Fetch areas and subjects like in the teacher modal
   const { areas } = useAreaData();
-  const { subjects } = useSubjectData();
+  const { liveSubjects: subjects } = useSubjectData();
   const dispatch = useDispatch();
 
   // Form state

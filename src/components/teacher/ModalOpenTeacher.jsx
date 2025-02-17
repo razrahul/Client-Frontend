@@ -19,7 +19,7 @@ const ModalOpenTeacher = ({
 }) => {
   // console.log(data)
   const { areas } = useAreaData();
-  const { subjects } = useSubjectData();
+  const { liveSubjects: subjects } = useSubjectData();
   const dispatch = useDispatch();
 
   // Form state
