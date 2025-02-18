@@ -8,7 +8,6 @@ const ModalOpenForm = ({
   setFormData,
   isEditing,
 }) => {
-  // CSS styles for modal positioning
   const styles = `
     .modal-overlay {
       position: fixed;

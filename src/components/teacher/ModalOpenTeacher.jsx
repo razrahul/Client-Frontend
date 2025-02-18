@@ -3,7 +3,6 @@ import { Button, Input, Checkbox, Textarea } from "@material-tailwind/react";
 import { useAreaData } from "../../hook/areaData";
 import { useSubjectData } from "../../hook/subjectData";
 import { useDispatch } from "react-redux";
-// import Select from "react-select";
 import {
   createTeacher,
   updateTeacherById,
@@ -17,12 +16,10 @@ const ModalOpenTeacher = ({
   isEditing,
   data,
 }) => {
-  // console.log(data)
   const { liveAreas: areas } = useAreaData();
   const { liveSubjects: subjects } = useSubjectData();
   const dispatch = useDispatch();
 
-  // Form state
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -33,12 +30,9 @@ const ModalOpenTeacher = ({
   const [image, setImage] = useState(null);
   const [imagePrev, setImagePrev] = useState("");
 
-  // console.log("page refresh")
-
-  // Effect: Reset form fields when modal opens
-  // Effect: Reset form fields when modal opens
+ 
   useEffect(() => {
-    if (!open) return; // Prevent execution if modal is closed
+    if (!open) return; 
 
     if (isEditing && data) {
       setName(data?.name || "");
@@ -51,7 +45,6 @@ const ModalOpenTeacher = ({
       setImage(null);
       setImagePrev(data?.image?.url || "");
     } else {
-      // Clear form only when opening for a new teacher
       setName("");
       setEmail("");
       setPhone("");
@@ -64,7 +57,6 @@ const ModalOpenTeacher = ({
     }
   }, [open, isEditing, data]); // ✅ Dependencies are minimal now
 
-  // Handle image change
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
@@ -77,7 +69,6 @@ const ModalOpenTeacher = ({
     }
   };
 
-  // Handle subject selection
   const handleSubjectChange = (subjectId) => {
     setSelectedSubjects((prevSelected) =>
       prevSelected.includes(subjectId)
@@ -86,7 +77,6 @@ const ModalOpenTeacher = ({
     );
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 

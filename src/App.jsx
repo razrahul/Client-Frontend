@@ -8,6 +8,7 @@ import FormsTable from "./pages/Forms/Forms";
 import AreaTable from "./pages/Area/area"; 
 import Subject from "./pages/Subject/Subject.jsx";
 import FAQS from "./pages/Faq/faq";
+import StudentFeedback from "./pages/student/studentFeedback.jsx";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="/area" element={<AreaTable />} />
             <Route path="/subject" element={<Subject/>}/>
             <Route path="/faq" element={<FAQS/>}/>
+            <Route path="/StudentFeedback" element={<StudentFeedback/>}/>
             {/* Add more routes for other components as needed */}
           </Routes>
         </div>

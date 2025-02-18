@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useFaqData } from "../../hook/faqData.js"; // Your custom hook for FAQ management
+import { useFaqData } from "../../hook/faqData.js";
 import {
   MagnifyingGlassIcon,
   ChevronUpDownIcon,
 } from "@heroicons/react/24/outline";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
-import ModalOpenFaq from "../../components/faq/ModalOpenFaq.jsx"; // Your modal component for FAQ
+import ModalOpenFaq from "../../components/faq/ModalOpenFaq.jsx"; 
 import {
   Card,
   CardHeader,
@@ -42,7 +42,6 @@ function FaqTable() {
   });
   const [editingId, setEditingId] = useState(null);
 
-  // Confirmation Dialog State
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [subjectToDelete, setSubjectToDelete] = useState(null);
 
@@ -120,7 +119,7 @@ function FaqTable() {
   const handleDeleteFaq = (id) => {
     deleteFaqById(id);
     setTableRows((prevRows) => prevRows.filter((faq) => faq._id !== id));
-    setIsConfirmationOpen(false); // Close the confirmation dialog after delete
+    setIsConfirmationOpen(false); 
   };
 
   const handlePageChange = (newPage) => {
@@ -265,7 +264,6 @@ function FaqTable() {
         </CardFooter>
       </Card>
 
-      {/* Your modal component here */}
       <ModalOpenFaq
         open={isModalOpen}
         handleClose={() => setIsModalOpen(false)}
@@ -303,7 +301,7 @@ function FaqTable() {
                 </button>
                 <button
                   className="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4 md:mt-0 md:order-1"
-                  onClick={closeConfirmationDialog} // Close the confirmation dialog
+                  onClick={closeConfirmationDialog} 
                 >
                   Cancel
                 </button>

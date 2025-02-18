@@ -9,6 +9,7 @@ import {
   LandPlot,
   BookCopy,
   TableOfContents,
+  MessagesSquare,
 } from "lucide-react"; // Add all necessary imports
 import { Link } from "react-router-dom"; // Import Link for routing
 
@@ -21,21 +22,38 @@ export default function Navbar() {
         </div>
         <ul className="flex-1 px-3">
           <SidebarItem
-            icon={<LayoutDashboard size={20} />} 
+            icon={<LayoutDashboard size={20} />}
             text="Dashboard"
             to="/"
           />
-          <SidebarItem icon={<Boxes size={20} />} text="Students" to="/Student" />
+          <SidebarItem
+            icon={<Boxes size={20} />}
+            text="Student"
+            to="/Student"
+          />
           <SidebarItem
             icon={<Package size={20} />}
             text="Teacher"
             to="/teacher"
           />
-          
-          <SidebarItem icon={<BookText size={20} />} text="Forms" to="/forms" />
+
+          <SidebarItem icon={<BookText size={20} />} text="Form" to="/forms" />
           <SidebarItem icon={<LandPlot size={20} />} text="Area" to="/area" />
-          <SidebarItem icon={<BookCopy  size={20} />} text="Subject" to="/subject" />
-          <SidebarItem icon={<TableOfContents   size={20} />} text="FAQ's" to="/faq" />
+          <SidebarItem
+            icon={<BookCopy size={20} />}
+            text="Subject"
+            to="/subject"
+          />
+          <SidebarItem
+            icon={<TableOfContents size={20} />}
+            text="FAQ's"
+            to="/faq"
+          />
+          <SidebarItem
+            icon={<MessagesSquare size={20} />}
+            text="Student Feedback"
+            to="/StudentFeedback"
+          />
           <hr className="my-3" />
           <SidebarItem icon={<Settings size={20} />} text="Settings" />
           <SidebarItem icon={<LifeBuoy size={20} />} text="Help" />

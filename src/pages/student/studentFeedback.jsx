@@ -1,45 +1,20 @@
 import React, { useState, useEffect } from "react";
-import ModalOpenTeacher from "../../components/teacher/ModalOpenTeacher";
-import {
-  Button,
-  Typography,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-} from "@material-tailwind/react";
-import {
-  MagnifyingGlassIcon,
-  ChevronUpDownIcon,
-} from "@heroicons/react/24/outline";
-import { UserPlusIcon } from "@heroicons/react/24/solid";
+import { Button, Typography, Card, CardHeader, CardBody, CardFooter } from "@material-tailwind/react";
+import { MagnifyingGlassIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
 import { PencilIcon, TrashIcon } from "lucide-react";
-import { useTeacherData } from "../../hook/teacherData";
-import { getAllTeachers, deleteTeacher } from "../../redux/actions/teacherAction.js"
 import { useDispatch, useSelector } from "react-redux";
+import { getAllFeedbacks, deleteFeedback } from "../../redux/actions/feedbackActions";
+import ModalOpenFeedback from "../../components/student/ModalOpenFeedback.jsx";
 
-const TABLE_HEAD = [
-  "Name",
-  "Email",
-  "Phone",
-  "About Us",
-  "Area",
-  "Subject",
-  "Charge Rate",
-  "Image",
-  "Action",
-];
+const TABLE_HEAD = ["Name", "Email", "Feedback", "Action"];
 
 const sortKeyMap = {
   Name: "name",
-  Subjects: "subject",
-  Status: "isLive",
-  Location: "city.name",
-  Rate: "chargeRate",
-  Joined: "createdAt",
+  Email: "email",
+  Feedback: "feedback",
 };
 
-function TeacherTable() {
+function StudentFeedback() {
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -48,45 +23,37 @@ function TeacherTable() {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
   const [editingId, setEditingId] = useState(null);
 
-  const [data, SetData] = useState("")
+  const [data, setData] = useState("");
 
   const rowsPerPage = 6;
 
   const dispatch = useDispatch();
-  const {teachers} = useSelector((state) => state.teacher)
+  const feedbacks  = useSelector((state) => state.feedback.feedbacks);
 
-    // Confirmation Dialog State
-    const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
-    const [teacherToDelete, setteacherToDelete] = useState(null);
-
-  useEffect(() => {
-    dispatch(getAllTeachers());
-   
-  }, [dispatch])
-  
- 
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const [feedbackToDelete, setFeedbackToDelete] = useState(null);
 
   useEffect(() => {
-    if (teachers && Array.isArray(teachers)) {
-        setTableRows(teachers);
+    dispatch(getAllFeedbacks());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (feedbacks && Array.isArray(feedbacks)) {
+      setTableRows(feedbacks);
     }
-}, [teachers]);
+  }, [feedbacks]);
+  
 
-
-  const filteredRows = tableRows.filter((teacher) => {
-    const sub = teacher.subject;
-    if (!sub || sub.length === 0) return false;
-    const subjectString = Array.isArray(sub)
-      ? sub.map((s) => s.name).join(" ")
-      : sub;
+  const filteredRows = tableRows.filter((feedback) => {
     return (
-      subjectString.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      teacher.name.toLowerCase().includes(searchTerm.toLowerCase())
+      (feedback.name && feedback.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (feedback.email && feedback.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (feedback.feedback && feedback.feedback.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   });
+  
 
   const sortedRows = [...filteredRows].sort((a, b) => {
     const getNestedValue = (obj, key) =>
@@ -109,11 +76,16 @@ function TeacherTable() {
       : String(bValue).localeCompare(String(aValue));
   });
 
+
+
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = sortedRows.slice(indexOfFirstRow, indexOfLastRow);
   const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
 
+  
+
+  
   const handleSort = (column) => {
     const key = sortKeyMap[column];
     const direction =
@@ -121,34 +93,28 @@ function TeacherTable() {
     setSortConfig({ key, direction });
   };
 
-  
-
-  const handleOpenModal = (teacher = null) => {
-    if (teacher) {
-      SetData(teacher)
-      setEditingId(teacher._id);
+  const handleOpenModal = (feedback = null) => {
+    if (feedback) {
+      setData(feedback);
+      setEditingId(feedback._id);
     } else {
-      SetData("")
+      setData("");
       setEditingId(null);
     }
     setIsModalOpen(true);
-};
-
-
-
-  const handleSaveTeacher = () => {
-       setIsModalOpen(false);
   };
 
+  const handleSaveFeedback = () => {
+    setIsModalOpen(false);
+  };
 
-  const handleDeleteTeacher = (id) =>{
-    dispatch(deleteTeacher(id)).then(() => {
-      dispatch(getAllTeachers()); 
-  });
-  setIsConfirmationOpen(false); 
+  const handleDeleteFeedback = (id) => {
+    dispatch(deleteFeedback(id)).then(() => {
+      dispatch(getAllFeedbacks()); 
+    });
+    setIsConfirmationOpen(false);
 
-  }
-  
+  };
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -157,12 +123,12 @@ function TeacherTable() {
   };
 
   const openConfirmationDialog = (id) => {
-    setteacherToDelete(id);
+    setFeedbackToDelete(id);
     setIsConfirmationOpen(true);
   };
 
   const closeConfirmationDialog = () => {
-    setteacherToDelete(null);
+    setFeedbackToDelete(null);
     setIsConfirmationOpen(false);
   };
 
@@ -172,9 +138,9 @@ function TeacherTable() {
         <CardHeader floated={false} className="p-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
             <div>
-              <Typography variant="h5">Teacher List</Typography>
+              <Typography variant="h5">Feedback List</Typography>
               <Typography color="gray" className="mt-1 text-sm">
-                Manage and view teacher information
+                Manage and view feedback information
               </Typography>
             </div>
             <div className="flex gap-2">
@@ -183,7 +149,7 @@ function TeacherTable() {
                 size="sm"
                 onClick={() => handleOpenModal()}
               >
-                <UserPlusIcon className="h-4 w-4" /> Add Teacher
+                Add Feedback
               </Button>
             </div>
           </div>
@@ -201,7 +167,7 @@ function TeacherTable() {
 
         <CardBody className="p-4">
           {tableRows.length === 0 ? (
-            <div>No teachers available.</div>
+            <div>No feedbacks available.</div>
           ) : (
             <table className="w-full table-auto">
               <thead>
@@ -222,32 +188,15 @@ function TeacherTable() {
               </thead>
               <tbody>
                 {currentRows.length > 0 ? (
-                  currentRows.map((teacher) => (
-                    <tr key={teacher._id}>
-                      <td className="text-sm py-2 pl-2">{teacher.name}</td>
-                      <td className="text-sm py-2 pl-2">{teacher.email}</td>
-                      <td className="text-sm py-2 pl-2">{teacher.phone}</td>
-                      <td className="text-sm py-2 pl-2">
-                        {teacher.aboutUs || "No about us available"}
-                      </td>
-                      <td className="text-sm py-2 pl-2">{teacher.area?.name || "Unknown"}</td>
-                      <td className="text-sm py-2 pl-2">
-                        {teacher.subject?.length > 0
-                          ? teacher.subject.map((sub) => sub.name).join(", ")
-                          : "No subjects"}
-                      </td>
-                      <td className="text-sm py-2 pl-2">{teacher.chargeRate}</td>
-                      <td>
-                        <img
-                          src={teacher.image?.url || "default.jpg"}
-                          alt={teacher.name}
-                          className="w-10 h-10 rounded-full"
-                        />
-                      </td>
+                  currentRows.map((feedback) => (
+                    <tr key={feedback._id}>
+                      <td className="text-sm py-2 pl-2">{feedback.user.name}</td>
+                      <td className="text-sm py-2 pl-2">{feedback.user.email}</td>
+                      <td className="text-sm py-2 pl-2">{feedback.feedback}</td>
                       <td className="p-3 border-b flex gap-2 text-decoration-line: none;">
                         <Button
                           className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
-                          onClick={() => handleOpenModal(teacher)}
+                          onClick={() => handleOpenModal(feedback)}
                           color="blue"
                           size="sm"
                         >
@@ -256,7 +205,7 @@ function TeacherTable() {
 
                         <Button
                           className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
-                          onClick={() => openConfirmationDialog(teacher._id)}
+                          onClick={() => openConfirmationDialog(feedback._id)}
                           color="blue"
                           size="sm"
                         >
@@ -267,7 +216,7 @@ function TeacherTable() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="8">No teachers available</td>
+                    <td colSpan="4">No feedbacks available</td>
                   </tr>
                 )}
               </tbody>
@@ -300,10 +249,10 @@ function TeacherTable() {
         </CardFooter>
       </Card>
 
-      <ModalOpenTeacher
+      <ModalOpenFeedback
         open={isModalOpen}
         handleClose={() => setIsModalOpen(false)}
-        handleSave={handleSaveTeacher}
+        handleSave={handleSaveFeedback}
         data={data}
         isEditing={!!editingId}
       />
@@ -329,7 +278,7 @@ function TeacherTable() {
                 <button
                   className="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-red-200 text-red-700 rounded-lg font-semibold text-sm md:ml-2 md:order-2"
                   onClick={() => {
-                    handleDeleteTeacher(teacherToDelete);
+                    handleDeleteFeedback(feedbackToDelete);
                   }}
                 >
                   Delete
@@ -349,4 +298,4 @@ function TeacherTable() {
   );
 }
 
-export default TeacherTable;
+export default StudentFeedback;

@@ -3,7 +3,6 @@ import { Button, Input, Checkbox, Textarea } from "@material-tailwind/react";
 import { useAreaData } from "../../hook/areaData";
 import { useSubjectData } from "../../hook/subjectData";
 import { useDispatch } from "react-redux";
-// import Select from "react-select";
 import {
   createStudent,
   updateStudentById,
@@ -17,17 +16,15 @@ const ModalOpenStudent = ({
   isEditing,
   data,
 }) => {
-  // Fetch areas and subjects like in the teacher modal
   const { liveAreas:areas } = useAreaData();
   const { liveSubjects: subjects } = useSubjectData();
   const dispatch = useDispatch();
 
-  // Form state
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [gender, setGender] = useState(""); // Gender state
-  const [className, setClassName] = useState(""); // Class state
+  const [gender, setGender] = useState(""); 
+  const [className, setClassName] = useState(""); 
   const [aboutUs, setAboutUs] = useState("");
   const [chargeRate, setChargeRate] = useState("");
   const [selectedSubjects, setSelectedSubjects] = useState([]);
@@ -35,9 +32,8 @@ const ModalOpenStudent = ({
   const [image, setImage] = useState(null);
   const [imagePrev, setImagePrev] = useState("");
 
-  // Effect to reset the form when the modal opens or data changes
   useEffect(() => {
-    if (!open) return; // Prevent execution if modal is closed
+    if (!open) return; 
 
     if (isEditing && data) {
       setName(data?.name || "");
@@ -52,7 +48,6 @@ const ModalOpenStudent = ({
       setImage(null);
       setImagePrev(data?.image?.url || "");
     } else {
-      // Reset form if opening for a new student
       setName("");
       setEmail("");
       setPhone("");
@@ -67,7 +62,6 @@ const ModalOpenStudent = ({
     }
   }, [open, isEditing, data]);
 
-  // Handle image change
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
@@ -80,7 +74,6 @@ const ModalOpenStudent = ({
     }
   };
 
-  // Handle subject selection
   const handleSubjectChange = (subjectId) => {
     setSelectedSubjects((prevSelected) =>
       prevSelected.includes(subjectId)
@@ -89,7 +82,6 @@ const ModalOpenStudent = ({
     );
   };
 
-  // Handle form submission for creating a new student
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -99,18 +91,18 @@ const ModalOpenStudent = ({
     formData.append("name", name);
     formData.append("email", email);
     formData.append("phone", phone);
-    formData.append("gender", gender); // Adding gender to form data
-    formData.append("className", className); // Adding class to form data
+    formData.append("gender", gender); 
+    formData.append("className", className); 
     formData.append("aboutUs", aboutUs);
     formData.append("chargeRate", chargeRate);
     formData.append("subjectId", selectedSubjects.join(","));
     formData.append("areaId", areaId);
     formData.append("file", image);
-    console.log([...formData]); // Log the FormData to see its contents
+    console.log([...formData]); 
 
     try {
       dispatch(createStudent(formData)).then(() => {
-        dispatch(getAllStudents()); // Re-fetch students after adding
+        dispatch(getAllStudents());
       });
       console.log("Submit successful");
       handleSave();
@@ -120,7 +112,6 @@ const ModalOpenStudent = ({
     }
   };
 
-  // Handle form submission for editing an existing student
   const handleEditStudent = async (e) => {
     e.preventDefault();
 
@@ -128,23 +119,23 @@ const ModalOpenStudent = ({
     formData.append("name", name);
     formData.append("email", email);
     formData.append("phone", phone);
-    formData.append("gender", gender); // Adding gender to form data
-    formData.append("className", className); // Adding class to form data
+    formData.append("gender", gender); 
+    formData.append("className", className); 
     formData.append("aboutUs", aboutUs);
     formData.append("chargeRate", chargeRate);
     formData.append("subjectId", selectedSubjects.join(","));
     formData.append("areaId", areaId);
     if (image) {
-      formData.append("file", image); // Only append image if a new one is selected
+      formData.append("file", image); 
     }
     console.log("on edit" ,formData);
 
     try {
       dispatch(updateStudentById(data._id, formData)).then(() => {
-        dispatch(getAllStudents()); // Re-fetch students after update
+        dispatch(getAllStudents()); 
       });
       console.log("Update successful");
-      handleSave(); // Close modal and refresh data
+      handleSave(); 
     } catch (error) {
       console.error("Error updating student:", error);
       alert("Failed to update student.");
