@@ -6,16 +6,16 @@ import {
   updateFeedbackAction,
   getAllFeedbacks,
 } from "../../redux/actions/feedbackActions.js";
-import { useStudentData } from "../../hook/studentData.js"; 
+import { useTeacherData } from "../../hook/teacherData.js"; 
 
-const ModalOpenFeedback = ({
+const ModalOpenFeedbackTeacher = ({
   open,
   handleClose,
   handleSave,
   isEditing,
   data,
 }) => {
-  const { students } = useStudentData(); 
+  const { teachers } = useTeacherData(); 
   const dispatch = useDispatch();
 
   const [userId, setUserId] = useState(""); 
@@ -87,16 +87,16 @@ const ModalOpenFeedback = ({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-1">
-                <label className="block text-sm font-medium">Select Student</label>
+                <label className="block text-sm font-medium">Select teacher</label>
                 <select
                   value={userId}
                   onChange={(e) => setUserId(e.target.value)}
                   className="border p-2 rounded"
                 >
-                  <option value="">Select student</option>
-                  {students.map((student) => (
-                    <option key={student._id} value={student._id}>
-                      {student.name}
+                  <option value="">Select teacher</option>
+                  {teachers.map((teacher) => (
+                    <option key={teacher._id} value={teacher._id}>
+                      {teacher.name}
                     </option>
                   ))}
                 </select>
@@ -144,4 +144,4 @@ const ModalOpenFeedback = ({
   );
 };
 
-export default ModalOpenFeedback;
+export default ModalOpenFeedbackTeacher;

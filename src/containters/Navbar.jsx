@@ -54,6 +54,11 @@ export default function Navbar() {
             text="Student Feedback"
             to="/StudentFeedback"
           />
+          <SidebarItem
+            icon={<MessagesSquare size={20} />}
+            text="Teacher Feedback"
+            to="/TeacherFeedback"
+          />
           <hr className="my-3" />
           <SidebarItem icon={<Settings size={20} />} text="Settings" />
           <SidebarItem icon={<LifeBuoy size={20} />} text="Help" />

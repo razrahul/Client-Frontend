@@ -17,7 +17,7 @@ import {
   getAllFeedbacks,
   deleteFeedback,
 } from "../../redux/actions/feedbackActions";
-import ModalOpenFeedback from "../../components/student/ModalOpenFeedbackStudent";
+import ModalOpenFeedback from "../../components/teacher/ModalOpenFeedbackTeacher.jsx";
 
 const TABLE_HEAD = ["Name", "Email", "Feedback", "Action"];
 
@@ -27,7 +27,7 @@ const sortKeyMap = {
   Feedback: "feedback",
 };
 
-function StudentFeedback() {
+function TeacherFeedback() {
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -310,4 +310,4 @@ function StudentFeedback() {
   );
 }
 
-export default StudentFeedback;
+export default TeacherFeedback;
