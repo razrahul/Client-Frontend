@@ -5,7 +5,7 @@ import {
   ChevronUpDownIcon,
 } from "@heroicons/react/24/outline";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
-import ModalOpenFaq from "../../components/faq/ModalOpenFaq.jsx"; 
+import ModalOpenFaq from "../../components/faq/ModalOpenFaq.jsx";
 import {
   Card,
   CardHeader,
@@ -119,7 +119,7 @@ function FaqTable() {
   const handleDeleteFaq = (id) => {
     deleteFaqById(id);
     setTableRows((prevRows) => prevRows.filter((faq) => faq._id !== id));
-    setIsConfirmationOpen(false); 
+    setIsConfirmationOpen(false);
   };
 
   const handlePageChange = (newPage) => {
@@ -191,7 +191,9 @@ function FaqTable() {
                   >
                     <div className="flex items-center gap-1">
                       {head}
-                      <ChevronUpDownIcon className="h-4 w-4" />
+                      {head !== "Action" && (
+                        <ChevronUpDownIcon className="h-4 w-4" />
+                      )}
                     </div>
                   </th>
                 ))}
@@ -301,7 +303,7 @@ function FaqTable() {
                 </button>
                 <button
                   className="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4 md:mt-0 md:order-1"
-                  onClick={closeConfirmationDialog} 
+                  onClick={closeConfirmationDialog}
                 >
                   Cancel
                 </button>

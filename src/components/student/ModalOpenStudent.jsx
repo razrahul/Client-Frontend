@@ -74,12 +74,23 @@ const ModalOpenStudent = ({
     }
   };
 
-  const handleSubjectChange = (subjectId) => {
-    setSelectedSubjects((prevSelected) =>
-      prevSelected.includes(subjectId)
-        ? prevSelected.filter((id) => id !== subjectId)
-        : [...prevSelected, subjectId]
-    );
+  const handleSubjectChange = (selectedOptions) => {
+    setSelectedSubjects((prevSelected) => {
+      // Use Set to automatically handle uniqueness
+      const updatedSelectedSubjects = new Set(prevSelected);
+
+      // Add each selected subject to the Set
+      selectedOptions.forEach((subjectId) => {
+        if (updatedSelectedSubjects.has(subjectId)) {
+          updatedSelectedSubjects.delete(subjectId); // Unselect subject if it's already selected
+        } else {
+          updatedSelectedSubjects.add(subjectId); // Select subject if not already selected
+        }
+      });
+
+      // Return the updated selected subjects as an array
+      return [...updatedSelectedSubjects];
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -204,34 +215,57 @@ const ModalOpenStudent = ({
                   onChange={(e) => setAboutUs(e.target.value)}
                 />
               </div>
+
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Subjects</label>
-                <div className="h-20 overflow-y-auto p-1 border rounded">
-                  {subjects.map((subject) => (
-                    <div key={subject._id} className="flex items-center">
-                      <Checkbox
-                        checked={selectedSubjects.includes(subject._id)}
-                        onChange={() => handleSubjectChange(subject._id)}
-                      />
-                      <span>{subject.name}</span>
-                    </div>
-                  ))}
+                <div className="relative">
+                  <select
+                    multiple
+                    value={selectedSubjects}
+                    onChange={(e) => {
+                      const selectedOptions = Array.from(
+                        e.target.selectedOptions,
+                        (option) => option.value
+                      );
+                      handleSubjectChange(selectedOptions);
+                    }}
+                    className="w-full border rounded-lg h-32 overflow-y-auto text-sm"
+                  >
+                    {subjects.map((subject) => (
+                      <option
+                        key={subject._id}
+                        value={subject._id}
+                        className="py-2" // Added padding to increase the gap between options
+                      >
+                        {subject.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
+
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Area</label>
-                <select
-                  value={areaId}
-                  onChange={(e) => setAreaId(e.target.value)}
-                >
-                  <option value="">Select Area</option>
-                  {areas.map((area) => (
-                    <option key={area._id} value={area._id}>
-                      {area.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <div className="h-32 overflow-y-auto border rounded-lg text-sm">
+                    {areas.map((area) => (
+                      <div
+                        key={area._id}
+                        onClick={() => setAreaId(area._id)}
+                        className={`p-2 cursor-pointer hover:bg-blue-500 ${
+                          area._id === areaId
+                            ? "bg-blue-500 text-white"
+                            : "bg-white"
+                        }`}
+                      >
+                        {area.name}
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
+
+
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Charge Rate</label>
                 <Input

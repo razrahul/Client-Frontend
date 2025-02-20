@@ -252,7 +252,7 @@ function FormsTable() {
                   </td>
                   <td className="p-3 text-left">
                     <Button
-                      className="flex items-center gap-2 text-black hover:bg-red-600 hover:text-white"
+                      className="flex items-center gap-2 text-black text-red-600 hover:bg-red-600 hover:text-white"
                       size="sm"
                       onClick={() => openConfirmationDialog(contact._id)}
                     >

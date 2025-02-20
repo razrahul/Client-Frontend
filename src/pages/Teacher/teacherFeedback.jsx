@@ -11,20 +11,22 @@ import {
   MagnifyingGlassIcon,
   ChevronUpDownIcon,
 } from "@heroicons/react/24/outline";
-import { PencilIcon, TrashIcon } from "lucide-react";
+import { PencilIcon, ToggleLeft, ToggleRight, TrashIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAllFeedbacks,
   deleteFeedback,
+  updateFeedbackLiveStatus,
 } from "../../redux/actions/feedbackActions";
 import ModalOpenFeedback from "../../components/teacher/ModalOpenFeedbackTeacher.jsx";
 
-const TABLE_HEAD = ["Name", "Email", "Feedback", "Action"];
+const TABLE_HEAD = ["Name", "Email", "Feedback", "Status", "Action"];
 
 const sortKeyMap = {
-  Name: "name",
-  Email: "email",
+  Name: "user.name",
+  Email: "user.email",
   Feedback: "feedback",
+  Status: "isLive",
 };
 
 function TeacherFeedback() {
@@ -51,19 +53,21 @@ function TeacherFeedback() {
   useEffect(() => {
     dispatch(getAllFeedbacks());
   }, [dispatch]);
-
+  
   useEffect(() => {
     if (feedbacks && Array.isArray(feedbacks)) {
-      setTableRows(feedbacks);
+      const filteredFeedbacks = feedbacks.filter(feedback => feedback.userType === "Teacher");
+      setTableRows(filteredFeedbacks);
     }
   }, [feedbacks]);
+  
 
   const filteredRows = tableRows.filter((feedback) => {
     return (
-      (feedback.name &&
-        feedback.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (feedback.email &&
-        feedback.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (feedback.user.name &&
+        feedback.user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (feedback.user.email &&
+        feedback.user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (feedback.feedback &&
         feedback.feedback.toLowerCase().includes(searchTerm.toLowerCase()))
     );
@@ -140,6 +144,10 @@ function TeacherFeedback() {
     setIsConfirmationOpen(false);
   };
 
+  const handleToggleLiveStatus = (id) => {
+    dispatch(updateFeedbackLiveStatus(id));
+  };
+
   return (
     <>
       <Card className="h-full w-full">
@@ -157,7 +165,7 @@ function TeacherFeedback() {
                 size="sm"
                 onClick={() => handleOpenModal()}
               >
-                Add Feedback
+                Add Teacher Feedback
               </Button>
             </div>
           </div>
@@ -188,7 +196,9 @@ function TeacherFeedback() {
                     >
                       <div className="flex items-center gap-1">
                         {head}
-                        <ChevronUpDownIcon className="h-4 w-4" />
+                        {head !== "Action" && (
+                          <ChevronUpDownIcon className="h-4 w-4" />
+                        )}
                       </div>
                     </th>
                   ))}
@@ -205,9 +215,24 @@ function TeacherFeedback() {
                         {feedback.user.email}
                       </td>
                       <td className="text-sm py-2 pl-2">{feedback.feedback}</td>
-                      <td className="p-3 border-b flex gap-2 text-decoration-line: none;">
+
+                      <td className="p-3 text-left">
+                        <strong>
+                          {feedback.isLive ? "Active" : "Inactive"}
+                        </strong>
+                        <span
+                          onClick={() => handleToggleLiveStatus(feedback._id)}
+                        >
+                          {feedback.isLive ? (
+                            <ToggleRight className="text-blue-600 cursor-pointer" />
+                          ) : (
+                            <ToggleLeft className="text-black cursor-pointer" />
+                          )}
+                        </span>
+                      </td>
+                      <td className="p-3  flex gap-2 text-decoration-line: none;">
                         <Button
-                          className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
+                          className="flex items-center gap-2 text-black bg-white hover:bg-blue-600 hover:text-white"
                           onClick={() => handleOpenModal(feedback)}
                           color="blue"
                           size="sm"
@@ -216,7 +241,7 @@ function TeacherFeedback() {
                         </Button>
 
                         <Button
-                          className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
+                          className="flex items-center gap-2 text-red-600 bg-white hover:bg-red-600 hover:text-white"
                           onClick={() => openConfirmationDialog(feedback._id)}
                           color="blue"
                           size="sm"

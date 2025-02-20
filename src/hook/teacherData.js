@@ -5,6 +5,7 @@ import {
   createTeacher,
   updateTeacherById,
   deleteTeacher,
+  updateTeacherLiveStatusById,
 } from "../redux/actions/teacherAction";
 
 export const useTeacherData = () => {
@@ -28,11 +29,13 @@ export const useTeacherData = () => {
     dispatch(deleteTeacher(id));
     console.log("delete teacher", id);
   };
-
+const toggleLiveStatus = (id) => {
+      dispatch(updateTeacherLiveStatusById(id));
+    };
   return {
     teachers,
     updateTeacher,
-
+    toggleLiveStatus,
     addTeacher,
     deleteTeacherHook,
   };

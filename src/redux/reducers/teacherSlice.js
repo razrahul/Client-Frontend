@@ -38,6 +38,15 @@ const teacherSlice = createSlice({
                 state.teachers[index] = action.payload;
             }
         },
+        updateTeacherLiveStatus: (state, action) => {
+            state.loading = false;
+            const index = state.teachers.findIndex(
+              (teacher) => teacher._id === action.payload._id
+            );
+            if (index !== -1) {
+              state.teachers[index] = action.payload; // Update the teacher's live status
+            }
+          },
         removeTeacher:(state, action)=> {
             state.loading = false;
             state.teachers = state.teachers.filter(teacher => teacher._id !== action.payload.teacher._id);
@@ -55,6 +64,7 @@ export const {
     addTeacher,
     updateTeacher,
     removeTeacher,
+    updateTeacherLiveStatus,
 } = teacherSlice.actions;
 
 export default teacherSlice.reducer;

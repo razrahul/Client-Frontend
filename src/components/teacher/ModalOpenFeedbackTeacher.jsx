@@ -82,7 +82,7 @@ const ModalOpenFeedbackTeacher = ({
         <div className="modal-overlay fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
           <div className="modal-content p-6 bg-white rounded-lg max-w-4xl w-full">
             <h2 className="text-2xl mb-4">
-              {isEditing ? "Edit Feedback" : "Add Feedback"}
+              {isEditing ? "Edit Teacher Feedback" : "Add Teacher Feedback"}
             </h2>
 
             <div className="grid grid-cols-2 gap-4">
@@ -111,7 +111,7 @@ const ModalOpenFeedbackTeacher = ({
                 />
               </div>
 
-              <div className="col-span-1">
+              {/* <div className="col-span-1">
                 <label className="block text-sm font-medium">Rating</label>
                 <Input
                   type="number"
@@ -120,7 +120,7 @@ const ModalOpenFeedbackTeacher = ({
                   min="1"
                   max="5"
                 />
-              </div>
+              </div> */}
             </div>
 
             <div className="mt-4 flex justify-between">
@@ -134,7 +134,7 @@ const ModalOpenFeedbackTeacher = ({
                 className="bg-blue-600 text-white px-4 py-2 rounded-md"
                 onClick={isEditing ? handleEditFeedback : handleSubmit}
               >
-                {isEditing ? "Save Changes" : "Add Feedback"}
+                {isEditing ? "Save Changes" : "Add  Feedback"}
               </button>
             </div>
           </div>

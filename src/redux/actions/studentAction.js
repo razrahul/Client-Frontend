@@ -11,6 +11,7 @@ import {
     removeStudent,
     updateStudent,
     getStudent,
+    updateStudentLiveStatus,
 } from "../reducers/studentSlice";
 
 // Get All Students
@@ -87,3 +88,19 @@ export const deleteStudentById = (id) => async (dispatch) => {
         );
     }
 };
+
+export const updateStudentLiveStatusById = (id) => async (dispatch) => {
+    try {
+      dispatch(studentRequest()); // Dispatch loading state
+  
+      const { data } = await axios.patch(`${server}/student/updatelive/${id}`); // Make the PATCH request to update the live status
+  
+      dispatch(updateStudentLiveStatus(data.student)); // Dispatch the action to update the subject in the Redux store
+    } catch (error) {
+      dispatch(
+        studentFail(
+          error.response?.data?.message || "Failed to update subject live status"
+        )
+      );
+    }
+  };

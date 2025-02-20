@@ -13,24 +13,24 @@ import {
   ChevronUpDownIcon,
 } from "@heroicons/react/24/outline";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
-import { PencilIcon, TrashIcon } from "lucide-react";
+import { PencilIcon, Phone, ToggleLeft, ToggleRight, TrashIcon } from "lucide-react";
 import { useStudentData } from "../../hook/studentData.js"; // Assuming a similar hook for Student
 import {
   getAllStudents,
   deleteStudentById,
+  updateStudentLiveStatusById
 } from "../../redux/actions/studentAction.js"; // Assuming a similar action for Student
 import { useDispatch, useSelector } from "react-redux";
 
 const TABLE_HEAD = [
-  "Name",
-  "Email",
+  "Name/Email",
   "Phone",
   "About Us",
-  "Class Name", // Added column for class name
+  "Class/Subject", // Added column for class name
   "Gender", // Added column for gender
   "Area",
-  "Subject",
   "Charge Rate",
+  "Status",
   "Image",
   "Action",
 ];
@@ -38,11 +38,9 @@ const TABLE_HEAD = [
 const sortKeyMap = {
   Name: "name",
   Gender: "gender",
-  ClassName: "className", // Added to map for sorting
-  Subjects: "subject",
-  Location: "city.name",
-  Rate: "chargeRate",
-  Joined: "createdAt",
+  Phone: "phone",
+  Status: "isLive",
+  Class: "class",
 };
 
 function StudentTable() {
@@ -59,6 +57,8 @@ function StudentTable() {
 
   const rowsPerPage = 6;
   const dispatch = useDispatch();
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const [studentToDelete, setstudentToDelete] = useState(null);
   const { students } = useSelector((state) => state.student);
 
   useEffect(() => {
@@ -74,14 +74,22 @@ function StudentTable() {
   const filteredRows = tableRows.filter((student) => {
     return (
       student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.className.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.class.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.gender.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
 
   const sortedRows = [...filteredRows].sort((a, b) => {
-    const getNestedValue = (obj, key) =>
-      key.split(".").reduce((o, k) => (o || {})[k], obj);
+    const getNestedValue = (obj, key) => {
+      if (!obj || !key) return undefined;
+
+      return key.split(".").reduce((o, k) => {
+        if (o && o[k] !== undefined) {
+          return o[k];
+        }
+        return undefined;
+      }, obj);
+    };
     const aValue = getNestedValue(a, sortConfig.key);
     const bValue = getNestedValue(b, sortConfig.key);
 
@@ -106,10 +114,30 @@ function StudentTable() {
   const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
 
   const handleSort = (column) => {
-    const key = sortKeyMap[column];
-    const direction =
-      sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
-    setSortConfig({ key, direction });
+    // Check if we are clicking on the "Name/Email" column
+    if (column === "Name/Email") {
+      // Sort by 'name' only
+      const direction =
+        sortConfig.key === "name" && sortConfig.direction === "asc"
+          ? "desc"
+          : "asc";
+      setSortConfig({ key: "name", direction });
+    } else if (column === "Class/Subject") {
+      // Sort by 'name' only
+      const direction =
+        sortConfig.key === "class" && sortConfig.direction === "asc"
+          ? "desc"
+          : "asc";
+      setSortConfig({ key: "class", direction });
+    } else {
+      // For other columns, use the regular sorting behavior
+      const key = sortKeyMap[column];
+      const direction =
+        sortConfig.key === key && sortConfig.direction === "asc"
+          ? "desc"
+          : "asc";
+      setSortConfig({ key, direction });
+    }
   };
 
   const handleOpenModal = (student = null) => {
@@ -133,6 +161,7 @@ function StudentTable() {
     dispatch(deleteStudentById(id)).then(() => {
       dispatch(getAllStudents()); // Re-fetch students after deletion
     });
+    setIsConfirmationOpen(false);
   };
 
   const handlePageChange = (newPage) => {
@@ -140,7 +169,26 @@ function StudentTable() {
       setCurrentPage(newPage);
     }
   };
+  const handleDeleteTeacher = (id) => {
+    dispatch(deleteTeacher(id)).then(() => {
+      dispatch(getAllTeachers());
+    });
+    setIsConfirmationOpen(false);
+  };
 
+  const openConfirmationDialog = (id) => {
+    setstudentToDelete(id);
+    setIsConfirmationOpen(true);
+  };
+
+  const closeConfirmationDialog = () => {
+    setstudentToDelete(null);
+    setIsConfirmationOpen(false);
+  };
+
+  const handleToggleLiveStatus = (id) => {
+    dispatch(updateStudentLiveStatusById(id));
+  };
   return (
     <>
       <Card className="h-full w-full">
@@ -184,12 +232,33 @@ function StudentTable() {
                   {TABLE_HEAD.map((head) => (
                     <th
                       key={head}
-                      className="p-3 cursor-pointer text-left text-sm font-medium"
-                      onClick={() => handleSort(head)}
+                      className={`p-3 text-left text-sm font-medium 
+                        ${
+                          head !== "Subject" &&
+                          head !== "Charge Rate" &&
+                          head !== "Image" &&
+                          head !== "Action" &&
+                          head !== "About Us" &&
+                          head !== "Area"
+                            ? "cursor-pointer hover:bg-gray-200"
+                            : "cursor-default"
+                        }`}
+                      onClick={
+                        head === "Name/Email" || head === "Class/Subject"
+                          ? () => handleSort(head) // Handle both "Name/Email" and "Class/Subject"
+                          : () => handleSort(head) // Default sorting for other columns
+                      }
                     >
                       <div className="flex items-center gap-1">
                         {head}
-                        <ChevronUpDownIcon className="h-4 w-4" />
+                        {head !== "Subject" &&
+                          head !== "Charge Rate" &&
+                          head !== "Image" &&
+                          head !== "Action" &&
+                          head !== "About Us" &&
+                          head !== "Area" && (
+                            <ChevronUpDownIcon className="h-4 w-4" />
+                          )}
                       </div>
                     </th>
                   ))}
@@ -199,31 +268,48 @@ function StudentTable() {
                 {currentRows.length > 0 ? (
                   currentRows.map((student) => (
                     <tr key={student._id}>
-                      <td className="text-sm py-2 pl-2">{student.name}</td>
-                      <td className="text-sm py-2 pl-2">{student.email}</td>
+                      <td className="text-sm py-2 pl-2">
+                        <strong>{student.name}</strong>
+                        <br />
+                        {student.email}
+                      </td>
                       <td className="text-sm py-2 pl-2">{student.phone}</td>
                       <td className="text-sm py-2 pl-2">
                         {student.aboutUs || "No about us available"}
                       </td>
                       <td className="text-sm py-2 pl-2">
-                        {student.class || "Unknown"}
-                      </td>
-                      {/* Class Name column */}
-                      <td className="text-sm py-2 pl-2">
-                        {student.gender || "Unknown"}
-                      </td>
-                      {/* Gender column */}
-                      <td className="text-sm py-2 pl-2">
-                        {student.area?.name || "Unknown"}
-                      </td>
-                      <td className="text-sm py-2 pl-2">
+                        <strong>{student.class || "Unknown"}</strong>
+                        <br />
                         {student.subject?.length > 0
                           ? student.subject.map((sub) => sub.name).join(", ")
                           : "No subjects"}
                       </td>
                       <td className="text-sm py-2 pl-2">
+                        {student.gender || "Unknown"}
+                      </td>
+                      <td className="text-sm py-2 pl-2">
+                        {student.area?.name || "Unknown"}
+                      </td>
+
+                      <td className="text-sm py-2 pl-2">
                         {student.chargeRate}
                       </td>
+
+                        <td className="p-3 text-left">
+                          <strong>
+                            {student.isLive ? "Active" : "Inactive"}
+                          </strong>
+                          <span
+                            onClick={() => handleToggleLiveStatus(student._id)}
+                          >
+                            {student.isLive ? (
+                              <ToggleRight className="text-blue-600 cursor-pointer" />
+                            ) : (
+                              <ToggleLeft className="text-black cursor-pointer" />
+                            )}
+                          </span>
+                        </td>
+
                       <td>
                         <img
                           src={student.image?.url || "default.jpg"}
@@ -231,9 +317,9 @@ function StudentTable() {
                           className="w-10 h-10 rounded-full"
                         />
                       </td>
-                      <td className="p-3 border-b flex gap-2 text-decoration-line: none;">
+                      <td className="p-3  flex gap-2 text-decoration-line: none;">
                         <Button
-                          className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
+                          className="flex items-center gap-2 text-black bg-white hover:bg-blue-600 hover:text-white"
                           onClick={() => handleOpenModal(student)}
                           color="blue"
                           size="sm"
@@ -242,8 +328,8 @@ function StudentTable() {
                         </Button>
 
                         <Button
-                          className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
-                          onClick={() => handleDeleteStudent(student._id)}
+                          className="flex items-center gap-2 text-red-600 bg-white hover:bg-red-600 hover:text-white"
+                          onClick={() => openConfirmationDialog(student._id)}
                           color="blue"
                           size="sm"
                         >
@@ -294,6 +380,43 @@ function StudentTable() {
         data={data}
         isEditing={!!editingId}
       />
+      {isConfirmationOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur confirm-dialog ">
+          <div className="relative px-4 min-h-screen md:flex md:items-center md:justify-center">
+            <div className=" opacity-25 w-full h-full absolute z-10 inset-0"></div>
+            <div className="bg-white rounded-lg md:max-w-md md:mx-auto p-4 fixed inset-x-0 bottom-0 z-50 mb-4 mx-4 md:relative ">
+              <div className="md:flex items-center">
+                <div className="rounded-full border border-gray-300 flex items-center justify-center w-16 h-16 flex-shrink-0 mx-auto">
+                  <i className="bx bx-error text-3xl">&#9888;</i>
+                </div>
+                <div className="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
+                  <p className="font-bold">Warning!</p>
+                  <p className="text-sm text-gray-700 mt-1">
+                    You will lose all of your data by deleting this. This action
+                    cannot be undone.
+                  </p>
+                </div>
+              </div>
+              <div className="text-center md:text-right mt-4 md:flex md:justify-end">
+                <button
+                  className="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-red-200 text-red-700 rounded-lg font-semibold text-sm md:ml-2 md:order-2"
+                  onClick={() => {
+                    handleDeleteStudent(studentToDelete);
+                  }}
+                >
+                  Delete
+                </button>
+                <button
+                  className="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4 md:mt-0 md:order-1"
+                  onClick={closeConfirmationDialog}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

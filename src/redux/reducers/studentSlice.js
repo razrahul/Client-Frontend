@@ -38,9 +38,17 @@ const studentSlice = createSlice({
                 state.students[index] = action.payload.student;
             }
         },
+        updateStudentLiveStatus: (state, action) => {
+            state.loading = false;
+            const index = state.students.findIndex((student) => student._id === action.payload._id);
+            if (index !== -1) {
+              state.students[index] = action.payload; // Update the student with the new isLive status
+            }
+          },
+          
         removeStudent: (state, action) => {
             state.loading = false;
-            state.students = state.students.filter(student => student._id !== action.payload.student._id);
+            state.student = state.student.filter(student => student._id !== action.payload.student._id);
         },
     },
 });
@@ -53,6 +61,7 @@ export const {
     addStudent,
     updateStudent,
     removeStudent,
+    updateStudentLiveStatus,
 } = studentSlice.actions;
 
 export default studentSlice.reducer;

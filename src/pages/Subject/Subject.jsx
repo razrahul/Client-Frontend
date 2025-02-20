@@ -157,7 +157,7 @@ function SubjectTable() {
   return (
     <>
       <Card className="h-full w-full ">
-        <CardHeader floated={false} className="border-b p-4">
+        <CardHeader floated={false} className=" p-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
             <div>
               <Typography variant="h5">Subject List</Typography>
@@ -199,7 +199,9 @@ function SubjectTable() {
                   >
                     <div className="flex items-center gap-1">
                       {head}
-                      <ChevronUpDownIcon className="h-4 w-4" />
+                      {head !== "Action" && (
+                        <ChevronUpDownIcon className="h-4 w-4" />
+                      )}
                     </div>
                   </th>
                 ))}
@@ -228,7 +230,7 @@ function SubjectTable() {
                     </span>
                   </td>
 
-                  <td className="p-3 border-b flex gap-2 text-decoration-line: none;">
+                  <td className="p-3  flex gap-2 text-decoration-line: none;">
                     <Button
                       className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
                       size="sm"
