@@ -39,8 +39,8 @@ const ModalOpenVacancy = ({
     }
   }, [open, isEditing, data]);
 
-  const handleSubjectChange = (e) => {
-    setSelectedSubject(e.target.value);
+  const handleSubjectChange = (subjectId) => {
+    setSelectedSubject(subjectId);
   };
 
   const handleAreaChange = (areaId) => {

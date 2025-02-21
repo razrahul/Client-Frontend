@@ -40,7 +40,7 @@ const ModalOpenStudent = ({
       setEmail(data?.email || "");
       setPhone(data?.phone || "");
       setGender(data?.gender || "");
-      setClassName(data?.className || "");
+      setClassName(data?.class || "");
       setAboutUs(data?.aboutUs || "");
       setChargeRate(data?.chargeRate || "");
       setSelectedSubjects(data?.subjects?.map((sub) => sub._id) || []);
