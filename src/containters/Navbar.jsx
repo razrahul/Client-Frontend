@@ -10,6 +10,7 @@ import {
   BookCopy,
   TableOfContents,
   MessagesSquare,
+  Users,
 } from "lucide-react"; // Add all necessary imports
 import { Link } from "react-router-dom"; // Import Link for routing
 
@@ -58,6 +59,11 @@ export default function Navbar() {
             icon={<MessagesSquare size={20} />}
             text="Teacher Feedback"
             to="/TeacherFeedback"
+          />
+          <SidebarItem
+            icon={<Users  size={20} />}
+            text="Vacancy"
+            to="/Vacancy"
           />
           <hr className="my-3" />
           <SidebarItem icon={<Settings size={20} />} text="Settings" />

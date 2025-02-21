@@ -7,6 +7,7 @@ import subjectSlice from './reducers/subjectslice.js';
 import faqSlice from   './reducers/faqSlice.js';
 import studentSlice from './reducers/studentSlice.js';
 import feedbackSlice from './reducers/feedbackSlice.js'
+import vacancySlice from './reducers/vacancySlice.js';
 
 
 
@@ -22,6 +23,7 @@ const store = configureStore({
         subject: subjectSlice,
         faq: faqSlice,
         feedback: feedbackSlice,
+        vacancy: vacancySlice,
     },
 });
 

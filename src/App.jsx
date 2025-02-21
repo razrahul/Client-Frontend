@@ -10,6 +10,7 @@ import Subject from "./pages/Subject/Subject.jsx";
 import FAQS from "./pages/Faq/faq";
 import StudentFeedback from "./pages/student/studentFeedback.jsx";
 import TeacherFeedback from "./pages/Teacher/teacherFeedback.jsx";
+import Vacancy from "./pages/vacancy/VacancyTable.jsx";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="/faq" element={<FAQS/>}/>
             <Route path="/StudentFeedback" element={<StudentFeedback/>}/>
             <Route path="/TeacherFeedback" element={<TeacherFeedback/>}/>
+            <Route path="/vacancy" element={<Vacancy/>}/>
             {/* Add more routes for other components as needed */}
           </Routes>
         </div>
