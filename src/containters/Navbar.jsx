@@ -22,11 +22,11 @@ export default function Navbar() {
           <div className="text-xl font-bold">Pinnacle Home Tuition</div>{" "}
         </div>
         <ul className="flex-1 px-3">
-          <SidebarItem
+          {/* <SidebarItem
             icon={<LayoutDashboard size={20} />}
             text="Dashboard"
             to="/"
-          />
+          /> */}
           <SidebarItem
             icon={<Boxes size={20} />}
             text="Student"
