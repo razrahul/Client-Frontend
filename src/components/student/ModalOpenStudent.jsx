@@ -47,7 +47,7 @@ const ModalOpenStudent = ({
       setClassName(data?.class || "");
       setAboutUs(data?.aboutUs || "");
       setChargeRate(data?.chargeRate || "");
-      setSelectedSubjects(data?.subjects?.map((sub) => sub._id) || []);
+      setSelectedSubjects(data?.subject?.map((sub) => sub._id) || []);
       setAreaId(data?.area?._id || "");
       setImage(null);
       setImagePrev(data?.image?.url || "");
@@ -86,19 +86,6 @@ const ModalOpenStudent = ({
     e.preventDefault();
 
     const formData = new FormData();
-    console.log(
-      name,
-      email,
-      phone,
-      gender,
-      className,
-      aboutUs,
-      chargeRate,
-      selectedSubjects,
-      areaId,
-      image
-    );
-
     formData.append("name", name);
     formData.append("email", email);
     formData.append("phone", phone);
@@ -109,7 +96,6 @@ const ModalOpenStudent = ({
     formData.append("subjectId", selectedSubjects.join(","));
     formData.append("areaId", areaId);
     formData.append("file", image);
-    console.log([...formData]);
 
     try {
       dispatch(createStudent(formData)).then(() => {
@@ -254,13 +240,13 @@ const ModalOpenStudent = ({
                   <Select
                     value={areaOptions.find(
                       (option) => option.value === areaId
-                    )} // Set the selected area
-                    onChange={handleAreaChange} // Handle change
-                    options={areaOptions} // Pass the area options
-                    getOptionLabel={(e) => e.label} // Custom label rendering for options
-                    getOptionValue={(e) => e.value} // Custom value extraction for selected option
+                    )}
+                    onChange={handleAreaChange}e
+                    options={areaOptions} 
+                    getOptionLabel={(e) => e.label} 
+                    getOptionValue={(e) => e.value} 
                     className="w-full border rounded-lg text-sm"
-                    isClearable={true} // Allow clearing the selection if needed
+                    isClearable={true} 
                   />
                 </div>
               </div>

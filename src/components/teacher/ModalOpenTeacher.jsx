@@ -210,13 +210,13 @@ const ModalOpenTeacher = ({
                   <Select
                     value={areaOptions.find(
                       (option) => option.value === areaId
-                    )} // Set the selected area
-                    onChange={handleAreaChange} // Handle change
-                    options={areaOptions} // Pass the area options
-                    getOptionLabel={(e) => e.label} // Custom label rendering for options
-                    getOptionValue={(e) => e.value} // Custom value extraction for selected option
+                    )}
+                    onChange={handleAreaChange}e
+                    options={areaOptions} 
+                    getOptionLabel={(e) => e.label} 
+                    getOptionValue={(e) => e.value} 
                     className="w-full border rounded-lg text-sm"
-                    isClearable={true} // Allow clearing the selection if needed
+                    isClearable={true} 
                   />
                 </div>
               </div>
