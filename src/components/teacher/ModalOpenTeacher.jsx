@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Button, Input, Checkbox, Textarea } from "@material-tailwind/react";
+import { Button, Input, Textarea } from "@material-tailwind/react";
 import { useAreaData } from "../../hook/areaData";
 import { useSubjectData } from "../../hook/subjectData";
 import { useDispatch } from "react-redux";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 
 import {
   createTeacher,
   updateTeacherById,
   getAllTeachers,
 } from "../../redux/actions/teacherAction.js";
+
+const animatedComponents = makeAnimated();
 
 const ModalOpenTeacher = ({
   open,
@@ -55,7 +59,7 @@ const ModalOpenTeacher = ({
       setImage(null);
       setImagePrev("");
     }
-  }, [open, isEditing, data]); // ✅ Dependencies are minimal now
+  }, [open, isEditing, data]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -69,41 +73,8 @@ const ModalOpenTeacher = ({
     }
   };
 
-  // const handleSubjectChange = (selectedOptions) => {
-  //   setSelectedSubjects((prevSelected) => {
-  //     // Create a Set to ensure uniqueness
-  //     const selectedSet = new Set([...prevSelected, ...selectedOptions]);
-
-  //     // Check for each selected option, and add or remove as necessary
-  //     selectedOptions.forEach((subjectId) => {
-  //       if (prevSelected.includes(subjectId)) {
-  //         selectedSet.delete(subjectId); // Remove subject if already selected
-  //       } else {
-  //         selectedSet.add(subjectId); // Add subject if not selected
-  //       }
-  //     });
-
-  //     // Return updated selected subjects as an array
-  //     return [...selectedSet];
-  //   });
-  // };
   const handleSubjectChange = (selectedOptions) => {
-    setSelectedSubjects((prevSelected) => {
-      // Use Set to automatically handle uniqueness
-      const updatedSelectedSubjects = new Set(prevSelected);
-
-      // Add each selected subject to the Set
-      selectedOptions.forEach((subjectId) => {
-        if (updatedSelectedSubjects.has(subjectId)) {
-          updatedSelectedSubjects.delete(subjectId); // Unselect subject if it's already selected
-        } else {
-          updatedSelectedSubjects.add(subjectId); // Select subject if not already selected
-        }
-      });
-
-      // Return the updated selected subjects as an array
-      return [...updatedSelectedSubjects];
-    });
+    setSelectedSubjects(selectedOptions.map((option) => option.value));
   };
 
   const handleSubmit = async (e) => {
@@ -145,15 +116,11 @@ const ModalOpenTeacher = ({
     if (image) {
       formData.append("file", image); // Only append image if a new one is selected
     }
-    // Debugging: Log FormData values
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
 
     try {
       dispatch(updateTeacherById(data._id, formData)).then(() => {
-        dispatch(getAllTeachers()); // Re-fetch teachers after add
-      }); // Assuming `data._id` contains the teacher ID
+        dispatch(getAllTeachers()); // Re-fetch teachers after edit
+      });
       console.log("Update successful");
       handleSave(); // Close modal and refresh data
     } catch (error) {
@@ -162,11 +129,25 @@ const ModalOpenTeacher = ({
     }
   };
 
+  const subjectOptions = subjects.map((subject) => ({
+    value: subject._id,
+    label: subject.name,
+  }));
+
+  const areaOptions = areas.map((area) => ({
+    value: area._id,
+    label: area.name,
+  }));
+
+  const handleAreaChange = (selectedOption) => {
+    setAreaId(selectedOption ? selectedOption.value : "");
+  };
+
   return (
     <>
       {open && (
         <div className="modal-overlay fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
-          <div className="modal-content p-6 bg-white rounded-lg  max-w-4xl w-full">
+          <div className="modal-content p-6 bg-white rounded-lg max-w-4xl w-full">
             <h2 className="text-2xl mb-4">
               {isEditing ? "Edit Teacher" : "Add Teacher"}
             </h2>
@@ -206,50 +187,37 @@ const ModalOpenTeacher = ({
 
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Subjects</label>
-                <div className="relative">
-                  <select
-                    multiple
-                    value={selectedSubjects}
-                    onChange={(e) => {
-                      const selectedOptions = Array.from(
-                        e.target.selectedOptions,
-                        (option) => option.value
-                      );
-                      handleSubjectChange(selectedOptions);
-                    }}
-                    className="w-full border rounded-lg h-32 overflow-y-auto text-sm"
-                  >
-                    {subjects.map((subject) => (
-                      <option
-                        key={subject._id}
-                        value={subject._id}
-                        className="py-2" // Added padding to increase the gap between options
-                      >
-                        {subject.name}
-                      </option>
-                    ))}
-                  </select>
+                <div className="relative z-10">
+                  <Select
+                    menuPortalTarget={document.body} // ensures the dropdown is rendered outside the modal container
+                    menuPosition="fixed" // keeps dropdown in place
+                    isMulti
+                    closeMenuOnSelect={false}
+                    components={animatedComponents}
+                    value={subjectOptions.filter((option) =>
+                      selectedSubjects.includes(option.value)
+                    )}
+                    onChange={handleSubjectChange}
+                    options={subjectOptions}
+                    className="w-full border rounded-lg text-sm"
+                  />
                 </div>
               </div>
 
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Area</label>
                 <div className="relative">
-                  <div className="h-32 overflow-y-auto border rounded-lg text-sm">
-                    {areas.map((area) => (
-                      <div
-                        key={area._id}
-                        onClick={() => setAreaId(area._id)}
-                        className={`p-2 cursor-pointer hover:bg-blue-500 ${
-                          area._id === areaId
-                            ? "bg-blue-500 text-white"
-                            : "bg-white"
-                        }`}
-                      >
-                        {area.name}
-                      </div>
-                    ))}
-                  </div>
+                  <Select
+                    value={areaOptions.find(
+                      (option) => option.value === areaId
+                    )} // Set the selected area
+                    onChange={handleAreaChange} // Handle change
+                    options={areaOptions} // Pass the area options
+                    getOptionLabel={(e) => e.label} // Custom label rendering for options
+                    getOptionValue={(e) => e.value} // Custom value extraction for selected option
+                    className="w-full border rounded-lg text-sm"
+                    isClearable={true} // Allow clearing the selection if needed
+                  />
                 </div>
               </div>
 

@@ -3,11 +3,15 @@ import { Button, Input, Checkbox, Textarea } from "@material-tailwind/react";
 import { useAreaData } from "../../hook/areaData";
 import { useSubjectData } from "../../hook/subjectData";
 import { useDispatch } from "react-redux";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 import {
   createStudent,
   updateStudentById,
   getAllStudents,
 } from "../../redux/actions/studentAction";
+
+const animatedComponents = makeAnimated();
 
 const ModalOpenStudent = ({
   open,
@@ -16,15 +20,15 @@ const ModalOpenStudent = ({
   isEditing,
   data,
 }) => {
-  const { liveAreas:areas } = useAreaData();
+  const { liveAreas: areas } = useAreaData();
   const { liveSubjects: subjects } = useSubjectData();
   const dispatch = useDispatch();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [gender, setGender] = useState(""); 
-  const [className, setClassName] = useState(""); 
+  const [gender, setGender] = useState("");
+  const [className, setClassName] = useState("");
   const [aboutUs, setAboutUs] = useState("");
   const [chargeRate, setChargeRate] = useState("");
   const [selectedSubjects, setSelectedSubjects] = useState([]);
@@ -33,7 +37,7 @@ const ModalOpenStudent = ({
   const [imagePrev, setImagePrev] = useState("");
 
   useEffect(() => {
-    if (!open) return; 
+    if (!open) return;
 
     if (isEditing && data) {
       setName(data?.name || "");
@@ -75,41 +79,37 @@ const ModalOpenStudent = ({
   };
 
   const handleSubjectChange = (selectedOptions) => {
-    setSelectedSubjects((prevSelected) => {
-      // Use Set to automatically handle uniqueness
-      const updatedSelectedSubjects = new Set(prevSelected);
-
-      // Add each selected subject to the Set
-      selectedOptions.forEach((subjectId) => {
-        if (updatedSelectedSubjects.has(subjectId)) {
-          updatedSelectedSubjects.delete(subjectId); // Unselect subject if it's already selected
-        } else {
-          updatedSelectedSubjects.add(subjectId); // Select subject if not already selected
-        }
-      });
-
-      // Return the updated selected subjects as an array
-      return [...updatedSelectedSubjects];
-    });
+    setSelectedSubjects(selectedOptions.map((option) => option.value));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
-    console.log(name, email, phone, gender, className, aboutUs, chargeRate, selectedSubjects, areaId, image);
+    console.log(
+      name,
+      email,
+      phone,
+      gender,
+      className,
+      aboutUs,
+      chargeRate,
+      selectedSubjects,
+      areaId,
+      image
+    );
 
     formData.append("name", name);
     formData.append("email", email);
     formData.append("phone", phone);
-    formData.append("gender", gender); 
-    formData.append("className", className); 
+    formData.append("gender", gender);
+    formData.append("className", className);
     formData.append("aboutUs", aboutUs);
     formData.append("chargeRate", chargeRate);
     formData.append("subjectId", selectedSubjects.join(","));
     formData.append("areaId", areaId);
     formData.append("file", image);
-    console.log([...formData]); 
+    console.log([...formData]);
 
     try {
       dispatch(createStudent(formData)).then(() => {
@@ -130,27 +130,40 @@ const ModalOpenStudent = ({
     formData.append("name", name);
     formData.append("email", email);
     formData.append("phone", phone);
-    formData.append("gender", gender); 
-    formData.append("className", className); 
+    formData.append("gender", gender);
+    formData.append("className", className);
     formData.append("aboutUs", aboutUs);
     formData.append("chargeRate", chargeRate);
     formData.append("subjectId", selectedSubjects.join(","));
     formData.append("areaId", areaId);
     if (image) {
-      formData.append("file", image); 
+      formData.append("file", image);
     }
-    console.log("on edit" ,formData);
+    console.log("on edit", formData);
 
     try {
       dispatch(updateStudentById(data._id, formData)).then(() => {
-        dispatch(getAllStudents()); 
+        dispatch(getAllStudents());
       });
       console.log("Update successful");
-      handleSave(); 
+      handleSave();
     } catch (error) {
       console.error("Error updating student:", error);
       alert("Failed to update student.");
     }
+  };
+
+  const subjectOptions = subjects.map((subject) => ({
+    value: subject._id,
+    label: subject.name,
+  }));
+  const areaOptions = areas.map((area) => ({
+    value: area._id,
+    label: area.name,
+  }));
+
+  const handleAreaChange = (selectedOption) => {
+    setAreaId(selectedOption ? selectedOption.value : "");
   };
 
   return (
@@ -218,53 +231,39 @@ const ModalOpenStudent = ({
 
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Subjects</label>
-                <div className="relative">
-                  <select
-                    multiple
-                    value={selectedSubjects}
-                    onChange={(e) => {
-                      const selectedOptions = Array.from(
-                        e.target.selectedOptions,
-                        (option) => option.value
-                      );
-                      handleSubjectChange(selectedOptions);
-                    }}
-                    className="w-full border rounded-lg h-32 overflow-y-auto text-sm"
-                  >
-                    {subjects.map((subject) => (
-                      <option
-                        key={subject._id}
-                        value={subject._id}
-                        className="py-2" // Added padding to increase the gap between options
-                      >
-                        {subject.name}
-                      </option>
-                    ))}
-                  </select>
+                <div className="relative z-10">
+                  <Select
+                    menuPortalTarget={document.body} // ensures the dropdown is rendered outside the modal container
+                    menuPosition="fixed" // keeps dropdown in place
+                    isMulti
+                    closeMenuOnSelect={false}
+                    components={animatedComponents}
+                    value={subjectOptions.filter((option) =>
+                      selectedSubjects.includes(option.value)
+                    )}
+                    onChange={handleSubjectChange}
+                    options={subjectOptions}
+                    className="w-full border rounded-lg text-sm"
+                  />
                 </div>
               </div>
 
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Area</label>
                 <div className="relative">
-                  <div className="h-32 overflow-y-auto border rounded-lg text-sm">
-                    {areas.map((area) => (
-                      <div
-                        key={area._id}
-                        onClick={() => setAreaId(area._id)}
-                        className={`p-2 cursor-pointer hover:bg-blue-500 ${
-                          area._id === areaId
-                            ? "bg-blue-500 text-white"
-                            : "bg-white"
-                        }`}
-                      >
-                        {area.name}
-                      </div>
-                    ))}
-                  </div>
+                  <Select
+                    value={areaOptions.find(
+                      (option) => option.value === areaId
+                    )} // Set the selected area
+                    onChange={handleAreaChange} // Handle change
+                    options={areaOptions} // Pass the area options
+                    getOptionLabel={(e) => e.label} // Custom label rendering for options
+                    getOptionValue={(e) => e.value} // Custom value extraction for selected option
+                    className="w-full border rounded-lg text-sm"
+                    isClearable={true} // Allow clearing the selection if needed
+                  />
                 </div>
               </div>
-
 
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Charge Rate</label>
