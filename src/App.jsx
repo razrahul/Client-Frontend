@@ -5,7 +5,6 @@ import {
   Navigate,
 } from "react-router-dom";
 import Navbar from "./containters/Navbar";
-import EmployeeTable from "./containters/EmployeeTable";
 import StudentTable from "./pages/student/studentTable.jsx";
 import TeacherTable from "./pages/Teacher/TeacherTable.jsx";
 import FormsTable from "./pages/Forms/Forms";

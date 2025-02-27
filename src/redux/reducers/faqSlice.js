@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   loading: false,
-  faqs: [], // Stores all FAQs
-  faq: {}, // Stores a single FAQ when fetched by ID
+  faqs: [], 
+  faq: {}, 
   error: null,
 };
 
@@ -25,7 +25,7 @@ const faqSlice = createSlice({
     },
     addFaq(state, action) {
       state.loading = false;
-      state.faqs.push(action.payload); // Add the new FAQ to the array
+      state.faqs.push(action.payload); 
     },
     removeFaq(state, action) {
       state.loading = false;
@@ -37,7 +37,7 @@ const faqSlice = createSlice({
         (faq) => faq._id === action.payload._id
       );
       if (index !== -1) {
-        state.faqs[index] = action.payload; // Update the FAQ in the array
+        state.faqs[index] = action.payload; 
       }
     },
     toggleFaqLiveStatus(state, action) {
@@ -45,7 +45,7 @@ const faqSlice = createSlice({
         (faq) => faq._id === action.payload._id
       );
       if (index !== -1) {
-        state.faqs[index].isLive = !state.faqs[index].isLive; // Toggle the live status
+        state.faqs[index].isLive = !state.faqs[index].isLive; 
       }
     },
   },

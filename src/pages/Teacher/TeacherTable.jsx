@@ -14,7 +14,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
 import { PencilIcon, ToggleLeft, ToggleRight, TrashIcon } from "lucide-react";
-import { useTeacherData } from "../../hook/teacherData";
 import {
   getAllTeachers,
   deleteTeacher,
@@ -40,15 +39,13 @@ const sortKeyMap = {
   Phone: "phone",
   Status: "isLive",
   Area: "area.name",
-  // Removed sorting keys for Subject, Charge Rate, Image, and Action
 };
 
 function TeacherTable() {
-  const toggleLiveStatus = useTeacherData();
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
-    key: "name", // Default sorting key
+    key: "name",
     direction: "asc",
   });
   const [currentPage, setCurrentPage] = useState(1);
@@ -77,7 +74,6 @@ function TeacherTable() {
   }, [teachers]);
 
   const filteredRows = tableRows.filter((teacher) => {
-    // Add a check to ensure teacher.name is defined and not null
     return (
       teacher.name &&
       teacher.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -120,16 +116,13 @@ function TeacherTable() {
   const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
 
   const handleSort = (column) => {
-    // Check if we are clicking on the "Name/Email" column
     if (column === "Name/Email") {
-      // Sort by 'name' only
       const direction =
         sortConfig.key === "name" && sortConfig.direction === "asc"
           ? "desc"
           : "asc";
       setSortConfig({ key: "name", direction });
     } else {
-      // For other columns, use the regular sorting behavior
       const key = sortKeyMap[column];
       const direction =
         sortConfig.key === key && sortConfig.direction === "asc"
@@ -237,8 +230,8 @@ function TeacherTable() {
                       }`}
                       onClick={
                         head === "Name/Email"
-                          ? () => handleSort("Name/Email") // Special case for Name/Email column
-                          : () => handleSort(head) // Default sorting for other columns
+                          ? () => handleSort("Name/Email")
+                          : () => handleSort(head)
                       }
                     >
                       <div className="flex items-center gap-1">
