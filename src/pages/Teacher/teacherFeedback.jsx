@@ -53,14 +53,15 @@ function TeacherFeedback() {
   useEffect(() => {
     dispatch(getAllFeedbacks());
   }, [dispatch]);
-  
+
   useEffect(() => {
     if (feedbacks && Array.isArray(feedbacks)) {
-      const filteredFeedbacks = feedbacks.filter(feedback => feedback.userType === "Teacher");
+      const filteredFeedbacks = feedbacks.filter(
+        (feedback) => feedback.userType === "Teacher"
+      );
       setTableRows(filteredFeedbacks);
     }
   }, [feedbacks]);
-  
 
   const filteredRows = tableRows.filter((feedback) => {
     return (

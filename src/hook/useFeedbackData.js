@@ -32,5 +32,11 @@ export const useFeedbackData = () => {
     dispatch(updateFeedbackLiveStatus(id));
   };
 
-  return { feedbacks, addFeedback, updateFeedbackById, deleteFeedbackById, toggleLiveStatus };
+  return {
+    feedbacks,
+    addFeedback,
+    updateFeedbackById,
+    deleteFeedbackById,
+    toggleLiveStatus,
+  };
 };

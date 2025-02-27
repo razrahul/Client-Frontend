@@ -183,7 +183,6 @@ function AreaTable() {
                   <th
                     key={head}
                     className="p-3 cursor-pointer"
-                    
                     onClick={() => handleSort(head)}
                   >
                     <div className="flex items-center gap-1">

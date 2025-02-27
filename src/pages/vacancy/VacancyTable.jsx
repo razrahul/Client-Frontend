@@ -21,13 +21,7 @@ import {
   updateVacancyLiveStatusById,
 } from "../../redux/actions/vacancyActions"; // Assuming you have similar actions as teacher
 
-const TABLE_HEAD = [
-  "Class",
-  "Area",
-  "Subject",
-  "Status",
-  "Action",
-];
+const TABLE_HEAD = ["Class", "Area", "Subject", "Status", "Action"];
 
 const sortKeyMap = {
   Class: "studentName",
@@ -111,9 +105,7 @@ function VacancyTable() {
   const handleSort = (column) => {
     const key = sortKeyMap[column];
     const direction =
-      sortConfig.key === key && sortConfig.direction === "asc"
-        ? "desc"
-        : "asc";
+      sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
     setSortConfig({ key, direction });
   };
 
@@ -214,7 +206,9 @@ function VacancyTable() {
                     >
                       <div className="flex items-center gap-1">
                         {head}
-                        {head !== "Action" && <ChevronUpDownIcon className="h-4 w-4" />}
+                        {head !== "Action" && (
+                          <ChevronUpDownIcon className="h-4 w-4" />
+                        )}
                       </div>
                     </th>
                   ))}
@@ -224,12 +218,22 @@ function VacancyTable() {
                 {currentRows.length > 0 ? (
                   currentRows.map((vacancy) => (
                     <tr key={vacancy._id}>
-                      <td className="text-sm py-2 pl-2">{vacancy.studentName}</td>
-                      <td className="text-sm py-2 pl-2">{vacancy.area?.name || "Unknown"}</td>
-                      <td className="text-sm py-2 pl-2">{vacancy.subject?.name || "No subject"}</td>
                       <td className="text-sm py-2 pl-2">
-                        <strong>{vacancy.isLive ? "Active" : "Inactive"}</strong>
-                        <span onClick={() => handleToggleLiveStatus(vacancy._id)}>
+                        {vacancy.studentName}
+                      </td>
+                      <td className="text-sm py-2 pl-2">
+                        {vacancy.area?.name || "Unknown"}
+                      </td>
+                      <td className="text-sm py-2 pl-2">
+                        {vacancy.subject?.name || "No subject"}
+                      </td>
+                      <td className="text-sm py-2 pl-2">
+                        <strong>
+                          {vacancy.isLive ? "Active" : "Inactive"}
+                        </strong>
+                        <span
+                          onClick={() => handleToggleLiveStatus(vacancy._id)}
+                        >
                           {vacancy.isLive ? (
                             <ToggleRight className="text-blue-600 cursor-pointer" />
                           ) : (

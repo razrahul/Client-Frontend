@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   vacancies: [],
@@ -8,7 +8,7 @@ const initialState = {
 };
 
 const vacancySlice = createSlice({
-  name: 'vacancy',
+  name: "vacancy",
   initialState,
   reducers: {
     vacancyRequest: (state) => {

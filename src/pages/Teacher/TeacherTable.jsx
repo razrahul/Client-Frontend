@@ -44,7 +44,7 @@ const sortKeyMap = {
 };
 
 function TeacherTable() {
-  const toggleLiveStatus=useTeacherData();
+  const toggleLiveStatus = useTeacherData();
   const [tableRows, setTableRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -178,7 +178,7 @@ function TeacherTable() {
   };
 
   const handleToggleLiveStatus = (id) => {
-    dispatch(updateTeacherLiveStatusById(id)); 
+    dispatch(updateTeacherLiveStatusById(id));
   };
 
   return (

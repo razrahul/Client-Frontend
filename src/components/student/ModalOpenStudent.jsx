@@ -241,12 +241,13 @@ const ModalOpenStudent = ({
                     value={areaOptions.find(
                       (option) => option.value === areaId
                     )}
-                    onChange={handleAreaChange}e
-                    options={areaOptions} 
-                    getOptionLabel={(e) => e.label} 
-                    getOptionValue={(e) => e.value} 
+                    onChange={handleAreaChange}
+                    e
+                    options={areaOptions}
+                    getOptionLabel={(e) => e.label}
+                    getOptionValue={(e) => e.value}
                     className="w-full border rounded-lg text-sm"
-                    isClearable={true} 
+                    isClearable={true}
                   />
                 </div>
               </div>

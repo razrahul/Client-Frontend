@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Input, Textarea } from "@material-tailwind/react";
+import { Input, Textarea } from "@material-tailwind/react";
 import { useAreaData } from "../../hook/areaData";
 import { useSubjectData } from "../../hook/subjectData";
 import { useDispatch } from "react-redux";
@@ -92,7 +92,7 @@ const ModalOpenTeacher = ({
 
     try {
       dispatch(createTeacher(formData)).then(() => {
-        dispatch(getAllTeachers()); // Re-fetch teachers after add
+        dispatch(getAllTeachers());
       });
       console.log("Submit successful");
       handleSave();
@@ -114,15 +114,15 @@ const ModalOpenTeacher = ({
     formData.append("subjectId", selectedSubjects.join(","));
     formData.append("areaId", areaId);
     if (image) {
-      formData.append("file", image); // Only append image if a new one is selected
+      formData.append("file", image);
     }
 
     try {
       dispatch(updateTeacherById(data._id, formData)).then(() => {
-        dispatch(getAllTeachers()); // Re-fetch teachers after edit
+        dispatch(getAllTeachers());
       });
       console.log("Update successful");
-      handleSave(); // Close modal and refresh data
+      handleSave();
     } catch (error) {
       console.error("Error updating teacher:", error);
       alert("Failed to update teacher.");
@@ -189,8 +189,8 @@ const ModalOpenTeacher = ({
                 <label className="block text-sm font-medium">Subjects</label>
                 <div className="relative z-10">
                   <Select
-                    menuPortalTarget={document.body} // ensures the dropdown is rendered outside the modal container
-                    menuPosition="fixed" // keeps dropdown in place
+                    menuPortalTarget={document.body}
+                    menuPosition="fixed"
                     isMulti
                     closeMenuOnSelect={false}
                     components={animatedComponents}
@@ -211,12 +211,12 @@ const ModalOpenTeacher = ({
                     value={areaOptions.find(
                       (option) => option.value === areaId
                     )}
-                    onChange={handleAreaChange}e
-                    options={areaOptions} 
-                    getOptionLabel={(e) => e.label} 
-                    getOptionValue={(e) => e.value} 
+                    onChange={handleAreaChange}
+                    options={areaOptions}
+                    getOptionLabel={(e) => e.label}
+                    getOptionValue={(e) => e.value}
                     className="w-full border rounded-lg text-sm"
-                    isClearable={true} 
+                    isClearable={true}
                   />
                 </div>
               </div>

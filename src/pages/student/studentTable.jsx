@@ -13,12 +13,18 @@ import {
   ChevronUpDownIcon,
 } from "@heroicons/react/24/outline";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
-import { PencilIcon, Phone, ToggleLeft, ToggleRight, TrashIcon } from "lucide-react";
+import {
+  PencilIcon,
+  Phone,
+  ToggleLeft,
+  ToggleRight,
+  TrashIcon,
+} from "lucide-react";
 import { useStudentData } from "../../hook/studentData.js"; // Assuming a similar hook for Student
 import {
   getAllStudents,
   deleteStudentById,
-  updateStudentLiveStatusById
+  updateStudentLiveStatusById,
 } from "../../redux/actions/studentAction.js"; // Assuming a similar action for Student
 import { useDispatch, useSelector } from "react-redux";
 
@@ -295,20 +301,20 @@ function StudentTable() {
                         {student.chargeRate}
                       </td>
 
-                        <td className="p-3 text-left">
-                          <strong>
-                            {student.isLive ? "Active" : "Inactive"}
-                          </strong>
-                          <span
-                            onClick={() => handleToggleLiveStatus(student._id)}
-                          >
-                            {student.isLive ? (
-                              <ToggleRight className="text-blue-600 cursor-pointer" />
-                            ) : (
-                              <ToggleLeft className="text-black cursor-pointer" />
-                            )}
-                          </span>
-                        </td>
+                      <td className="p-3 text-left">
+                        <strong>
+                          {student.isLive ? "Active" : "Inactive"}
+                        </strong>
+                        <span
+                          onClick={() => handleToggleLiveStatus(student._id)}
+                        >
+                          {student.isLive ? (
+                            <ToggleRight className="text-blue-600 cursor-pointer" />
+                          ) : (
+                            <ToggleLeft className="text-black cursor-pointer" />
+                          )}
+                        </span>
+                      </td>
 
                       <td>
                         <img

@@ -32,7 +32,9 @@ export const getLiveFaqs = () => async (dispatch) => {
     const { data } = await axios.get(`${server}/faq/live`);
     dispatch(fetchFaqsSuccess(data));
   } catch (error) {
-    dispatch(faqFail(error.response?.data?.message || "Failed to fetch live FAQs"));
+    dispatch(
+      faqFail(error.response?.data?.message || "Failed to fetch live FAQs")
+    );
   }
 };
 
@@ -80,6 +82,10 @@ export const updateFaqLiveStatus = (id) => async (dispatch) => {
     const { data } = await axios.patch(`${server}/faq/updatelive/${id}`);
     dispatch(toggleFaqLiveStatus(data.faq));
   } catch (error) {
-    dispatch(faqFail(error.response?.data?.message || "Failed to update FAQ live status"));
+    dispatch(
+      faqFail(
+        error.response?.data?.message || "Failed to update FAQ live status"
+      )
+    );
   }
 };

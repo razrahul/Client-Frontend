@@ -98,7 +98,9 @@ export const updateVacancyLiveStatusById = (id) => async (dispatch) => {
     dispatch(updateVacancyLiveStatus(data));
   } catch (error) {
     dispatch(
-      vacancyFail(error.response?.data?.message || "Failed to update live status")
+      vacancyFail(
+        error.response?.data?.message || "Failed to update live status"
+      )
     );
   }
 };

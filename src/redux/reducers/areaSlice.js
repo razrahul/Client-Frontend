@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   loading: false,
-  areas: [],  // Stores all areas (including live areas)
-  liveAreas: [],  // Stores only live areas
+  areas: [], // Stores all areas (including live areas)
+  liveAreas: [], // Stores only live areas
   area: {},
   error: null,
 };
@@ -34,17 +34,23 @@ const areaSlice = createSlice({
     },
     removeArea(state, action) {
       state.loading = false;
-      state.areas = state.areas.filter(area => area._id !== action.payload._id);
+      state.areas = state.areas.filter(
+        (area) => area._id !== action.payload._id
+      );
     },
     updateArea(state, action) {
       state.loading = false;
-      const index = state.areas.findIndex(area => area._id === action.payload._id);
+      const index = state.areas.findIndex(
+        (area) => area._id === action.payload._id
+      );
       if (index !== -1) {
         state.areas[index] = action.payload;
       }
     },
     toggleAreaLiveStatus(state, action) {
-      const index = state.areas.findIndex(area => area._id === action.payload._id);
+      const index = state.areas.findIndex(
+        (area) => area._id === action.payload._id
+      );
       if (index !== -1) {
         state.areas[index].isLive = !state.areas[index].isLive; // Toggle the live status
       }
@@ -60,7 +66,7 @@ export const {
   removeArea,
   updateArea,
   toggleAreaLiveStatus,
-  getAllLiveAreasSuccess
+  getAllLiveAreasSuccess,
 } = areaSlice.actions;
 
 export default areaSlice.reducer;

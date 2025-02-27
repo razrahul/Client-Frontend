@@ -53,24 +53,27 @@ function FormsTable() {
   useEffect(() => {
     if (contacts) {
       setTableRows(contacts);
-    } 
+    }
   }, [contacts]);
 
   const filteredRows = tableRows.filter((contact) => {
     const searchLower = searchTerm.toLowerCase();
-  
+
     return (
       (contact.name && contact.name.toLowerCase().includes(searchLower)) ||
       (contact.email && contact.email.toLowerCase().includes(searchLower)) ||
-      (contact.number && String(contact.number).toLowerCase().includes(searchLower)) ||  // Convert number to string
-      (contact.whatsappNumber && String(contact.whatsappNumber).toLowerCase().includes(searchLower)) ||  // Convert whatsappNumber to string
+      (contact.number &&
+        String(contact.number).toLowerCase().includes(searchLower)) || // Convert number to string
+      (contact.whatsappNumber &&
+        String(contact.whatsappNumber).toLowerCase().includes(searchLower)) || // Convert whatsappNumber to string
       (contact.class && contact.class.toLowerCase().includes(searchLower)) ||
-      (contact.subjectList && contact.subjectList.join("").toLowerCase().includes(searchLower)) ||
-      (contact.timeslot && contact.timeslot.toLowerCase().includes(searchLower)) ||
+      (contact.subjectList &&
+        contact.subjectList.join("").toLowerCase().includes(searchLower)) ||
+      (contact.timeslot &&
+        contact.timeslot.toLowerCase().includes(searchLower)) ||
       (contact.feeRange && contact.feeRange.toLowerCase().includes(searchLower))
     );
   });
-  
 
   // Sorting function
   const sortRows = (rows) => {
@@ -211,9 +214,7 @@ function FormsTable() {
                     >
                       {head}
                       {sortColumn === head.toLowerCase() && (
-                        <span>
-                          {sortOrder === "asc" ? "↑" : "↓"}
-                        </span>
+                        <span>{sortOrder === "asc" ? "↑" : "↓"}</span>
                       )}
                     </button>
                   </th>
@@ -239,7 +240,8 @@ function FormsTable() {
                       Class: {contact.class || "No class provided"}
                     </strong>
                     <br />
-                    Subjects: {contact.subjectList.length > 0
+                    Subjects:{" "}
+                    {contact.subjectList.length > 0
                       ? contact.subjectList.join(", ")
                       : "No subjects provided"}
                   </td>
@@ -312,7 +314,8 @@ function FormsTable() {
                 <div className="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
                   <p className="font-bold">Warning!</p>
                   <p className="text-sm text-gray-700 mt-1">
-                    You will lose all of your data by deleting this. This action cannot be undone.
+                    You will lose all of your data by deleting this. This action
+                    cannot be undone.
                   </p>
                 </div>
               </div>

@@ -22,8 +22,9 @@ const ModalOpenArea = ({
 
           <div className="space-y-4">
             <div>
-                <label className="block text-sm font-medium text-gray-900">
-                Area Name</label>
+              <label className="block text-sm font-medium text-gray-900">
+                Area Name
+              </label>
               <input
                 className="w-full p-2 border rounded"
                 value={formData.name}

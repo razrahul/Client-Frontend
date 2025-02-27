@@ -21,7 +21,9 @@ export const getAllFeedbacks = () => async (dispatch) => {
     const { data } = await axios.get(`${server}/feedback`);
     dispatch(fetchFeedbacksSuccess(data));
   } catch (error) {
-    dispatch(feedbackFail(error.response?.data?.message || "Failed to fetch feedbacks"));
+    dispatch(
+      feedbackFail(error.response?.data?.message || "Failed to fetch feedbacks")
+    );
   }
 };
 
@@ -33,7 +35,11 @@ export const getLiveFeedbacks = () => async (dispatch) => {
     const { data } = await axios.get(`${server}/feedback/live`);
     dispatch(fetchFeedbacksSuccess(data));
   } catch (error) {
-    dispatch(feedbackFail(error.response?.data?.message || "Failed to fetch live feedbacks"));
+    dispatch(
+      feedbackFail(
+        error.response?.data?.message || "Failed to fetch live feedbacks"
+      )
+    );
   }
 };
 
@@ -45,7 +51,11 @@ export const getFeedbackById = (id) => async (dispatch) => {
     const { data } = await axios.get(`${server}/feedback/${id}`);
     dispatch(setFeedback(data.feedbacks));
   } catch (error) {
-    dispatch(feedbackFail(error.response?.data?.message || "Failed to fetch feedback by ID"));
+    dispatch(
+      feedbackFail(
+        error.response?.data?.message || "Failed to fetch feedback by ID"
+      )
+    );
   }
 };
 
@@ -57,7 +67,9 @@ export const createFeedback = (feedbackData) => async (dispatch) => {
     const { data } = await axios.post(`${server}/feedback`, feedbackData);
     dispatch(addFeedback(data.feedback));
   } catch (error) {
-    dispatch(feedbackFail(error.response?.data?.message || "Failed to create feedback"));
+    dispatch(
+      feedbackFail(error.response?.data?.message || "Failed to create feedback")
+    );
   }
 };
 
@@ -69,7 +81,9 @@ export const updateFeedbackAction = (id, feedbackData) => async (dispatch) => {
     const { data } = await axios.put(`${server}/feedback/${id}`, feedbackData);
     dispatch(updateFeedback(data.feedback));
   } catch (error) {
-    dispatch(feedbackFail(error.response?.data?.message || "Failed to update feedback"));
+    dispatch(
+      feedbackFail(error.response?.data?.message || "Failed to update feedback")
+    );
   }
 };
 
@@ -81,7 +95,9 @@ export const deleteFeedback = (id) => async (dispatch) => {
     await axios.delete(`${server}/feedback/${id}`);
     dispatch(removeFeedback(id));
   } catch (error) {
-    dispatch(feedbackFail(error.response?.data?.message || "Failed to delete feedback"));
+    dispatch(
+      feedbackFail(error.response?.data?.message || "Failed to delete feedback")
+    );
   }
 };
 
@@ -93,6 +109,10 @@ export const updateFeedbackLiveStatus = (id) => async (dispatch) => {
     const { data } = await axios.patch(`${server}/feedback/updatelive/${id}`);
     dispatch(toggleFeedbackLiveStatus(data.feedback));
   } catch (error) {
-    dispatch(feedbackFail(error.response?.data?.message || "Failed to update feedback live status"));
+    dispatch(
+      feedbackFail(
+        error.response?.data?.message || "Failed to update feedback live status"
+      )
+    );
   }
 };

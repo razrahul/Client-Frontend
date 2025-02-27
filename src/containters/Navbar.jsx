@@ -61,7 +61,7 @@ export default function Navbar() {
             to="/TeacherFeedback"
           />
           <SidebarItem
-            icon={<Users  size={20} />}
+            icon={<Users size={20} />}
             text="Vacancy"
             to="/Vacancy"
           />

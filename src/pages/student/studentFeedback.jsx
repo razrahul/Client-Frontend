@@ -20,15 +20,13 @@ import {
 } from "../../redux/actions/feedbackActions";
 import ModalOpenFeedback from "../../components/student/ModalOpenFeedbackStudent";
 
-const TABLE_HEAD = ["Name", "Email", "Feedback",  "Status",
-  "Action"];
+const TABLE_HEAD = ["Name", "Email", "Feedback", "Status", "Action"];
 
 const sortKeyMap = {
   Name: "user.name",
   Email: "user.email",
   Feedback: "feedback",
   Status: "isLive",
-
 };
 
 function StudentFeedback() {
@@ -55,14 +53,15 @@ function StudentFeedback() {
   useEffect(() => {
     dispatch(getAllFeedbacks());
   }, [dispatch]);
-  
+
   useEffect(() => {
     if (feedbacks && Array.isArray(feedbacks)) {
-      const filteredFeedbacks = feedbacks.filter(feedback => feedback.userType === "Student");
+      const filteredFeedbacks = feedbacks.filter(
+        (feedback) => feedback.userType === "Student"
+      );
       setTableRows(filteredFeedbacks);
     }
   }, [feedbacks]);
-  
 
   const filteredRows = tableRows.filter((feedback) => {
     return (

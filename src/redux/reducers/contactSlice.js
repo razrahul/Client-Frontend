@@ -29,7 +29,7 @@ const contactSlice = createSlice({
       state.loading = false;
       state.contacts = action.payload.contactForms || action.payload || [];
     },
-    
+
     getContact: (state, action) => {
       state.loading = false;
       state.contact = action.payload.contactForm;
@@ -56,12 +56,14 @@ const contactSlice = createSlice({
   },
 });
 
-export const { addContact, removeContact, updateContact,
-    contactRequest,
-    contactFail,
-    fetchContactsSuccess,
-    getContact
- } =
-  contactSlice.actions;
+export const {
+  addContact,
+  removeContact,
+  updateContact,
+  contactRequest,
+  contactFail,
+  fetchContactsSuccess,
+  getContact,
+} = contactSlice.actions;
 
 export default contactSlice.reducer;

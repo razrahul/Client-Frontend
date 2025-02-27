@@ -6,7 +6,7 @@ import {
   updateFeedbackAction,
   getAllFeedbacks,
 } from "../../redux/actions/feedbackActions.js";
-import { useStudentData } from "../../hook/studentData.js"; 
+import { useStudentData } from "../../hook/studentData.js";
 
 const ModalOpenFeedbackStudent = ({
   open,
@@ -15,24 +15,24 @@ const ModalOpenFeedbackStudent = ({
   isEditing,
   data,
 }) => {
-  const { students } = useStudentData(); 
+  const { students } = useStudentData();
   const dispatch = useDispatch();
 
-  const [userId, setUserId] = useState(""); 
-  const [feedback, setFeedback] = useState(""); 
-  const [rating, setRating] = useState(2); 
+  const [userId, setUserId] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const [rating, setRating] = useState(2);
 
   useEffect(() => {
-    if (!open) return; 
+    if (!open) return;
 
     if (isEditing && data) {
       setUserId(data?.userId || "");
       setFeedback(data?.feedback || "");
-      setRating(data?.rating || 2); 
+      setRating(data?.rating || 2);
     } else {
       setUserId("");
       setFeedback("");
-      setRating(2); 
+      setRating(2);
     }
   }, [open, isEditing, data]);
 
@@ -47,9 +47,9 @@ const ModalOpenFeedbackStudent = ({
 
     try {
       await dispatch(createFeedback(formData)).then(() => {
-        dispatch(getAllFeedbacks()); 
+        dispatch(getAllFeedbacks());
       });
-      handleSave(); 
+      handleSave();
     } catch (error) {
       console.error("Error adding feedback:", error);
       alert("Failed to add feedback.");
@@ -57,7 +57,7 @@ const ModalOpenFeedbackStudent = ({
   };
 
   const handleEditFeedback = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     const formData = {
       userId,
@@ -67,9 +67,9 @@ const ModalOpenFeedbackStudent = ({
 
     try {
       await dispatch(updateFeedbackAction(data._id, formData)).then(() => {
-        dispatch(getAllFeedbacks()); 
+        dispatch(getAllFeedbacks());
       });
-      handleSave(); 
+      handleSave();
     } catch (error) {
       console.error("Error updating feedback:", error);
       alert("Failed to update feedback.");
@@ -87,7 +87,9 @@ const ModalOpenFeedbackStudent = ({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-1">
-                <label className="block text-sm font-medium">Select Student</label>
+                <label className="block text-sm font-medium">
+                  Select Student
+                </label>
                 <select
                   value={userId}
                   onChange={(e) => setUserId(e.target.value)}
