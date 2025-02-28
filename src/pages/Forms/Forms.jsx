@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useFormsData } from "../../hook/formsData.js";
-import FormRow from "../../components/forms/FormTableRow.jsx";
-import ModalOpenForm from "../../components/forms/ModalOpenForm.jsx";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { UserPlusIcon, PencilIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
-  Input,
   Typography,
   Button,
   CardBody,
@@ -17,6 +13,7 @@ import { TrashIcon } from "lucide-react";
 
 const TABLE_HEAD = [
   "Applicant",
+  "Role",
   "Contacts",
   "Class/Subjects",
   "Time/Fee Range",
@@ -179,13 +176,6 @@ function FormsTable() {
         <CardHeader floated={false} className=" p-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
             <Typography variant="h5">Form List</Typography>
-            {/* <Button
-              className="flex items-center gap-2 bg-blue-600 text-white"
-              size="sm"
-              onClick={() => handleOpenModal()}
-            >
-              <UserPlusIcon className="h-4 w-4" /> Add Form
-            </Button> */}
           </div>
           <div className="relative mt-4 w-full md:w-72">
             <input
@@ -228,6 +218,9 @@ function FormsTable() {
                     <strong>{contact.name || "No name provided"}</strong>
                     <br />
                     {contact.email || "No email provided"}
+                  </td>
+                  <td className="p-3 text-left">
+                    <strong>{contact.role || "No name provided"}</strong>
                   </td>
                   <td className="p-3 text-left">
                     <strong>{contact.number || "No number provided"}</strong>
@@ -290,14 +283,14 @@ function FormsTable() {
         </CardFooter>
       </Card>
 
-      <ModalOpenForm
+      {/* <ModalOpenForm
         open={isModalOpen}
         handleClose={() => setIsModalOpen(false)}
         handleSave={handleSaveForm}
         formData={formData}
         setFormData={setFormData}
         isEditing={!!editingId}
-      />
+      /> */}
 
       {/* Confirmation Dialog */}
       {isConfirmationOpen && (

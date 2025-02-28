@@ -178,7 +178,7 @@ const ModalOpenTeacher = ({
                 />
               </div>
               <div className="col-span-1">
-                <label className="block text-sm font-medium">About Us</label>
+                <label className="block text-sm font-medium">Experience</label>
                 <Textarea
                   value={aboutUs}
                   onChange={(e) => setAboutUs(e.target.value)}

@@ -215,7 +215,7 @@ function StudentFeedback() {
                       <td className="text-sm py-2 pl-2">
                         {feedback.user.email}
                       </td>
-                      <td className="text-sm py-2 pl-2">{feedback.feedback}</td>
+                      <td className="text-sm py-2 pl-2 ">{feedback.feedback}</td>
                       <td className="p-3 text-left">
                         <strong>
                           {feedback.isLive ? "Active" : "Inactive"}

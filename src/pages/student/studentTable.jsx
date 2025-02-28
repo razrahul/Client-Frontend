@@ -35,7 +35,7 @@ const TABLE_HEAD = [
   "Class/Subject", // Added column for class name
   "Gender", // Added column for gender
   "Area",
-  "Charge Rate",
+  "Board",
   "Status",
   "Image",
   "Action",
@@ -241,7 +241,7 @@ function StudentTable() {
                       className={`p-3 text-left text-sm font-medium 
                         ${
                           head !== "Subject" &&
-                          head !== "Charge Rate" &&
+                          head !== "Board" &&
                           head !== "Image" &&
                           head !== "Action" &&
                           head !== "About Us" &&
@@ -258,7 +258,7 @@ function StudentTable() {
                       <div className="flex items-center gap-1">
                         {head}
                         {head !== "Subject" &&
-                          head !== "Charge Rate" &&
+                          head !== "Board" &&
                           head !== "Image" &&
                           head !== "Action" &&
                           head !== "About Us" &&
@@ -274,34 +274,36 @@ function StudentTable() {
                 {currentRows.length > 0 ? (
                   currentRows.map((student) => (
                     <tr key={student._id}>
-                      <td className="text-sm py-2 pl-2">
+                      <td className="text-sm py-2 pl-2 w-52 break-words">
                         <strong>{student.name}</strong>
                         <br />
                         {student.email}
                       </td>
-                      <td className="text-sm py-2 pl-2">{student.phone}</td>
-                      <td className="text-sm py-2 pl-2">
+                      <td className="text-sm py-2 pl-2 w-40 break-words">
+                        {student.phone}
+                      </td>
+                      <td className="text-sm py-2 pl-2 w-64 break-words">
                         {student.aboutUs || "No about us available"}
                       </td>
-                      <td className="text-sm py-2 pl-2">
+                      <td className="text-sm py-2 pl-2 w-64 break-words">
                         <strong>{student.class || "Unknown"}</strong>
                         <br />
                         {student.subject?.length > 0
                           ? student.subject.map((sub) => sub.name).join(", ")
                           : "No subjects"}
                       </td>
-                      <td className="text-sm py-2 pl-2">
+                      <td className="text-sm py-2 pl-2 w-32">
                         {student.gender || "Unknown"}
                       </td>
-                      <td className="text-sm py-2 pl-2">
+                      <td className="text-sm py-2 pl-2 w-40">
                         {student.area?.name || "Unknown"}
                       </td>
 
-                      <td className="text-sm py-2 pl-2">
+                      <td className="text-sm py-2 pl-2 w-32">
                         {student.chargeRate}
                       </td>
 
-                      <td className="p-3 text-left">
+                      <td className="p-3 text-left w-40">
                         <strong>
                           {student.isLive ? "Active" : "Inactive"}
                         </strong>
@@ -316,14 +318,14 @@ function StudentTable() {
                         </span>
                       </td>
 
-                      <td>
+                      <td className="w-16 text-center">
                         <img
                           src={student.image?.url || "default.jpg"}
                           alt={student.name}
                           className="w-10 h-10 rounded-full"
                         />
                       </td>
-                      <td className="p-3  flex gap-2 text-decoration-line: none;">
+                      <td className="p-3 flex gap-2">
                         <Button
                           className="flex items-center gap-2 text-black bg-white hover:bg-blue-600 hover:text-white"
                           onClick={() => handleOpenModal(student)}

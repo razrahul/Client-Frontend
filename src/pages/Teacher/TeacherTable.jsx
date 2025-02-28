@@ -240,8 +240,7 @@ function TeacherTable() {
                           head !== "Charge Rate" &&
                           head !== "Image" &&
                           head !== "Action" &&
-                          head !== "Experience" &&
-                          (
+                          head !== "Experience" && (
                             <ChevronUpDownIcon className="h-4 w-4" />
                           )}
                       </div>
@@ -253,28 +252,30 @@ function TeacherTable() {
                 {currentRows.length > 0 ? (
                   currentRows.map((teacher) => (
                     <tr key={teacher._id}>
-                      <td className="text-sm py-2 pl-2">
+                      <td className="text-sm py-2 pl-2 w-52 break-words">
                         <strong>{teacher.name}</strong>
                         <br />
                         {teacher.email}
                       </td>
-                      <td className="text-sm py-2 pl-2">{teacher.phone}</td>
-                      <td className="text-sm py-2 pl-2">
+                      <td className="text-sm py-2 pl-2 w-40 break-words">
+                        {teacher.phone}
+                      </td>
+                      <td className="text-sm py-2 pl-2 w-64 break-words">
                         {teacher.aboutUs || "No about us available"}
                       </td>
-                      <td className="text-sm py-2 pl-2">
+                      <td className="text-sm py-2 pl-2 w-64 break-words">
                         {teacher.area?.name || "Unknown"}
                       </td>
-                      <td className="text-sm py-2 pl-2">
+                      <td className="text-sm py-2 pl-2 w-64 break-words">
                         {teacher.subject?.length > 0
                           ? teacher.subject.map((sub) => sub.name).join(", ")
                           : "No subjects"}
                       </td>
-                      <td className="text-sm py-2 pl-2">
+                      <td className="text-sm py-2 pl-2 w-32 break-words">
                         {teacher.chargeRate}
                       </td>
 
-                      <td className="p-3 text-left">
+                      <td className="p-3 text-left w-40 break-words">
                         <strong>
                           {teacher.isLive ? "Active" : "Inactive"}
                         </strong>
@@ -289,14 +290,14 @@ function TeacherTable() {
                         </span>
                       </td>
 
-                      <td>
+                      <td className="w-16 text-center">
                         <img
                           src={teacher.image?.url || "default.jpg"}
                           alt={teacher.name}
                           className="w-10 h-10 rounded-full"
                         />
                       </td>
-                      <td className="p-3  flex gap-2 text-decoration-line: none;">
+                      <td className="p-3 flex gap-2">
                         <Button
                           className="flex items-center gap-2 text-black bg-white hover:bg-blue-600 hover:text-white"
                           onClick={() => handleOpenModal(teacher)}
