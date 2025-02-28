@@ -253,11 +253,11 @@ const ModalOpenStudent = ({
               </div>
 
               <div className="col-span-1">
-                <label className="block text-sm font-medium">Charge Rate</label>
+                <label className="block text-sm font-medium">Board</label>
                 <Input
                   value={chargeRate}
                   onChange={(e) => setChargeRate(e.target.value)}
-                  placeholder="Enter Charge Rate"
+                  placeholder="Enter Board"
                 />
               </div>
               <div className="col-span-1">
