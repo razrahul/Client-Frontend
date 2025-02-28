@@ -19,7 +19,7 @@ export default function Navbar() {
     <aside className="h-screen w-64">
       <nav className="h-full flex flex-col bg-white border-r ">
         <div className="p-4 pb-2 flex justify-between items-center">
-          <div className="text-xl font-bold">Pinnacle Home Tuition</div>{" "}
+          <div className="text-xl font-bold">Pringle Home Tuition</div>{" "}
         </div>
         <ul className="flex-1 px-3">
           <SidebarItem

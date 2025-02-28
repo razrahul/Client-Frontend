@@ -24,7 +24,7 @@ import { useDispatch, useSelector } from "react-redux";
 const TABLE_HEAD = [
   "Name/Email",
   "Phone",
-  "About Us",
+  "Experience",
   "Area",
   "Subject",
   "Charge Rate",
@@ -223,7 +223,7 @@ function TeacherTable() {
                         head !== "Charge Rate" &&
                         head !== "Image" &&
                         head !== "Action" &&
-                        head !== "About Us" &&
+                        head !== "Experience" &&
                         head !== "Area"
                           ? "cursor-pointer hover:bg-gray-200"
                           : "cursor-default"
@@ -240,8 +240,8 @@ function TeacherTable() {
                           head !== "Charge Rate" &&
                           head !== "Image" &&
                           head !== "Action" &&
-                          head !== "About Us" &&
-                          head !== "Area" && (
+                          head !== "Experience" &&
+                          (
                             <ChevronUpDownIcon className="h-4 w-4" />
                           )}
                       </div>
