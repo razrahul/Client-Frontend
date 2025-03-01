@@ -27,7 +27,7 @@ const TABLE_HEAD = [
   "Phone",
   "About Us",
   "Area",
-  "Subject",
+  "Board/Subject",
   "Charge Rate",
   "Status",
   "Image",
