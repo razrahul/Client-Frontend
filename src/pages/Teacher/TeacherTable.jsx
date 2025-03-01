@@ -273,6 +273,8 @@ function TeacherTable() {
                         {teacher.area?.name || "Unknown"}
                       </td>
                       <td className="text-sm py-2 pl-2">
+                        <strong>B-{teacher.board || "Null"}</strong>
+                        <br/>
                         {teacher.subject?.length > 0
                           ? teacher.subject.map((sub) => sub.name).join(", ")
                           : "No subjects"}

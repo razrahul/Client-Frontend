@@ -34,6 +34,7 @@ const ModalOpenTeacher = ({
   const [areaId, setAreaId] = useState("");
   const [image, setImage] = useState(null);
   const [imagePrev, setImagePrev] = useState("");
+  const [selectedBoard, setSelectedBoard] = useState(null);
 
   useEffect(() => {
     if (!open) return;
@@ -48,6 +49,7 @@ const ModalOpenTeacher = ({
       setAreaId(data?.area?._id || "");
       setImage(null);
       setImagePrev(data?.image?.url || "");
+      setSelectedBoard({ label: data?.board, value: data?.board } || null);
     } else {
       setName("");
       setEmail("");
@@ -58,6 +60,7 @@ const ModalOpenTeacher = ({
       setAreaId("");
       setImage(null);
       setImagePrev("");
+      setSelectedBoard(null);
     }
   }, [open, isEditing, data]);
 
@@ -89,6 +92,7 @@ const ModalOpenTeacher = ({
     formData.append("subjectId", selectedSubjects.join(","));
     formData.append("areaId", areaId);
     formData.append("file", image);
+    formData.append("board", selectedBoard?.value);
 
     try {
       dispatch(createTeacher(formData)).then(() => {
@@ -116,6 +120,7 @@ const ModalOpenTeacher = ({
     if (image) {
       formData.append("file", image); // Only append image if a new one is selected
     }
+    formData.append("board", selectedBoard?.value);
 
     try {
       dispatch(updateTeacherById(data._id, formData)).then(() => {
@@ -142,6 +147,15 @@ const ModalOpenTeacher = ({
   const handleAreaChange = (selectedOption) => {
     setAreaId(selectedOption ? selectedOption.value : "");
   };
+
+  const columnsBoard = ["BSEB", "CBSE", "ICSE", "BSMEB", "All Board", "State Board", "IB", "Others"];
+
+  // Define boardOptions inside the component
+  const boardOptions = columnsBoard.map((board) => ({
+    label: board,
+    value: board,
+  }));
+
 
   return (
     <>
@@ -211,12 +225,26 @@ const ModalOpenTeacher = ({
                     value={areaOptions.find(
                       (option) => option.value === areaId
                     )}
-                    onChange={handleAreaChange}e
-                    options={areaOptions} 
-                    getOptionLabel={(e) => e.label} 
-                    getOptionValue={(e) => e.value} 
+                    onChange={handleAreaChange}
+                    e
+                    options={areaOptions}
+                    getOptionLabel={(e) => e.label}
+                    getOptionValue={(e) => e.value}
                     className="w-full border rounded-lg text-sm"
-                    isClearable={true} 
+                    isClearable={true}
+                  />
+                </div>
+              </div>
+
+              <div className="col-span-1">
+                <label className="block text-sm font-medium">Board</label>
+                <div className="relative">
+                  <Select
+                    value={selectedBoard}
+                    onChange={setSelectedBoard} // Directly set the selected option
+                    options={boardOptions} // Ensure this is defined inside the component
+                    className="w-full border rounded-lg text-sm"
+                    isClearable={true}
                   />
                 </div>
               </div>
