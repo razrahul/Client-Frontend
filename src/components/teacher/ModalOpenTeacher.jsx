@@ -5,12 +5,7 @@ import { useSubjectData } from "../../hook/subjectData";
 import { useDispatch } from "react-redux";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-
-import {
-  createTeacher,
-  updateTeacherById,
-  getAllTeachers,
-} from "../../redux/actions/teacherAction.js";
+import { createTeacher, updateTeacherById, getAllTeachers } from "../../redux/actions/teacherAction.js";
 
 const animatedComponents = makeAnimated();
 
@@ -34,6 +29,7 @@ const ModalOpenTeacher = ({
   const [areaId, setAreaId] = useState("");
   const [image, setImage] = useState(null);
   const [imagePrev, setImagePrev] = useState("");
+  const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
     if (!open) return;
@@ -77,8 +73,43 @@ const ModalOpenTeacher = ({
     setSelectedSubjects(selectedOptions.map((option) => option.value));
   };
 
+  // Validation functions
+  const validateName = (name) => name.trim() !== "";
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePhone = (phone) => /^\d{10}$/.test(phone); // Ensures phone is 10 digits
+  const validateAboutUs = (aboutUs) => {
+    const wordCount = aboutUs.split(" ").filter(Boolean).length;
+    return wordCount <= 25; // No more than 250 words
+  };
+  const validateChargeRate = (chargeRate) => chargeRate.trim() !== ""; // Ensure chargeRate is not empty
+  const validateSubject = (selectedSubjects) => selectedSubjects.length > 0; // Ensure at least one subject is selected
+  const validateArea = (areaId) => areaId.trim() !== ""; // Ensure areaId is not empty
+  const validateImage = (image) => image !== null; // Ensure image is uploaded
+
+  const validateForm = () => {
+    const errors = {};
+
+    if (!validateName(name)) errors.name = "Name is required";
+    if (!validateEmail(email)) errors.email = "Invalid email";
+    if (!validatePhone(phone)) errors.phone = "Phone must be 10 digits";
+    if (!validateAboutUs(aboutUs)) errors.aboutUs = "About Us must be 150 words or less";
+    if (!validateChargeRate(chargeRate)) errors.chargeRate = "Charge Rate is required";
+    if (!validateSubject(selectedSubjects)) errors.selectedSubjects = "At least one subject must be selected";
+    if (!validateArea(areaId)) errors.areaId = "Area is required";
+    if (!validateImage(image)) errors.image = "Image is required";
+
+    return errors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const errors = validateForm();
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      return; // Stop submission if there are validation errors
+    }
 
     const formData = new FormData();
     formData.append("name", name);
@@ -104,6 +135,13 @@ const ModalOpenTeacher = ({
 
   const handleEditTeacher = async (e) => {
     e.preventDefault();
+
+    const errors = validateForm();
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      return; // Stop submission if there are validation errors
+    }
 
     const formData = new FormData();
     formData.append("name", name);
@@ -148,9 +186,7 @@ const ModalOpenTeacher = ({
       {open && (
         <div className="modal-overlay fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
           <div className="modal-content p-6 bg-white rounded-lg max-w-4xl w-full">
-            <h2 className="text-2xl mb-4">
-              {isEditing ? "Edit Teacher" : "Add Teacher"}
-            </h2>
+            <h2 className="text-2xl mb-4">{isEditing ? "Edit Teacher" : "Add Teacher"}</h2>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-1">
@@ -160,6 +196,7 @@ const ModalOpenTeacher = ({
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Enter Name"
                 />
+                {formErrors.name && <p className="text-red-500 text-xs">{formErrors.name}</p>}
               </div>
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Email</label>
@@ -168,6 +205,7 @@ const ModalOpenTeacher = ({
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter Email"
                 />
+                {formErrors.email && <p className="text-red-500 text-xs">{formErrors.email}</p>}
               </div>
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Phone</label>
@@ -176,6 +214,7 @@ const ModalOpenTeacher = ({
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Enter Phone"
                 />
+                {formErrors.phone && <p className="text-red-500 text-xs">{formErrors.phone}</p>}
               </div>
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Experience</label>
@@ -183,6 +222,7 @@ const ModalOpenTeacher = ({
                   value={aboutUs}
                   onChange={(e) => setAboutUs(e.target.value)}
                 />
+                {formErrors.aboutUs && <p className="text-red-500 text-xs">{formErrors.aboutUs}</p>}
               </div>
 
               <div className="col-span-1">
@@ -201,6 +241,9 @@ const ModalOpenTeacher = ({
                     options={subjectOptions}
                     className="w-full border rounded-lg text-sm"
                   />
+                  {formErrors.selectedSubjects && (
+                    <p className="text-red-500 text-xs">{formErrors.selectedSubjects}</p>
+                  )}
                 </div>
               </div>
 
@@ -208,9 +251,7 @@ const ModalOpenTeacher = ({
                 <label className="block text-sm font-medium">Area</label>
                 <div className="relative">
                   <Select
-                    value={areaOptions.find(
-                      (option) => option.value === areaId
-                    )}
+                    value={areaOptions.find((option) => option.value === areaId)}
                     onChange={handleAreaChange}
                     options={areaOptions}
                     getOptionLabel={(e) => e.label}
@@ -218,6 +259,7 @@ const ModalOpenTeacher = ({
                     className="w-full border rounded-lg text-sm"
                     isClearable={true}
                   />
+                  {formErrors.areaId && <p className="text-red-500 text-xs">{formErrors.areaId}</p>}
                 </div>
               </div>
 
@@ -228,26 +270,23 @@ const ModalOpenTeacher = ({
                   onChange={(e) => setChargeRate(e.target.value)}
                   placeholder="Enter Charge Rate"
                 />
+                {formErrors.chargeRate && <p className="text-red-500 text-xs">{formErrors.chargeRate}</p>}
               </div>
 
               <div className="col-span-1">
-                <label className="block text-sm font-medium">
-                  Upload Image
-                </label>
+                <label className="block text-sm font-medium">Upload Image</label>
                 <Input
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
                 />
                 {imagePrev && <img src={imagePrev} alt="Preview" width="150" />}
+                {formErrors.image && <p className="text-red-500 text-xs">{formErrors.image}</p>}
               </div>
             </div>
 
             <div className="mt-4 flex justify-between">
-              <button
-                className="bg-gray-500 text-white px-4 py-2 rounded-md"
-                onClick={handleClose}
-              >
+              <button className="bg-gray-500 text-white px-4 py-2 rounded-md" onClick={handleClose}>
                 Cancel
               </button>
               <button

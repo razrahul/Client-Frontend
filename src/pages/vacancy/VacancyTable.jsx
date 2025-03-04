@@ -62,10 +62,12 @@ function VacancyTable() {
 
   const filteredRows = tableRows.filter((vacancy) => {
     return (
-      vacancy.studentName &&
-      vacancy.studentName.toLowerCase().includes(searchTerm.toLowerCase())
+      (vacancy.studentName && vacancy.studentName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (vacancy.area?.name && vacancy.area.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (vacancy.subject?.name && vacancy.subject.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   });
+  
 
   const sortedRows = [...filteredRows].sort((a, b) => {
     const getNestedValue = (obj, key) => {

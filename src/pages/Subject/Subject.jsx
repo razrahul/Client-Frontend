@@ -17,11 +17,12 @@ import {
 } from "@material-tailwind/react";
 import { PencilIcon, ToggleLeft, ToggleRight, TrashIcon } from "lucide-react";
 
-const TABLE_HEAD = ["Name", "Status", "Action"];
+const TABLE_HEAD = ["Name", "Status", "Created", "Action"]; // Add 'Created' here
 
 const sortKeyMap = {
   Name: "name",
   Status: "isLive",
+  Created: "createdAt", // Map Created to createdAt field
 };
 
 function SubjectTable() {
@@ -48,7 +49,19 @@ function SubjectTable() {
 
   const filteredRows = tableRows.filter((subject) => {
     const searchLower = searchTerm.toLowerCase();
-    return subject.name && subject.name.toLowerCase().includes(searchLower);
+    
+    // Search by Name
+    const nameMatch = subject.name && subject.name.toLowerCase().includes(searchLower);
+
+    // Search by Created Date (day/month/year)
+    const createdAtMatch = subject.createdAt
+      ? new Date(subject.createdAt)
+          .toLocaleDateString()
+          .toLowerCase()
+          .includes(searchLower)
+      : false;
+
+    return nameMatch || createdAtMatch;
   });
 
   const rowsPerPage = 6;
@@ -59,7 +72,7 @@ function SubjectTable() {
     }
   }, [subjects]);
 
-  // Sorting logic
+  // Sorting logic for Created Date
   const sortedRows = [...filteredRows].sort((a, b) => {
     const aValue = a[sortConfig.key];
     const bValue = b[sortConfig.key];
@@ -147,17 +160,19 @@ function SubjectTable() {
       setCurrentPage(newPage);
     }
   };
+
   const handleToggleLive = (id) => {
     toggleSubjectLiveStatus(id);
   };
+
   if (subjects.length === 0) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
-      <Card className="h-full w-full ">
-        <CardHeader floated={false} className=" p-4">
+      <Card className="h-full w-full">
+        <CardHeader floated={false} className="p-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
             <div>
               <Typography variant="h5">Subject List</Typography>
@@ -210,14 +225,12 @@ function SubjectTable() {
             <tbody>
               {currentRows.map((subject) => (
                 <tr key={subject._id} className="hover:bg-gray-50">
-                  <td className="p-3 text-left">
+                  <td className="p-3 text-left w-72">
                     <strong>{subject.name || "No name provided"}</strong>
                   </td>
 
-                  <td className="p-3 text-left">
+                  <td className="p-3 text-left w-72">
                     <strong>{subject.isLive ? "Active" : "Inactive"}</strong>
-
-                    {/* Toggle Icon */}
                     <span
                       onClick={() => handleToggleLive(subject._id)}
                       style={{ cursor: "pointer" }}
@@ -230,13 +243,19 @@ function SubjectTable() {
                     </span>
                   </td>
 
-                  <td className="p-3  flex gap-2 text-decoration-line: none;">
+                  <td className="p-3 text-left w-72">
+                    <strong>
+                      {new Date(subject.createdAt).toLocaleDateString()}
+                    </strong>
+                  </td>
+
+                  <td className="p-3 flex gap-2 text-decoration-line: none;">
                     <Button
                       className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
                       size="sm"
                       onClick={() => handleOpenModal(subject)}
                     >
-                      <PencilIcon className="h-5 w-5 " />
+                      <PencilIcon className="h-5 w-5" />
                     </Button>
 
                     <Button

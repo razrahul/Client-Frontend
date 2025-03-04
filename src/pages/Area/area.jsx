@@ -45,8 +45,18 @@ function AreaTable() {
 
   const filteredRows = tableRows.filter((area) => {
     const searchLower = searchTerm.toLowerCase();
-    return area.name && area.name.toLowerCase().includes(searchLower);
+    
+    // Check if the name contains the search term
+    const nameMatch = area.name && area.name.toLowerCase().includes(searchLower);
+  
+    // Check if the search term is found in the date (createdAt field)
+    const createdAtMatch = area.createdAt
+      ? new Date(area.createdAt).toLocaleDateString().toLowerCase().includes(searchLower)
+      : false;
+  
+    return nameMatch || createdAtMatch;
   });
+  
 
   const rowsPerPage = 6;
 
@@ -198,11 +208,11 @@ function AreaTable() {
             <tbody>
               {currentRows.map((area) => (
                 <tr key={area._id} className="hover:bg-gray-50">
-                  <td className="p-3 text-left">
+                  <td className="p-3 text-left w-72">
                     <strong>{area.name || "No name provided"}</strong>
                   </td>
 
-                  <td className="p-3 text-left">
+                  <td className="p-3 text-left w-72">
                     <strong>{area.isLive ? "Active" : "Inactive"}</strong>
                     <span onClick={() => handleToggleLiveStatus(area._id)}>
                       {area.isLive ? (
@@ -213,7 +223,7 @@ function AreaTable() {
                     </span>
                   </td>
 
-                  <td className="p-3 text-left">
+                  <td className="p-3 text-left w-72">
                     <strong>
                       {new Date(area.createdAt).toLocaleDateString()}
                     </strong>

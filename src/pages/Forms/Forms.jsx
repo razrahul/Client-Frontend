@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useFormsData } from "../../hook/formsData.js";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
 import {
   Card,
   CardHeader,
@@ -12,12 +12,22 @@ import {
 import { TrashIcon } from "lucide-react";
 
 const TABLE_HEAD = [
-  "Applicant",
+  "Name",
   "Role",
-  "Contacts",
-  "Class/Subjects",
+  "Phone No",
+  "Class",
   "Time/Fee Range",
+  "Date",
 ];
+
+const sortKeyMap = {
+  "Name": "name",
+  "Role": "role",
+  "Phone No": "number",
+  "Class": "class",
+  "Time/Fee Range": "timeslot",
+  "Date": "createdAt",
+};
 
 function FormsTable() {
   const { contacts, deleteAreaById } = useFormsData();
@@ -26,110 +36,73 @@ function FormsTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 6;
 
-  // Sorting state
-  const [sortColumn, setSortColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    number: "",
-    whatsappNumber: "",
-    class: "",
-    subjectList: [],
-    timeslot: "",
-    feeRange: "",
+  const [sortConfig, setSortConfig] = useState({
+    key: "createdAt",
+    direction: "asc",
   });
-  const [editingId, setEditingId] = useState(null);
 
-  // Confirmation dialog state
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [subjectToDelete, setSubjectToDelete] = useState(null);
 
   useEffect(() => {
     if (contacts) {
       setTableRows(contacts);
-    } 
+    }
   }, [contacts]);
 
   const filteredRows = tableRows.filter((contact) => {
     const searchLower = searchTerm.toLowerCase();
-  
     return (
       (contact.name && contact.name.toLowerCase().includes(searchLower)) ||
       (contact.email && contact.email.toLowerCase().includes(searchLower)) ||
-      (contact.number && String(contact.number).toLowerCase().includes(searchLower)) ||  // Convert number to string
-      (contact.whatsappNumber && String(contact.whatsappNumber).toLowerCase().includes(searchLower)) ||  // Convert whatsappNumber to string
+      (contact.number &&
+        String(contact.number).toLowerCase().includes(searchLower)) ||
+      (contact.whatsappNumber &&
+        String(contact.whatsappNumber).toLowerCase().includes(searchLower)) ||
       (contact.class && contact.class.toLowerCase().includes(searchLower)) ||
-      (contact.subjectList && contact.subjectList.join("").toLowerCase().includes(searchLower)) ||
-      (contact.timeslot && contact.timeslot.toLowerCase().includes(searchLower)) ||
-      (contact.feeRange && contact.feeRange.toLowerCase().includes(searchLower))
+      (contact.subjectList &&
+        contact.subjectList.join("").toLowerCase().includes(searchLower)) ||
+      (contact.timeslot &&
+        contact.timeslot.toLowerCase().includes(searchLower)) ||
+      (contact.feeRange &&
+        contact.feeRange.toLowerCase().includes(searchLower)) ||
+      (contact.role && contact.role.toLowerCase().includes(searchLower)) ||
+      (contact.createdAt &&
+        new Date(contact.createdAt).toLocaleDateString().toLowerCase().includes(searchLower))
     );
   });
-  
 
-  // Sorting function
-  const sortRows = (rows) => {
-    if (!sortColumn) return rows;
+  const sortedRows = [...filteredRows].sort((a, b) => {
+    const aValue = a[sortConfig.key];
+    const bValue = b[sortConfig.key];
 
-    return [...rows].sort((a, b) => {
-      let aValue = a[sortColumn];
-      let bValue = b[sortColumn];
+    // Sorting for createdAt (date)
+    if (sortConfig.key === "createdAt") {
+      return sortConfig.direction === "asc"
+        ? new Date(aValue) - new Date(bValue)
+        : new Date(bValue) - new Date(aValue);
+    }
 
-      if (sortColumn === "subjectList") {
-        aValue = a.subjectList.join(", ");
-        bValue = b.subjectList.join(", ");
-      }
+    // Sorting for other fields (strings or numbers)
+    if (typeof aValue === "boolean" && typeof bValue === "boolean") {
+      return sortConfig.direction === "asc" ? aValue - bValue : bValue - aValue;
+    }
 
-      if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
-      if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
-      return 0;
-    });
-  };
-
-  const sortedRows = sortRows(filteredRows);
+    return sortConfig.direction === "asc"
+      ? String(aValue).localeCompare(String(bValue))
+      : String(bValue).localeCompare(String(aValue));
+  });
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = sortedRows.slice(indexOfFirstRow, indexOfLastRow);
   const totalPages = Math.ceil(sortedRows.length / rowsPerPage);
 
-  const handleOpenModal = (contact = null) => {
-    if (contact) {
-      setFormData(contact);
-      setEditingId(contact._id);
-    } else {
-      setFormData({
-        name: "",
-        email: "",
-        number: "",
-        whatsappNumber: "",
-        class: "",
-        subjectList: [],
-        timeslot: "",
-        feeRange: "",
-      });
-      setEditingId(null);
-    }
-    setIsModalOpen(true);
-  };
-
-  const handleSaveForm = () => {
-    if (editingId) {
-      setTableRows(
-        tableRows.map((contact) =>
-          contact._id === editingId ? { ...contact, ...formData } : contact
-        )
-      );
-    } else {
-      const newForm = {
-        ...formData,
-        _id: `temp-${Math.random().toString(36).substr(2, 9)}`,
-      };
-      setTableRows([...tableRows, newForm]);
-    }
-    setIsModalOpen(false);
+  const handleSort = (columnName) => {
+    const key = sortKeyMap[columnName];
+    const direction =
+      sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
+    setSortConfig({ key, direction });
   };
 
   const handleDeleteArea = (id) => {
@@ -137,7 +110,7 @@ function FormsTable() {
     setTableRows((prevRows) =>
       prevRows.filter((contact) => contact._id !== id)
     );
-    setIsConfirmationOpen(false); // Close the confirmation dialog after delete
+    setIsConfirmationOpen(false);
   };
 
   const handlePageChange = (newPage) => {
@@ -156,24 +129,10 @@ function FormsTable() {
     setIsConfirmationOpen(false);
   };
 
-  // Sort handler
-  const handleSort = (column) => {
-    if (sortColumn === column) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(column);
-      setSortOrder("asc");
-    }
-  };
-
-  if (!contacts || contacts.length === 0) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <>
-      <Card className="h-full w-full ">
-        <CardHeader floated={false} className=" p-4">
+      <Card className="h-full w-full">
+        <CardHeader floated={false} className="p-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
             <Typography variant="h5">Form List</Typography>
           </div>
@@ -196,14 +155,12 @@ function FormsTable() {
                 {TABLE_HEAD.map((head) => (
                   <th key={head} className="p-3 font-bold text-left">
                     <button
-                      onClick={() => handleSort(head.toLowerCase())}
+                      onClick={() => handleSort(head)}
                       className="flex items-center gap-1"
                     >
                       {head}
-                      {sortColumn === head.toLowerCase() && (
-                        <span>
-                          {sortOrder === "asc" ? "↑" : "↓"}
-                        </span>
+                      {sortConfig.key === sortKeyMap[head] && (
+                        <ChevronUpDownIcon className="h-4 w-4" />
                       )}
                     </button>
                   </th>
@@ -220,7 +177,7 @@ function FormsTable() {
                     {contact.email || "No email provided"}
                   </td>
                   <td className="p-3 text-left">
-                    <strong>{contact.role || "No name provided"}</strong>
+                    <strong>{contact.role || "No role provided"}</strong>
                   </td>
                   <td className="p-3 text-left">
                     <strong>{contact.number || "No number provided"}</strong>
@@ -232,7 +189,8 @@ function FormsTable() {
                       Class: {contact.class || "No class provided"}
                     </strong>
                     <br />
-                    Subjects: {contact.subjectList.length > 0
+                    Subjects:{" "}
+                    {contact.subjectList.length > 0
                       ? contact.subjectList.join(", ")
                       : "No subjects provided"}
                   </td>
@@ -243,9 +201,16 @@ function FormsTable() {
                     <br />
                     Charges: {contact.feeRange || "No fee range provided"}
                   </td>
+
+                  <td className="p-3 text-left">
+                    <strong>
+                      {new Date(contact.createdAt).toLocaleDateString()}
+                    </strong>
+                  </td>
+
                   <td className="p-3 text-left">
                     <Button
-                      className="flex items-center gap-2  text-red-600 hover:bg-red-600 hover:text-white"
+                      className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
                       size="sm"
                       onClick={() => openConfirmationDialog(contact._id)}
                     >
@@ -283,21 +248,11 @@ function FormsTable() {
         </CardFooter>
       </Card>
 
-      {/* <ModalOpenForm
-        open={isModalOpen}
-        handleClose={() => setIsModalOpen(false)}
-        handleSave={handleSaveForm}
-        formData={formData}
-        setFormData={setFormData}
-        isEditing={!!editingId}
-      /> */}
-
-      {/* Confirmation Dialog */}
       {isConfirmationOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur confirm-dialog ">
+        <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur confirm-dialog">
           <div className="relative px-4 min-h-screen md:flex md:items-center md:justify-center">
-            <div className=" opacity-25 w-full h-full absolute z-10 inset-0"></div>
-            <div className="bg-white rounded-lg md:max-w-md md:mx-auto p-4 fixed inset-x-0 bottom-0 z-50 mb-4 mx-4 md:relative ">
+            <div className="opacity-25 w-full h-full absolute z-10 inset-0"></div>
+            <div className="bg-white rounded-lg md:max-w-md md:mx-auto p-4 fixed inset-x-0 bottom-0 z-50 mb-4 mx-4 md:relative">
               <div className="md:flex items-center">
                 <div className="rounded-full border border-gray-300 flex items-center justify-center w-16 h-16 flex-shrink-0 mx-auto">
                   <i className="bx bx-error text-3xl">&#9888;</i>
@@ -305,7 +260,8 @@ function FormsTable() {
                 <div className="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
                   <p className="font-bold">Warning!</p>
                   <p className="text-sm text-gray-700 mt-1">
-                    You will lose all of your data by deleting this. This action cannot be undone.
+                    You will lose all of your data by deleting this. This action
+                    cannot be undone.
                   </p>
                 </div>
               </div>
@@ -318,7 +274,7 @@ function FormsTable() {
                 </button>
                 <button
                   className="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4 md:mt-0 md:order-1"
-                  onClick={closeConfirmationDialog} // Close the confirmation dialog
+                  onClick={closeConfirmationDialog}
                 >
                   Cancel
                 </button>

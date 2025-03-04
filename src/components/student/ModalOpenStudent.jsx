@@ -35,6 +35,7 @@ const ModalOpenStudent = ({
   const [areaId, setAreaId] = useState("");
   const [image, setImage] = useState(null);
   const [imagePrev, setImagePrev] = useState("");
+  const [errors, setErrors] = useState({}); // Error state for feedback
 
   useEffect(() => {
     if (!open) return;
@@ -82,8 +83,50 @@ const ModalOpenStudent = ({
     setSelectedSubjects(selectedOptions.map((option) => option.value));
   };
 
+  // Phone validation: must be 10 digits and contain only numbers
+  const validatePhone = (phone) => {
+    const phoneRegex = /^[0-9]{10}$/;
+    return phoneRegex.test(phone);
+  };
+
+  // About Us validation: length between 200 and 250 words
+  const validateAboutUs = (aboutUs) => {
+    const wordCount = aboutUs.split(" ").filter(Boolean).length;
+    return wordCount <= 25;
+  };
+
+  const validateForm = () => {
+    const validationErrors = {};
+
+    if (!name) validationErrors.name = "Name is required.";
+    if (!email) validationErrors.email = "Email is required.";
+    if (!phone) validationErrors.phone = "Phone number is required.";
+    if (!gender) validationErrors.gender = "Gender is required.";
+    if (!aboutUs) validationErrors.aboutUs = "About Us is required.";
+    if (!className) validationErrors.className = "Class is required.";
+    if (!selectedSubjects || selectedSubjects.length === 0)
+      validationErrors.selectedSubjects =
+        "At least one subject must be selected.";
+    if (!areaId) validationErrors.areaId = "Area Us is required.";
+    if (!chargeRate) validationErrors.chargeRate = "Board Us is required.";
+    if (!image) validationErrors.image = "Image Us is required.";
+    if (phone && !validatePhone(phone))
+      validationErrors.phone =
+        "Phone Number must be 10 digits and contain only numbers.";
+    if (aboutUs && !validateAboutUs(aboutUs))
+      validationErrors.aboutUs =
+        "About Us must contain not more than 150 words.";
+
+    setErrors(validationErrors);
+
+    // If there are any validation errors, prevent form submission
+    return Object.keys(validationErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) return; // If validation fails, prevent form submission
 
     const formData = new FormData();
     formData.append("name", name);
@@ -111,6 +154,8 @@ const ModalOpenStudent = ({
 
   const handleEditStudent = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) return; // If validation fails, prevent form submission
 
     const formData = new FormData();
     formData.append("name", name);
@@ -169,6 +214,9 @@ const ModalOpenStudent = ({
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Enter Name"
                 />
+                {errors.name && (
+                  <p className="text-red-500 text-sm">{errors.name}</p>
+                )}
               </div>
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Email</label>
@@ -177,6 +225,9 @@ const ModalOpenStudent = ({
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter Email"
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-sm">{errors.email}</p>
+                )}
               </div>
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Phone</label>
@@ -185,6 +236,9 @@ const ModalOpenStudent = ({
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Enter Phone"
                 />
+                {errors.phone && (
+                  <p className="text-red-500 text-sm">{errors.phone}</p>
+                )}
               </div>
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Gender</label>
@@ -198,6 +252,9 @@ const ModalOpenStudent = ({
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
                 </select>
+                {errors.gender && (
+                  <p className="text-red-500 text-sm">{errors.gender}</p>
+                )}
               </div>
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Class</label>
@@ -206,6 +263,9 @@ const ModalOpenStudent = ({
                   onChange={(e) => setClassName(e.target.value)}
                   placeholder="Enter Class"
                 />
+                {errors.aboutUs && (
+                  <p className="text-red-500 text-sm">{errors.className}</p>
+                )}
               </div>
               <div className="col-span-1">
                 <label className="block text-sm font-medium">About Us</label>
@@ -213,6 +273,9 @@ const ModalOpenStudent = ({
                   value={aboutUs}
                   onChange={(e) => setAboutUs(e.target.value)}
                 />
+                {errors.aboutUs && (
+                  <p className="text-red-500 text-sm">{errors.aboutUs}</p>
+                )}
               </div>
 
               <div className="col-span-1">
@@ -231,6 +294,11 @@ const ModalOpenStudent = ({
                     options={subjectOptions}
                     className="w-full border rounded-lg text-sm"
                   />
+                  {errors.selectedSubjects && (
+                    <p className="text-red-500 text-sm">
+                      {errors.selectedSubjects}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -249,6 +317,9 @@ const ModalOpenStudent = ({
                     className="w-full border rounded-lg text-sm"
                     isClearable={true}
                   />
+                  {errors.areaId && (
+                    <p className="text-red-500 text-sm">{errors.areaId}</p>
+                  )}
                 </div>
               </div>
 
@@ -259,6 +330,9 @@ const ModalOpenStudent = ({
                   onChange={(e) => setChargeRate(e.target.value)}
                   placeholder="Enter Board"
                 />
+                {errors.chargeRate && (
+                    <p className="text-red-500 text-sm">{errors.chargeRate}</p>
+                  )}
               </div>
               <div className="col-span-1">
                 <label className="block text-sm font-medium">
@@ -269,6 +343,9 @@ const ModalOpenStudent = ({
                   accept="image/*"
                   onChange={handleImageChange}
                 />
+                {errors.image && (
+                    <p className="text-red-500 text-sm">{errors.image}</p>
+                  )}
                 {imagePrev && <img src={imagePrev} alt="Preview" width="150" />}
               </div>
             </div>
