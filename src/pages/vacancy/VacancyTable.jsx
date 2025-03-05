@@ -21,10 +21,10 @@ import {
   updateVacancyLiveStatusById,
 } from "../../redux/actions/vacancyActions"; // Assuming you have similar actions as teacher
 
-const TABLE_HEAD = ["Class", "Area", "Subject", "Status", "Action"];
+const TABLE_HEAD = ["Student", "Area", "Subject", "Status", "Action"];
 
 const sortKeyMap = {
-  Class: "studentName",
+  Student: "studentName",
   Area: "area.name",
   Subject: "subject.name",
   Status: "isLive",

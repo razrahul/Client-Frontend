@@ -88,8 +88,14 @@ const ModalOpenTeacher = ({
     const wordCount = aboutUs.split(" ").filter(Boolean).length;
     return wordCount <= 25;
   };
-  const validateChargeRate = (chargeRate) => chargeRate.trim() !== "";
+  const validateChargeRate = (chargeRate) => {
+    const cleanedChargeRate = chargeRate.trim();
+    return cleanedChargeRate.length <= 10;
+  };
   const validateSubject = (selectedSubjects) => selectedSubjects.length > 0;
+  const validateBoard = (selectedBoard) => {
+    return selectedBoard !== null && selectedBoard !== undefined;
+  };
   const validateArea = (areaId) => areaId.trim() !== "";
 
   const validateImage = (image, imagePrev, isEditing) => {
@@ -110,13 +116,19 @@ const ModalOpenTeacher = ({
     if (!validateName(name)) errors.name = "Name is required";
     if (!validateEmail(email)) errors.email = "Invalid email";
     if (!validatePhone(phone)) errors.phone = "Phone must be 10 digits";
+    if (!aboutUs) errors.aboutUs = "About Us is required.";
+
     if (!validateAboutUs(aboutUs))
-      errors.aboutUs = "About Us must be 150 words or less";
+      errors.aboutUs = "Experience must be 150 words or less";
+    if (!chargeRate) errors.chargeRate = "Charge Rate is required.";
+
     if (!validateChargeRate(chargeRate))
-      errors.chargeRate = "Charge Rate is required";
+      errors.chargeRate = "Charge Rate should be no more than 10 characters";
     if (!validateSubject(selectedSubjects))
       errors.selectedSubjects = "At least one subject must be selected";
     if (!validateArea(areaId)) errors.areaId = "Area is required";
+    if (!validateBoard(selectedBoard))
+      errors.selectedBoard = "Board is required"; // Validation for Board
 
     if (!validateImage(image, imagePrev, isEditing)) {
       errors.image = "Image is required";
@@ -268,7 +280,7 @@ const ModalOpenTeacher = ({
               </div>
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Experience</label>
-                <Textarea
+                <Input
                   value={aboutUs}
                   onChange={(e) => setAboutUs(e.target.value)}
                 />
@@ -315,6 +327,9 @@ const ModalOpenTeacher = ({
                     className="w-full border rounded-lg text-sm"
                     isClearable={true}
                   />
+                  {formErrors.areaId && (
+                    <p className="text-red-500 text-xs">{formErrors.areaId}</p>
+                  )}
                 </div>
               </div>
 
@@ -328,8 +343,10 @@ const ModalOpenTeacher = ({
                     className="w-full border rounded-lg text-sm"
                     isClearable={true}
                   />
-                  {formErrors.areaId && (
-                    <p className="text-red-500 text-xs">{formErrors.areaId}</p>
+                  {formErrors.selectedBoard && (
+                    <p className="text-red-500 text-xs">
+                      {formErrors.selectedBoard}
+                    </p>
                   )}
                 </div>
               </div>

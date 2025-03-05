@@ -199,73 +199,73 @@ function AreaTable() {
         </CardHeader>
 
         <CardBody className="p-4">
-                  {tableRows.length === 0 ? (
-                      <div>Loading... Areas</div>
-                    ) : (
-          <table className="w-full table-auto">
-            <thead>
-              <tr className="bg-gray-100">
-                {TABLE_HEAD.map((head) => (
-                  <th
-                    key={head}
-                    className="p-3 cursor-pointer"
-                    onClick={() => handleSort(head)}
-                  >
-                    <div className="flex items-center gap-1">
-                      {head}
-                      {head !== "Action" && (
-                        <ChevronUpDownIcon className="h-4 w-4" />
-                      )}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {currentRows.map((area) => (
-                <tr key={area._id} className="hover:bg-gray-50">
-                  <td className="p-3 text-left w-72">
-                    <strong>{area.name || "No name provided"}</strong>
-                  </td>
-
-                  <td className="p-3 text-left w-72">
-                    <strong>{area.isLive ? "Active" : "Inactive"}</strong>
-                    <span onClick={() => handleToggleLiveStatus(area._id)}>
-                      {area.isLive ? (
-                        <ToggleRight className="text-blue-600 cursor-pointer" />
-                      ) : (
-                        <ToggleLeft className="text-black cursor-pointer" />
-                      )}
-                    </span>
-                  </td>
-
-                  <td className="p-3 text-left w-72">
-                    <strong>
-                      {new Date(area.createdAt).toLocaleDateString()}
-                    </strong>
-                  </td>
-
-                  <td className="p-3  flex gap-2 text-decoration-line: none;">
-                    <Button
-                      className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
-                      size="sm"
-                      onClick={() => handleOpenModal(area)}
+          {tableRows.length === 0 ? (
+            <div>Loading... Areas</div>
+          ) : (
+            <table className="w-full table-auto">
+              <thead>
+                <tr className="bg-gray-100">
+                  {TABLE_HEAD.map((head) => (
+                    <th
+                      key={head}
+                      className="p-3 cursor-pointer"
+                      onClick={() => handleSort(head)}
                     >
-                      <PencilIcon className="h-5 w-5 " />
-                    </Button>
-
-                    <Button
-                      className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
-                      size="sm"
-                      onClick={() => openConfirmationDialog(area._id)}
-                    >
-                      <TrashIcon className="h-5 w-5 " />
-                    </Button>
-                  </td>
+                      <div className="flex items-center gap-1">
+                        {head}
+                        {head !== "Action" && (
+                          <ChevronUpDownIcon className="h-4 w-4" />
+                        )}
+                      </div>
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentRows.map((area) => (
+                  <tr key={area._id} className="hover:bg-gray-50">
+                    <td className="p-3 text-left w-72">
+                      <strong>{area.name || "No name provided"}</strong>
+                    </td>
+
+                    <td className="p-3 text-left w-72">
+                      <strong>{area.isLive ? "Active" : "Inactive"}</strong>
+                      <span onClick={() => handleToggleLiveStatus(area._id)}>
+                        {area.isLive ? (
+                          <ToggleRight className="text-blue-600 cursor-pointer" />
+                        ) : (
+                          <ToggleLeft className="text-black cursor-pointer" />
+                        )}
+                      </span>
+                    </td>
+
+                    <td className="p-3 text-left w-72">
+                      <strong>
+                        {new Date(area.createdAt).toLocaleDateString()}
+                      </strong>
+                    </td>
+
+                    <td className="p-3  flex gap-2 text-decoration-line: none;">
+                      <Button
+                        className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
+                        size="sm"
+                        onClick={() => handleOpenModal(area)}
+                      >
+                        <PencilIcon className="h-5 w-5 " />
+                      </Button>
+
+                      <Button
+                        className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
+                        size="sm"
+                        onClick={() => openConfirmationDialog(area._id)}
+                      >
+                        <TrashIcon className="h-5 w-5 " />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </CardBody>
 

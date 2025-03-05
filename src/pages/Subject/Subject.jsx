@@ -168,9 +168,7 @@ function SubjectTable() {
     toggleSubjectLiveStatus(id);
   };
 
-  if (subjects.length === 0) {
-    return <div>Loading...</div>;
-  }
+  
   const openConfirmationDialog = (id) => {
     setSubjectToDelete(id);
     setIsConfirmationOpen(true);
@@ -215,7 +213,7 @@ function SubjectTable() {
 
         <CardBody className="p-4">
           {tableRows.length === 0 ? (
-            <div>Loading... Forms</div>
+            <div>Loading... Subjects</div>
           ) : (
             <table className="w-full table-auto">
               <thead>

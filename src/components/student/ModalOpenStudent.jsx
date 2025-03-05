@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Input, Checkbox, Textarea } from "@material-tailwind/react";
+import { Input, Textarea } from "@material-tailwind/react";
 import { useAreaData } from "../../hook/areaData";
 import { useSubjectData } from "../../hook/subjectData";
 import { useDispatch } from "react-redux";
@@ -83,6 +83,8 @@ const ModalOpenStudent = ({
     setSelectedSubjects(selectedOptions.map((option) => option.value));
   };
 
+  const validateName = (name) => name.trim() !== "";
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePhone = (phone) => {
     const phoneRegex = /^[0-9]{10}$/;
     return phoneRegex.test(phone);
@@ -106,8 +108,8 @@ const ModalOpenStudent = ({
   const validateForm = () => {
     const validationErrors = {};
 
-    if (!name) validationErrors.name = "Name is required.";
-    if (!email) validationErrors.email = "Email is required.";
+    if (!validateName(name)) validationErrors.name = "Name is required";
+    if (!validateEmail(email)) validationErrors.email = "Invalid email";
     if (!phone) validationErrors.phone = "Phone number is required.";
     if (!gender) validationErrors.gender = "Gender is required.";
     if (!aboutUs) validationErrors.aboutUs = "About Us is required.";
@@ -201,6 +203,21 @@ const ModalOpenStudent = ({
     value: area._id,
     label: area.name,
   }));
+  const chargeRateOptions = [
+    "BSEB",
+    "CBSE",
+    "ICSE",
+    "BSMEB",
+    "All Board",
+    "State Board",
+    "IB",
+    "Others",
+  ];
+
+  const chargeRateOptionsMapped = chargeRateOptions.map((rate) => ({
+    label: rate,
+    value: rate,
+  }));
 
   const handleAreaChange = (selectedOption) => {
     setAreaId(selectedOption ? selectedOption.value : "");
@@ -278,9 +295,11 @@ const ModalOpenStudent = ({
               </div>
               <div className="col-span-1">
                 <label className="block text-sm font-medium">About Us</label>
-                <Textarea
+                <Input
                   value={aboutUs}
                   onChange={(e) => setAboutUs(e.target.value)}
+                  placeholder="About Us"
+
                 />
                 {errors.aboutUs && (
                   <p className="text-red-500 text-sm">{errors.aboutUs}</p>
@@ -334,15 +353,26 @@ const ModalOpenStudent = ({
 
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Board</label>
-                <Input
-                  value={chargeRate}
-                  onChange={(e) => setChargeRate(e.target.value)}
-                  placeholder="Enter Board"
-                />
-                {errors.chargeRate && (
-                  <p className="text-red-500 text-sm">{errors.chargeRate}</p>
-                )}
+                <div className="relative">
+                  <Select
+                    value={
+                      chargeRate
+                        ? { value: chargeRate, label: chargeRate }
+                        : null
+                    }
+                    onChange={(selectedOption) =>
+                      setChargeRate(selectedOption?.value || "")
+                    }
+                    options={chargeRateOptionsMapped}
+                    className="w-full border rounded-lg text-sm"
+                    isClearable={true}
+                  />
+                  {errors.chargeRate && (
+                    <p className="text-red-500 text-sm">{errors.chargeRate}</p>
+                  )}
+                </div>
               </div>
+
               <div className="col-span-1">
                 <label className="block text-sm font-medium">
                   Upload Image

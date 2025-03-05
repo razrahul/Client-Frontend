@@ -47,8 +47,10 @@ function FaqTable() {
 
   const filteredRows = tableRows.filter((faq) => {
     const searchLower = searchTerm.toLowerCase();
-    const questionMatch= faq.question && faq.question.toLowerCase().includes(searchLower);
-    const answerMatch= faq.answer && faq.answer.toLowerCase().includes(searchLower);
+    const questionMatch =
+      faq.question && faq.question.toLowerCase().includes(searchLower);
+    const answerMatch =
+      faq.answer && faq.answer.toLowerCase().includes(searchLower);
 
     return questionMatch || answerMatch;
   });
@@ -145,10 +147,6 @@ function FaqTable() {
     toggleLiveStatus(id);
   };
 
-  if (faqs.length === 0) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <>
       <Card className="h-full w-full">
@@ -183,65 +181,69 @@ function FaqTable() {
         </CardHeader>
 
         <CardBody className="p-4">
-          <table className="w-full table-auto">
-            <thead>
-              <tr className="bg-gray-100">
-                {TABLE_HEAD.map((head) => (
-                  <th
-                    key={head}
-                    className="p-3 cursor-pointer"
-                    onClick={() => handleSort(head)}
-                  >
-                    <div className="flex items-center gap-1">
-                      {head}
-                      {head !== "Action" && (
-                        <ChevronUpDownIcon className="h-4 w-4" />
-                      )}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {currentRows.map((faq) => (
-                <tr key={faq._id} className="hover:bg-gray-50">
-                  <td className="p-3 text-left">
-                    <strong>{faq.question || "No question provided"}</strong>
-                  </td>
-                  <td className="p-3 text-left">
-                    <strong>{faq.answer || "No answer provided"}</strong>
-                  </td>
-                  <td className="p-3 text-left">
-                    <strong>{faq.isLive ? "Active" : "Inactive"}</strong>
-                    <span onClick={() => handleToggleLiveStatus(faq._id)}>
-                      {faq.isLive ? (
-                        <ToggleRight className="text-blue-600 cursor-pointer" />
-                      ) : (
-                        <ToggleLeft className="text-black cursor-pointer" />
-                      )}
-                    </span>
-                  </td>
-                  <td className="p-3 flex gap-2 text-decoration-line: none;">
-                    <Button
-                      className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
-                      size="sm"
-                      onClick={() => handleOpenModal(faq)}
+          {tableRows.length === 0 ? (
+            <div>Loading... Subjects</div>
+          ) : (
+            <table className="w-full table-auto">
+              <thead>
+                <tr className="bg-gray-100">
+                  {TABLE_HEAD.map((head) => (
+                    <th
+                      key={head}
+                      className="p-3 cursor-pointer"
+                      onClick={() => handleSort(head)}
                     >
-                      <PencilIcon className="h-5 w-5 " />
-                    </Button>
-
-                    <Button
-                      className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
-                      size="sm"
-                      onClick={() => openConfirmationDialog(faq._id)}
-                    >
-                      <TrashIcon className="h-5 w-5 " />
-                    </Button>
-                  </td>
+                      <div className="flex items-center gap-1">
+                        {head}
+                        {head !== "Action" && (
+                          <ChevronUpDownIcon className="h-4 w-4" />
+                        )}
+                      </div>
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentRows.map((faq) => (
+                  <tr key={faq._id} className="hover:bg-gray-50">
+                    <td className="p-3 text-left">
+                      <strong>{faq.question || "No question provided"}</strong>
+                    </td>
+                    <td className="p-3 text-left">
+                      <strong>{faq.answer || "No answer provided"}</strong>
+                    </td>
+                    <td className="p-3 text-left">
+                      <strong>{faq.isLive ? "Active" : "Inactive"}</strong>
+                      <span onClick={() => handleToggleLiveStatus(faq._id)}>
+                        {faq.isLive ? (
+                          <ToggleRight className="text-blue-600 cursor-pointer" />
+                        ) : (
+                          <ToggleLeft className="text-black cursor-pointer" />
+                        )}
+                      </span>
+                    </td>
+                    <td className="p-3 flex gap-2 text-decoration-line: none;">
+                      <Button
+                        className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
+                        size="sm"
+                        onClick={() => handleOpenModal(faq)}
+                      >
+                        <PencilIcon className="h-5 w-5 " />
+                      </Button>
+
+                      <Button
+                        className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
+                        size="sm"
+                        onClick={() => openConfirmationDialog(faq._id)}
+                      >
+                        <TrashIcon className="h-5 w-5 " />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </CardBody>
 
         <CardFooter className="flex items-center justify-between border-t p-4">

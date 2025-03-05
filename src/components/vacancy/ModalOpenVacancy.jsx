@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Button, Input, Textarea } from "@material-tailwind/react";
+import { Input } from "@material-tailwind/react";
+import Select from "react-select"; // Import react-select
 import { useAreaData } from "../../hook/areaData";
 import { useSubjectData } from "../../hook/subjectData";
 import { useDispatch } from "react-redux";
@@ -39,12 +40,12 @@ const ModalOpenVacancy = ({
     }
   }, [open, isEditing, data]);
 
-  const handleSubjectChange = (subjectId) => {
-    setSelectedSubject(subjectId);
+  const handleSubjectChange = (selectedOption) => {
+    setSelectedSubject(selectedOption ? selectedOption.value : ""); // Update for single selection
   };
 
-  const handleAreaChange = (areaId) => {
-    setAreaId(areaId);
+  const handleAreaChange = (selectedOption) => {
+    setAreaId(selectedOption ? selectedOption.value : ""); // Update for single selection
   };
 
   const handleSubmit = async (e) => {
@@ -87,6 +88,17 @@ const ModalOpenVacancy = ({
     }
   };
 
+  // Prepare options for react-select
+  const subjectOptions = subjects.map((subject) => ({
+    value: subject._id,
+    label: subject.name,
+  }));
+
+  const areaOptions = areas.map((area) => ({
+    value: area._id,
+    label: area.name,
+  }));
+
   return (
     <>
       {open && (
@@ -106,45 +118,33 @@ const ModalOpenVacancy = ({
                 />
               </div>
 
+              {/* Subject Selection using react-select */}
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Subject</label>
-                <div className="relative">
-                  <div className="h-28 overflow-y-auto border rounded-lg text-sm">
-                    {subjects.map((subject) => (
-                      <div
-                        key={subject._id}
-                        onClick={() => handleSubjectChange(subject._id)} // Handle selection by clicking
-                        className={`p-2 cursor-pointer hover:bg-blue-500 ${
-                          subject._id === selectedSubject
-                            ? "bg-blue-500 text-white"
-                            : "bg-white"
-                        }`}
-                      >
-                        {subject.name}
-                      </div>
-                    ))}
-                  </div>
+                <div className="relative z-10">
+                  <Select
+                    menuPortalTarget={document.body}
+                    menuPosition="fixed"
+                    value={subjectOptions.find((option) => option.value === selectedSubject)}
+                    onChange={handleSubjectChange}
+                    options={subjectOptions}
+                    className="w-full border rounded-lg text-sm"
+                    isClearable={true}
+                  />
                 </div>
               </div>
 
+              {/* Area Selection using react-select */}
               <div className="col-span-1">
                 <label className="block text-sm font-medium">Area</label>
                 <div className="relative">
-                  <div className="h-28 overflow-y-auto border rounded-lg text-sm">
-                    {areas.map((area) => (
-                      <div
-                        key={area._id}
-                        onClick={() => handleAreaChange(area._id)}
-                        className={`p-2 cursor-pointer hover:bg-blue-500 ${
-                          area._id === areaId
-                            ? "bg-blue-500 text-white"
-                            : "bg-white"
-                        }`}
-                      >
-                        {area.name}
-                      </div>
-                    ))}
-                  </div>
+                  <Select
+                    value={areaOptions.find((option) => option.value === areaId)}
+                    onChange={handleAreaChange}
+                    options={areaOptions}
+                    className="w-full border rounded-lg text-sm"
+                    isClearable={true}
+                  />
                 </div>
               </div>
             </div>
