@@ -209,7 +209,7 @@ function TeacherTable() {
 
         <CardBody className="p-4">
           {tableRows.length === 0 ? (
-            <div>No teachers available.</div>
+            <div>Loading... Teachers.</div>
           ) : (
             <table className="w-full table-auto">
               <thead>
@@ -268,7 +268,7 @@ function TeacherTable() {
                       </td>
                       <td className="text-sm py-2 pl-2">
                         <strong>B-{teacher.board || "Null"}</strong>
-                        <br/>
+                        <br />
                         {teacher.subject?.length > 0
                           ? teacher.subject.map((sub) => sub.name).join(", ")
                           : "No subjects"}

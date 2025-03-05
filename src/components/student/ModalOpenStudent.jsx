@@ -83,18 +83,26 @@ const ModalOpenStudent = ({
     setSelectedSubjects(selectedOptions.map((option) => option.value));
   };
 
-  // Phone validation: must be 10 digits and contain only numbers
   const validatePhone = (phone) => {
     const phoneRegex = /^[0-9]{10}$/;
     return phoneRegex.test(phone);
   };
 
-  // About Us validation: length between 200 and 250 words
   const validateAboutUs = (aboutUs) => {
     const wordCount = aboutUs.split(" ").filter(Boolean).length;
     return wordCount <= 25;
   };
+  const validateImage = (image, imagePrev, isEditing) => {
+    if (isEditing && imagePrev) {
+      return true;
+    }
 
+    if (image) {
+      return true;
+    }
+
+    return false;
+  };
   const validateForm = () => {
     const validationErrors = {};
 
@@ -109,7 +117,9 @@ const ModalOpenStudent = ({
         "At least one subject must be selected.";
     if (!areaId) validationErrors.areaId = "Area Us is required.";
     if (!chargeRate) validationErrors.chargeRate = "Board Us is required.";
-    if (!image) validationErrors.image = "Image Us is required.";
+    if (!image && !validateImage(image, imagePrev, isEditing)) {
+      validationErrors.image = "Image is required";
+    }
     if (phone && !validatePhone(phone))
       validationErrors.phone =
         "Phone Number must be 10 digits and contain only numbers.";
@@ -119,7 +129,6 @@ const ModalOpenStudent = ({
 
     setErrors(validationErrors);
 
-    // If there are any validation errors, prevent form submission
     return Object.keys(validationErrors).length === 0;
   };
 
@@ -331,8 +340,8 @@ const ModalOpenStudent = ({
                   placeholder="Enter Board"
                 />
                 {errors.chargeRate && (
-                    <p className="text-red-500 text-sm">{errors.chargeRate}</p>
-                  )}
+                  <p className="text-red-500 text-sm">{errors.chargeRate}</p>
+                )}
               </div>
               <div className="col-span-1">
                 <label className="block text-sm font-medium">
@@ -344,8 +353,8 @@ const ModalOpenStudent = ({
                   onChange={handleImageChange}
                 />
                 {errors.image && (
-                    <p className="text-red-500 text-sm">{errors.image}</p>
-                  )}
+                  <p className="text-red-500 text-sm">{errors.image}</p>
+                )}
                 {imagePrev && <img src={imagePrev} alt="Preview" width="150" />}
               </div>
             </div>

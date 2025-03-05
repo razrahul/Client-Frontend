@@ -47,7 +47,10 @@ function FaqTable() {
 
   const filteredRows = tableRows.filter((faq) => {
     const searchLower = searchTerm.toLowerCase();
-    return faq.question && faq.question.toLowerCase().includes(searchLower);
+    const questionMatch= faq.question && faq.question.toLowerCase().includes(searchLower);
+    const answerMatch= faq.answer && faq.answer.toLowerCase().includes(searchLower);
+
+    return questionMatch || answerMatch;
   });
 
   const rowsPerPage = import.meta.env.VITE_ROW_PER_PAGE;

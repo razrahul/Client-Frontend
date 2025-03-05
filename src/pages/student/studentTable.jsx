@@ -20,20 +20,19 @@ import {
   ToggleRight,
   TrashIcon,
 } from "lucide-react";
-import { useStudentData } from "../../hook/studentData.js"; // Assuming a similar hook for Student
 import {
   getAllStudents,
   deleteStudentById,
   updateStudentLiveStatusById,
-} from "../../redux/actions/studentAction.js"; // Assuming a similar action for Student
+} from "../../redux/actions/studentAction.js";
 import { useDispatch, useSelector } from "react-redux";
 
 const TABLE_HEAD = [
   "Name/Email",
   "Phone",
   "About Us",
-  "Class/Subject", // Added column for class name
-  "Gender", // Added column for gender
+  "Class/Subject",
+  "Gender",
   "Area",
   "Board",
   "Status",
@@ -120,23 +119,19 @@ function StudentTable() {
   const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
 
   const handleSort = (column) => {
-    // Check if we are clicking on the "Name/Email" column
     if (column === "Name/Email") {
-      // Sort by 'name' only
       const direction =
         sortConfig.key === "name" && sortConfig.direction === "asc"
           ? "desc"
           : "asc";
       setSortConfig({ key: "name", direction });
     } else if (column === "Class/Subject") {
-      // Sort by 'name' only
       const direction =
         sortConfig.key === "class" && sortConfig.direction === "asc"
           ? "desc"
           : "asc";
       setSortConfig({ key: "class", direction });
     } else {
-      // For other columns, use the regular sorting behavior
       const key = sortKeyMap[column];
       const direction =
         sortConfig.key === key && sortConfig.direction === "asc"
@@ -230,7 +225,7 @@ function StudentTable() {
 
         <CardBody className="p-4">
           {tableRows.length === 0 ? (
-            <div>No students available.</div>
+            <div>Loading... Students</div>
           ) : (
             <table className="w-full table-auto">
               <thead>

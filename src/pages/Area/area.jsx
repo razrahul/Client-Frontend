@@ -199,6 +199,9 @@ function AreaTable() {
         </CardHeader>
 
         <CardBody className="p-4">
+                  {tableRows.length === 0 ? (
+                      <div>Loading... Areas</div>
+                    ) : (
           <table className="w-full table-auto">
             <thead>
               <tr className="bg-gray-100">
@@ -263,6 +266,7 @@ function AreaTable() {
               ))}
             </tbody>
           </table>
+          )}
         </CardBody>
 
         <CardFooter className="flex items-center justify-between border-t p-4">

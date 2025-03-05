@@ -156,7 +156,6 @@ function SubjectTable() {
       prevRows.filter((subject) => subject._id !== id)
     );
     setIsConfirmationOpen(false);
-
   };
 
   const handlePageChange = (newPage) => {
@@ -215,75 +214,77 @@ function SubjectTable() {
         </CardHeader>
 
         <CardBody className="p-4">
-          <table className="w-full table-auto">
-            <thead>
-              <tr className="bg-gray-100">
-                {TABLE_HEAD.map((head) => (
-                  <th
-                    key={head}
-                    className="p-3 cursor-pointer"
-                    onClick={() => handleSort(head)}
-                  >
-                    <div className="flex items-center gap-1">
-                      {head}
-                      {head !== "Action" && (
-                        <ChevronUpDownIcon className="h-4 w-4" />
-                      )}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {currentRows.map((subject) => (
-                <tr key={subject._id} className="hover:bg-gray-50">
-                  <td className="p-3 text-left w-72">
-                    <strong>{subject.name || "No name provided"}</strong>
-                  </td>
-
-                  <td className="p-3 text-left w-72">
-                    <strong>{subject.isLive ? "Active" : "Inactive"}</strong>
-                    <span
-                      onClick={() => handleToggleLive(subject._id)}
-                      style={{ cursor: "pointer" }}
+          {tableRows.length === 0 ? (
+            <div>Loading... Forms</div>
+          ) : (
+            <table className="w-full table-auto">
+              <thead>
+                <tr className="bg-gray-100">
+                  {TABLE_HEAD.map((head) => (
+                    <th
+                      key={head}
+                      className="p-3 cursor-pointer"
+                      onClick={() => handleSort(head)}
                     >
-                      {subject.isLive ? (
-                        <ToggleRight className="text-blue-600" />
-                      ) : (
-                        <ToggleLeft className="text-black" />
-                      )}
-                    </span>
-                  </td>
-
-                  <td className="p-3 text-left w-72">
-                    <strong>
-                      {new Date(subject.createdAt).toLocaleDateString()}
-                    </strong>
-                  </td>
-
-                  <td className="p-3 flex gap-2 text-decoration-line: none;">
-                    <Button
-                      className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
-                      size="sm"
-                      onClick={() => handleOpenModal(subject)}
-                    >
-                      <PencilIcon className="h-5 w-5" />
-                    </Button>
-
-                    <Button
-                      className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
-                      size="sm"
-                      onClick={() =>
-                        openConfirmationDialog(subject._id)
-                      }
-                    >
-                      <TrashIcon className="h-5 w-5" />
-                    </Button>
-                  </td>
+                      <div className="flex items-center gap-1">
+                        {head}
+                        {head !== "Action" && (
+                          <ChevronUpDownIcon className="h-4 w-4" />
+                        )}
+                      </div>
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentRows.map((subject) => (
+                  <tr key={subject._id} className="hover:bg-gray-50">
+                    <td className="p-3 text-left w-72">
+                      <strong>{subject.name || "No name provided"}</strong>
+                    </td>
+
+                    <td className="p-3 text-left w-72">
+                      <strong>{subject.isLive ? "Active" : "Inactive"}</strong>
+                      <span
+                        onClick={() => handleToggleLive(subject._id)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {subject.isLive ? (
+                          <ToggleRight className="text-blue-600" />
+                        ) : (
+                          <ToggleLeft className="text-black" />
+                        )}
+                      </span>
+                    </td>
+
+                    <td className="p-3 text-left w-72">
+                      <strong>
+                        {new Date(subject.createdAt).toLocaleDateString()}
+                      </strong>
+                    </td>
+
+                    <td className="p-3 flex gap-2 text-decoration-line: none;">
+                      <Button
+                        className="flex items-center gap-2 text-black hover:bg-blue-600 hover:text-white"
+                        size="sm"
+                        onClick={() => handleOpenModal(subject)}
+                      >
+                        <PencilIcon className="h-5 w-5" />
+                      </Button>
+
+                      <Button
+                        className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
+                        size="sm"
+                        onClick={() => openConfirmationDialog(subject._id)}
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </CardBody>
 
         <CardFooter className="flex items-center justify-between border-t p-4">

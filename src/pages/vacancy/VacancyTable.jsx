@@ -62,12 +62,14 @@ function VacancyTable() {
 
   const filteredRows = tableRows.filter((vacancy) => {
     return (
-      (vacancy.studentName && vacancy.studentName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (vacancy.area?.name && vacancy.area.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (vacancy.subject?.name && vacancy.subject.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      (vacancy.studentName &&
+        vacancy.studentName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (vacancy.area?.name &&
+        vacancy.area.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (vacancy.subject?.name &&
+        vacancy.subject.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   });
-  
 
   const sortedRows = [...filteredRows].sort((a, b) => {
     const getNestedValue = (obj, key) => {
@@ -188,7 +190,7 @@ function VacancyTable() {
 
         <CardBody className="p-4">
           {tableRows.length === 0 ? (
-            <div>No vacancies available.</div>
+            <div>Loading... Vacancy</div>
           ) : (
             <table className="w-full table-auto">
               <thead>

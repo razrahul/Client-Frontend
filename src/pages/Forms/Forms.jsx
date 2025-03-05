@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useFormsData } from "../../hook/formsData.js";
-import { MagnifyingGlassIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
+import {
+  MagnifyingGlassIcon,
+  ChevronUpDownIcon,
+} from "@heroicons/react/24/outline";
 import {
   Card,
   CardHeader,
@@ -21,12 +24,12 @@ const TABLE_HEAD = [
 ];
 
 const sortKeyMap = {
-  "Name": "name",
-  "Role": "role",
+  Name: "name",
+  Role: "role",
   "Phone No": "number",
-  "Class": "class",
+  Class: "class",
   "Time/Fee Range": "timeslot",
-  "Date": "createdAt",
+  Date: "createdAt",
 };
 
 function FormsTable() {
@@ -68,7 +71,10 @@ function FormsTable() {
         contact.feeRange.toLowerCase().includes(searchLower)) ||
       (contact.role && contact.role.toLowerCase().includes(searchLower)) ||
       (contact.createdAt &&
-        new Date(contact.createdAt).toLocaleDateString().toLowerCase().includes(searchLower))
+        new Date(contact.createdAt)
+          .toLocaleDateString()
+          .toLowerCase()
+          .includes(searchLower))
     );
   });
 
@@ -149,78 +155,83 @@ function FormsTable() {
         </CardHeader>
 
         <CardBody className="p-4">
-          <table className="w-full table-auto">
-            <thead>
-              <tr className="bg-gray-100">
-                {TABLE_HEAD.map((head) => (
-                  <th key={head} className="p-3 font-bold text-left">
-                    <button
-                      onClick={() => handleSort(head)}
-                      className="flex items-center gap-1"
-                    >
-                      {head}
-                      {sortConfig.key === sortKeyMap[head] && (
-                        <ChevronUpDownIcon className="h-4 w-4" />
-                      )}
-                    </button>
-                  </th>
-                ))}
-                <th className="p-3 text-left">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentRows.map((contact) => (
-                <tr key={contact._id}>
-                  <td className="p-3 text-left">
-                    <strong>{contact.name || "No name provided"}</strong>
-                    <br />
-                    {contact.email || "No email provided"}
-                  </td>
-                  <td className="p-3 text-left">
-                    <strong>{contact.role || "No role provided"}</strong>
-                  </td>
-                  <td className="p-3 text-left">
-                    <strong>{contact.number || "No number provided"}</strong>
-                    <br />
-                    WhatsApp: {contact.whatsappNumber || "No WhatsApp provided"}
-                  </td>
-                  <td className="p-3 text-left">
-                    <strong>
-                      Class: {contact.class || "No class provided"}
-                    </strong>
-                    <br />
-                    Subjects:{" "}
-                    {contact.subjectList.length > 0
-                      ? contact.subjectList.join(", ")
-                      : "No subjects provided"}
-                  </td>
-                  <td className="p-3 text-left">
-                    <strong>
-                      Time: {contact.timeslot || "No timeslot provided"}
-                    </strong>
-                    <br />
-                    Charges: {contact.feeRange || "No fee range provided"}
-                  </td>
-
-                  <td className="p-3 text-left">
-                    <strong>
-                      {new Date(contact.createdAt).toLocaleDateString()}
-                    </strong>
-                  </td>
-
-                  <td className="p-3 text-left">
-                    <Button
-                      className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
-                      size="sm"
-                      onClick={() => openConfirmationDialog(contact._id)}
-                    >
-                      <TrashIcon className="h-5 w-5" />
-                    </Button>
-                  </td>
+          {tableRows.length === 0 ? (
+            <div>Loading... Forms</div>
+          ) : (
+            <table className="w-full table-auto">
+              <thead>
+                <tr className="bg-gray-100">
+                  {TABLE_HEAD.map((head) => (
+                    <th key={head} className="p-3 font-bold text-left">
+                      <button
+                        onClick={() => handleSort(head)}
+                        className="flex items-center gap-1"
+                      >
+                        {head}
+                        {sortConfig.key === sortKeyMap[head] && (
+                          <ChevronUpDownIcon className="h-4 w-4" />
+                        )}
+                      </button>
+                    </th>
+                  ))}
+                  <th className="p-3 text-left">Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentRows.map((contact) => (
+                  <tr key={contact._id}>
+                    <td className="p-3 text-left">
+                      <strong>{contact.name || "No name provided"}</strong>
+                      <br />
+                      {contact.email || "No email provided"}
+                    </td>
+                    <td className="p-3 text-left">
+                      <strong>{contact.role || "No role provided"}</strong>
+                    </td>
+                    <td className="p-3 text-left">
+                      <strong>{contact.number || "No number provided"}</strong>
+                      <br />
+                      WhatsApp:{" "}
+                      {contact.whatsappNumber || "No WhatsApp provided"}
+                    </td>
+                    <td className="p-3 text-left">
+                      <strong>
+                        Class: {contact.class || "No class provided"}
+                      </strong>
+                      <br />
+                      Subjects:{" "}
+                      {contact.subjectList.length > 0
+                        ? contact.subjectList.join(", ")
+                        : "No subjects provided"}
+                    </td>
+                    <td className="p-3 text-left">
+                      <strong>
+                        Time: {contact.timeslot || "No timeslot provided"}
+                      </strong>
+                      <br />
+                      Charges: {contact.feeRange || "No fee range provided"}
+                    </td>
+
+                    <td className="p-3 text-left">
+                      <strong>
+                        {new Date(contact.createdAt).toLocaleDateString()}
+                      </strong>
+                    </td>
+
+                    <td className="p-3 text-left">
+                      <Button
+                        className="flex items-center gap-2 text-red-600 hover:bg-red-600 hover:text-white"
+                        size="sm"
+                        onClick={() => openConfirmationDialog(contact._id)}
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </CardBody>
 
         <CardFooter className="flex items-center justify-between border-t p-4">

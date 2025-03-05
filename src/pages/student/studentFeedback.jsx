@@ -184,7 +184,7 @@ function StudentFeedback() {
 
         <CardBody className="p-4">
           {tableRows.length === 0 ? (
-            <div>No feedbacks available.</div>
+            <div>Loading... Feedback</div>
           ) : (
             <table className="w-full table-auto">
               <thead>
@@ -215,7 +215,9 @@ function StudentFeedback() {
                       <td className="text-sm py-2 pl-2">
                         {feedback.user.email}
                       </td>
-                      <td className="text-sm py-2 pl-2 ">{feedback.feedback}</td>
+                      <td className="text-sm py-2 pl-2 ">
+                        {feedback.feedback}
+                      </td>
                       <td className="p-3 text-left">
                         <strong>
                           {feedback.isLive ? "Active" : "Inactive"}
