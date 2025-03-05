@@ -26,7 +26,7 @@ const TABLE_HEAD = [
   "Phone",
   "Experience",
   "Area",
-  "Subject",
+  "Board/Subject",
   "Charge Rate",
   "Status",
   "Image",
@@ -266,7 +266,9 @@ function TeacherTable() {
                       <td className="text-sm py-2 pl-2 w-64 break-words">
                         {teacher.area?.name || "Unknown"}
                       </td>
-                      <td className="text-sm py-2 pl-2 w-64 break-words">
+                      <td className="text-sm py-2 pl-2">
+                        <strong>B-{teacher.board || "Null"}</strong>
+                        <br/>
                         {teacher.subject?.length > 0
                           ? teacher.subject.map((sub) => sub.name).join(", ")
                           : "No subjects"}
