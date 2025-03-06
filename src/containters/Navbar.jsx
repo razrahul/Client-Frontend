@@ -14,12 +14,15 @@ import {
 } from "lucide-react"; // Add all necessary imports
 import { Link } from "react-router-dom"; // Import Link for routing
 
+import logo from "../../public/pringlelogosvg.svg"
+
 export default function Navbar() {
   return (
     <aside className="h-screen w-64">
       <nav className="h-full flex flex-col bg-white border-r ">
         <div className="p-4 pb-2 flex justify-between items-center">
-          <div className="text-xl font-bold">Pringle Home Tuition</div>{" "}
+          <img className="w-8" src={logo} alt="logo" />
+          <div className="text-lg font-bold">Pringle Home Tuition</div>
         </div>
         <ul className="flex-1 px-3">
           <SidebarItem
