@@ -110,11 +110,11 @@ const ModalOpenVacancy = ({
 
             <div className="grid grid-cols-1 gap-4">
               <div className="col-span-1">
-                <label className="block text-sm font-medium">Class</label>
+                <label className="block text-sm font-medium">Student Name</label>
                 <Input
                   value={studentName}
                   onChange={(e) => setStudentName(e.target.value)}
-                  placeholder="Enter Class"
+                  placeholder="Enter Student Name"
                 />
               </div>
 
