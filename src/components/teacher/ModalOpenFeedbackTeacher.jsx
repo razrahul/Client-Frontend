@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Button, Input, Textarea } from "@material-tailwind/react";
+import { Textarea } from "@material-tailwind/react";
+import Select from "react-select";
 import { useDispatch } from "react-redux";
 import {
   createFeedback,
@@ -22,11 +23,15 @@ const ModalOpenFeedbackTeacher = ({
   const [feedback, setFeedback] = useState("");
   const [rating, setRating] = useState(2);
 
+  // Error handling state
+  const [userIdError, setUserIdError] = useState("");
+  const [feedbackError, setFeedbackError] = useState("");
+
   useEffect(() => {
     if (!open) return;
 
     if (isEditing && data) {
-      setUserId(data?.userId || "");
+      setUserId(data?.user?._id || "");
       setFeedback(data?.feedback || "");
       setRating(data?.rating || 2);
     } else {
@@ -36,8 +41,40 @@ const ModalOpenFeedbackTeacher = ({
     }
   }, [open, isEditing, data]);
 
+  // Teacher select change handler
+  const handleTeacherChange = (selectedOption) => {
+    setUserId(selectedOption ? selectedOption.value : "");
+    setUserIdError(""); // Clear the error when user selects a teacher
+  };
+
+  // Handle feedback change
+  const handleFeedbackChange = (e) => {
+    setFeedback(e.target.value);
+    setFeedbackError(""); // Clear the error when user types feedback
+  };
+
+  // Form validation
+  const validateForm = () => {
+    let valid = true;
+
+    if (!userId) {
+      setUserIdError("Teacher is required");
+      valid = false;
+    }
+
+    if (!feedback.trim()) {
+      setFeedbackError("Feedback is required");
+      valid = false;
+    }
+
+    return valid;
+  };
+
+  // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) return; // Stop submission if validation fails
 
     const formData = {
       userId,
@@ -56,8 +93,11 @@ const ModalOpenFeedbackTeacher = ({
     }
   };
 
+  // Edit feedback handler
   const handleEditFeedback = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) return; // Stop submission if validation fails
 
     const formData = {
       userId,
@@ -76,6 +116,15 @@ const ModalOpenFeedbackTeacher = ({
     }
   };
 
+  const teacherOptions = teachers.map((teacher) => ({
+    value: teacher._id,
+    label: teacher.name,
+  }));
+
+  const selectedTeacher = teacherOptions.find(
+    (option) => option.value === userId
+  );
+
   return (
     <>
       {open && (
@@ -85,44 +134,33 @@ const ModalOpenFeedbackTeacher = ({
               {isEditing ? "Edit Teacher Feedback" : "Add Teacher Feedback"}
             </h2>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div className="col-span-1">
-                <label className="block text-sm font-medium">
-                  Select teacher
-                </label>
-                <select
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
-                  className="border p-2 rounded"
-                >
-                  <option value="">Select teacher</option>
-                  {teachers.map((teacher) => (
-                    <option key={teacher._id} value={teacher._id}>
-                      {teacher.name}
-                    </option>
-                  ))}
-                </select>
+                <label className="block text-sm font-medium">Select teacher</label>
+                <div className="relative">
+                  <Select
+                    value={selectedTeacher || null} // Ensure it can be null if no teacher is selected
+                    onChange={handleTeacherChange}
+                    options={teacherOptions}
+                    getOptionLabel={(e) => e.label}
+                    getOptionValue={(e) => e.value}
+                    className="w-full border rounded-lg text-sm"
+                    isClearable={true}
+                  />
+                  {userIdError && <p className="text-red-500 text-sm">{userIdError}</p>}
+                </div>
               </div>
 
               <div className="col-span-1">
-                <label className="block text-sm font-medium">Feedback</label>
-                <Textarea
+                <label className="block text-sm font-medium mb-2">Teacher's Feedback</label>
+                <textarea
                   value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
+                  onChange={handleFeedbackChange}
                   placeholder="Write your feedback here"
+                  className="w-full min-h-[100px] bg-transparent text-blue-gray-700 font-sans font-normal resize-none disabled:bg-blue-gray-50 disabled:border-0 disabled:resize-none disabled:cursor-not-allowed transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 focus:border-gray-900"
                 />
+                {feedbackError && <p className="text-red-500 text-sm">{feedbackError}</p>}
               </div>
-
-              {/* <div className="col-span-1">
-                <label className="block text-sm font-medium">Rating</label>
-                <Input
-                  type="number"
-                  value={rating}
-                  onChange={(e) => setRating(e.target.value)}
-                  min="1"
-                  max="5"
-                />
-              </div> */}
             </div>
 
             <div className="mt-4 flex justify-between">
@@ -136,7 +174,7 @@ const ModalOpenFeedbackTeacher = ({
                 className="bg-blue-600 text-white px-4 py-2 rounded-md"
                 onClick={isEditing ? handleEditFeedback : handleSubmit}
               >
-                {isEditing ? "Save Changes" : "Add  Feedback"}
+                {isEditing ? "Save Changes" : "Add Feedback"}
               </button>
             </div>
           </div>
