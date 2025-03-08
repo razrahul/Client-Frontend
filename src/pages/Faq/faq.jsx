@@ -6,6 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
 import ModalOpenFaq from "../../components/faq/ModalOpenFaq.jsx";
+
 import {
   Card,
   CardHeader,
@@ -182,7 +183,7 @@ function FaqTable() {
 
         <CardBody className="p-4">
           {tableRows.length === 0 ? (
-            <div>Loading... Subjects</div>
+            <div>Loading... FAQ'S</div>
           ) : (
             <table className="w-full table-auto">
               <thead>

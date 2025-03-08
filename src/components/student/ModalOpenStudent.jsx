@@ -67,29 +67,8 @@ const ModalOpenStudent = ({
     }
   }, [open, isEditing, data]);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setImagePrev(reader.result);
-      reader.readAsDataURL(file);
-    } else {
-      setImagePrev("");
-    }
-  };
-
-  const handleSubjectChange = (selectedOptions) => {
-    setSelectedSubjects(selectedOptions.map((option) => option.value));
-  };
-
   const validateName = (name) => name.trim() !== "";
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePhone = (phone) => {
-    const phoneRegex = /^[0-9]{10}$/;
-    return phoneRegex.test(phone);
-  };
-
   const validateAboutUs = (aboutUs) => {
     const wordCount = aboutUs.split(" ").filter(Boolean).length;
     return wordCount <= 25;
@@ -106,32 +85,114 @@ const ModalOpenStudent = ({
     return false;
   };
   const validateForm = () => {
-    const validationErrors = {};
+    const formErrors = {};
+  
+    if (!validateName(name)) formErrors.name = "Name is required";
+    if (!validateEmail(email)) formErrors.email = "Invalid email";
+    if (!phone) formErrors.phone = "Phone number is required";
+    if (!gender) formErrors.gender = "Gender is required";
+    if (!className) formErrors.className = "Class is required";
+    if (!validateAboutUs(aboutUs)) formErrors.aboutUs = "About Us must contain not more than 150 words.";
+    if (!chargeRate) formErrors.chargeRate = "Board is required.";
+    if (!selectedSubjects || selectedSubjects.length === 0) formErrors.selectedSubjects = "At least one subject must be selected.";
+    if (!areaId) formErrors.areaId = "Area is required.";
+    if (!validateImage(image, imagePrev, isEditing)) formErrors.image = "Image is required";
+  
+    setErrors(formErrors); // Set error state to trigger re-render and show validation messages.
+  
+    // Return true if no errors, otherwise false.
+    return Object.keys(formErrors).length === 0;
+  };
+  
+  const handleInputChange = (field, value) => {
+    if (field === "name") setName(value);
+    if (field === "email") setEmail(value);
+    if (field === "phone") setPhone(value);
+    if (field === "gender") setGender(value);
+    if (field === "className") setClassName(value);
+    if (field === "aboutUs") setAboutUs(value);
+    if (field === "chargeRate") setChargeRate(value);
+    if (field === "areaId") setAreaId(value);
 
-    if (!validateName(name)) validationErrors.name = "Name is required";
-    if (!validateEmail(email)) validationErrors.email = "Invalid email";
-    if (!phone) validationErrors.phone = "Phone number is required.";
-    if (!gender) validationErrors.gender = "Gender is required.";
-    if (!aboutUs) validationErrors.aboutUs = "About Us is required.";
-    if (!className) validationErrors.className = "Class is required.";
-    if (!selectedSubjects || selectedSubjects.length === 0)
-      validationErrors.selectedSubjects =
-        "At least one subject must be selected.";
-    if (!areaId) validationErrors.areaId = "Area Us is required.";
-    if (!chargeRate) validationErrors.chargeRate = "Board Us is required.";
-    if (!image && !validateImage(image, imagePrev, isEditing)) {
-      validationErrors.image = "Image is required";
+    setErrors((prevErrors) => {
+      const updatedErrors = { ...prevErrors };
+
+      if (field === "name" && !validateName(value)) {
+        updatedErrors.name = "Name is required";
+      } else if (field === "name") {
+        delete updatedErrors.name;
+      }
+
+      if (field === "email" && !validateEmail(value)) {
+        updatedErrors.email = "Invalid email";
+      } else if (field === "email") {
+        delete updatedErrors.email;
+      }
+
+      if (field === "aboutUs" && !validateAboutUs(value)) {
+        updatedErrors.aboutUs =
+          "About Us must contain not more than 150 words.";
+      } else if (field === "aboutUs") {
+        delete updatedErrors.aboutUs;
+      }
+
+      if (field === "chargeRate" && !value) {
+        updatedErrors.chargeRate = "Board Us is required.";
+      } else if (field === "chargeRate") {
+        delete updatedErrors.chargeRate;
+      }
+
+      return updatedErrors;
+    });
+  };
+
+  const handlePhoneChange = (e) => {
+    const value = e.target.value;
+    const phoneRegex = /^[0-9]*$/; // Only allow numbers, up to 10 digits
+     if (!phoneRegex.test(value)) {
+      setPhone(value);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        phone: "Enter numbers only",
+      }));
+    } 
+    // If the value has more than 10 digits, show 'Enter 10 digits only'
+    else if (value.length > 10) {
+      setPhone(value);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        phone: "Enter 10 digits only",
+      }));
+    } 
+    // If the value is valid and contains 10 or fewer digits, clear the error
+    else {
+      setPhone(value);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        phone: "", // Clear error when input is valid
+      }));
     }
-    if (phone && !validatePhone(phone))
-      validationErrors.phone =
-        "Phone Number must be 10 digits and contain only numbers.";
-    if (aboutUs && !validateAboutUs(aboutUs))
-      validationErrors.aboutUs =
-        "About Us must contain not more than 150 words.";
+  };
+  
 
-    setErrors(validationErrors);
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePrev(reader.result);
+      reader.readAsDataURL(file);
+    } else {
+      setImagePrev("");
+    }
+  };
 
-    return Object.keys(validationErrors).length === 0;
+  const handleSubjectChange = (selectedOptions) => {
+    setSelectedSubjects(selectedOptions.map((option) => option.value));
+  };
+
+  const handleAreaChange = (selectedOption) => {
+    setAreaId(selectedOption ? selectedOption.value : "");
   };
 
   const handleSubmit = async (e) => {
@@ -219,10 +280,6 @@ const ModalOpenStudent = ({
     value: rate,
   }));
 
-  const handleAreaChange = (selectedOption) => {
-    setAreaId(selectedOption ? selectedOption.value : "");
-  };
-
   return (
     <>
       {open && (
@@ -237,7 +294,7 @@ const ModalOpenStudent = ({
                 <label className="block text-sm font-medium">Name</label>
                 <Input
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
                   placeholder="Enter Name"
                 />
                 {errors.name && (
@@ -248,7 +305,7 @@ const ModalOpenStudent = ({
                 <label className="block text-sm font-medium">Email</label>
                 <Input
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
                   placeholder="Enter Email"
                 />
                 {errors.email && (
@@ -259,7 +316,7 @@ const ModalOpenStudent = ({
                 <label className="block text-sm font-medium">Phone</label>
                 <Input
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={handlePhoneChange} // Updated to use the new function
                   placeholder="Enter Phone"
                 />
                 {errors.phone && (
@@ -270,7 +327,7 @@ const ModalOpenStudent = ({
                 <label className="block text-sm font-medium">Gender</label>
                 <select
                   value={gender}
-                  onChange={(e) => setGender(e.target.value)}
+                  onChange={(e) => handleInputChange("gender", e.target.value)}
                   className="w-full"
                 >
                   <option value="">Select Gender</option>
@@ -286,10 +343,12 @@ const ModalOpenStudent = ({
                 <label className="block text-sm font-medium">Class</label>
                 <Input
                   value={className}
-                  onChange={(e) => setClassName(e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("className", e.target.value)
+                  }
                   placeholder="Enter Class"
                 />
-                {errors.aboutUs && (
+                {errors.className && (
                   <p className="text-red-500 text-sm">{errors.className}</p>
                 )}
               </div>
@@ -297,9 +356,8 @@ const ModalOpenStudent = ({
                 <label className="block text-sm font-medium">About Us</label>
                 <Input
                   value={aboutUs}
-                  onChange={(e) => setAboutUs(e.target.value)}
+                  onChange={(e) => handleInputChange("aboutUs", e.target.value)}
                   placeholder="About Us"
-
                 />
                 {errors.aboutUs && (
                   <p className="text-red-500 text-sm">{errors.aboutUs}</p>
@@ -338,7 +396,6 @@ const ModalOpenStudent = ({
                       (option) => option.value === areaId
                     )}
                     onChange={handleAreaChange}
-                    e
                     options={areaOptions}
                     getOptionLabel={(e) => e.label}
                     getOptionValue={(e) => e.value}
@@ -361,7 +418,10 @@ const ModalOpenStudent = ({
                         : null
                     }
                     onChange={(selectedOption) =>
-                      setChargeRate(selectedOption?.value || "")
+                      handleInputChange(
+                        "chargeRate",
+                        selectedOption?.value || ""
+                      )
                     }
                     options={chargeRateOptionsMapped}
                     className="w-full border rounded-lg text-sm"

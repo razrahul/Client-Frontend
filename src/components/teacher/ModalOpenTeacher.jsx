@@ -80,57 +80,53 @@ const ModalOpenTeacher = ({
     setSelectedSubjects(selectedOptions.map((option) => option.value));
   };
 
-  // Validation functions
+  const validatePhoneNumber = (phone) => {
+    if (/[^0-9]/.test(phone)) return "Please enter only numbers";
+    if (phone.length > 10) return "Phone number must be 10 digits";
+    return "";
+  };
+
+  const handlePhoneChange = (e) => {
+    const phoneValue = e.target.value;
+    setPhone(phoneValue);
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      phone: validatePhoneNumber(phoneValue),
+    }));
+  };
+
   const validateName = (name) => name.trim() !== "";
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePhone = (phone) => /^\d{10}$/.test(phone);
   const validateAboutUs = (aboutUs) => {
     const wordCount = aboutUs.split(" ").filter(Boolean).length;
     return wordCount <= 25;
   };
-  const validateChargeRate = (chargeRate) => {
-    const cleanedChargeRate = chargeRate.trim();
-    return cleanedChargeRate.length <= 10;
-  };
+  const validateChargeRate = (chargeRate) => chargeRate.trim().length <= 10;
   const validateSubject = (selectedSubjects) => selectedSubjects.length > 0;
-  const validateBoard = (selectedBoard) => {
-    return selectedBoard !== null && selectedBoard !== undefined;
-  };
+  const validateBoard = (selectedBoard) =>
+    selectedBoard !== null && selectedBoard !== undefined;
   const validateArea = (areaId) => areaId.trim() !== "";
-
-  const validateImage = (image, imagePrev, isEditing) => {
-    if (isEditing && imagePrev) {
-      return true;
-    }
-
-    if (image) {
-      return true;
-    }
-
-    return false;
-  };
 
   const validateForm = () => {
     const errors = {};
 
     if (!validateName(name)) errors.name = "Name is required";
     if (!validateEmail(email)) errors.email = "Invalid email";
-    if (!validatePhone(phone)) errors.phone = "Phone must be 10 digits";
+    if (formErrors.phone) errors.phone = formErrors.phone;
+    if (!phone) errors.phone = "Phone number is required.";
     if (!aboutUs) errors.aboutUs = "About Us is required.";
-
     if (!validateAboutUs(aboutUs))
       errors.aboutUs = "Experience must be 150 words or less";
     if (!chargeRate) errors.chargeRate = "Charge Rate is required.";
-
     if (!validateChargeRate(chargeRate))
-      errors.chargeRate = "Charge Rate should be no more than 10 characters";
+      errors.chargeRate = "Charge Rate should be not more than 10.";
     if (!validateSubject(selectedSubjects))
       errors.selectedSubjects = "At least one subject must be selected";
     if (!validateArea(areaId)) errors.areaId = "Area is required";
     if (!validateBoard(selectedBoard))
       errors.selectedBoard = "Board is required"; // Validation for Board
 
-    if (!validateImage(image, imagePrev, isEditing)) {
+    if (!image && !imagePrev) {
       errors.image = "Image is required";
     }
 
@@ -162,7 +158,6 @@ const ModalOpenTeacher = ({
       dispatch(createTeacher(formData)).then(() => {
         dispatch(getAllTeachers());
       });
-      console.log("Submit successful");
       handleSave();
     } catch (error) {
       console.error("Error adding teacher:", error);
@@ -197,7 +192,6 @@ const ModalOpenTeacher = ({
       dispatch(updateTeacherById(data._id, formData)).then(() => {
         dispatch(getAllTeachers());
       });
-      console.log("Update successful");
       handleSave();
     } catch (error) {
       console.error("Error updating teacher:", error);
@@ -271,7 +265,7 @@ const ModalOpenTeacher = ({
                 <label className="block text-sm font-medium">Phone</label>
                 <Input
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={handlePhoneChange}
                   placeholder="Enter Phone"
                 />
                 {formErrors.phone && (
