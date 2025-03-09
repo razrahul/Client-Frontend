@@ -19,11 +19,9 @@ export const getAllContactForms = () => async (dispatch) => {
     const { data } = await axios.get(`${server}/getAllContactForms`);
     dispatch(fetchContactsSuccess(data));
   } catch (error) {
-    return async (dispatch) => {
-      dispatch(
-        contactFail(error.response?.data?.message || "Failed to fetch contact")
-      );
-    };
+    dispatch(
+      contactFail(error.response?.data?.message || "Failed to fetch contact")
+    );
   }
 };
 

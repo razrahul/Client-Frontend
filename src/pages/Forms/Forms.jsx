@@ -156,7 +156,7 @@ function FormsTable() {
 
         <CardBody className="p-4">
           {tableRows.length === 0 ? (
-            <div>Loading... Forms</div>
+            <div>No Data Found</div>
           ) : (
             <table className="w-full table-auto">
               <thead>
