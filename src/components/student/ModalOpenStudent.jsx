@@ -216,7 +216,6 @@ const ModalOpenStudent = ({
       dispatch(createStudent(formData)).then(() => {
         dispatch(getAllStudents());
       });
-      console.log("Submit successful");
       handleSave();
     } catch (error) {
       console.error("Error adding student:", error);
@@ -242,13 +241,11 @@ const ModalOpenStudent = ({
     if (image) {
       formData.append("file", image);
     }
-    console.log("on edit", formData);
 
     try {
       dispatch(updateStudentById(data._id, formData)).then(() => {
         dispatch(getAllStudents());
       });
-      console.log("Update successful");
       handleSave();
     } catch (error) {
       console.error("Error updating student:", error);

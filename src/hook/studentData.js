@@ -28,7 +28,6 @@ export const useStudentData = () => {
   // Delete student function
   const deleteStudentHook = (id) => {
     dispatch(deleteStudentById(id)); // Dispatch action to delete a student by id
-    console.log("delete student", id); // You can log the deletion if needed
   };
 
   return {

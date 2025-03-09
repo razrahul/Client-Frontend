@@ -54,7 +54,6 @@ const teacherSlice = createSlice({
       state.teachers = state.teachers.filter(
         (teacher) => teacher._id !== action.payload.teacher._id
       );
-      console.log(action.payload.teacher._id);
     },
   },
 });

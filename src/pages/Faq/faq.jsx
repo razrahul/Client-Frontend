@@ -183,7 +183,7 @@ function FaqTable() {
 
         <CardBody className="p-4">
           {tableRows.length === 0 ? (
-            <div>Loading... FAQ'S</div>
+            <div>No Data Found</div>
           ) : (
             <table className="w-full table-auto">
               <thead>

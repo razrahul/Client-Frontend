@@ -27,7 +27,6 @@ export const useTeacherData = () => {
 
   const deleteTeacherHook = (id) => {
     dispatch(deleteTeacher(id));
-    console.log("delete teacher", id);
   };
   const toggleLiveStatus = (id) => {
     dispatch(updateTeacherLiveStatusById(id));
