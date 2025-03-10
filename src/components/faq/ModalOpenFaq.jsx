@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const ModalOpenFaq = ({
   open,
@@ -8,9 +8,56 @@ const ModalOpenFaq = ({
   setFormData,
   isEditing,
 }) => {
-  const handleSubmit = () => {
-    handleSave();
+  const [questionError, setQuestionError] = useState(""); // Error for question field
+  const [answerError, setAnswerError] = useState(""); // Error for answer field
+
+  // Handle input change for question and validate
+  const handleQuestionChange = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, question: value });
+
+    // Set error message if the field is empty
+    if (value.trim() === "") {
+      setQuestionError("Question is required");
+    } else {
+      setQuestionError(""); // Clear error if the field is not empty
+    }
   };
+
+  // Handle input change for answer and validate
+  const handleAnswerChange = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, answer: value });
+
+    // Set error message if the field is empty
+    if (value.trim() === "") {
+      setAnswerError("Answer is required");
+    } else {
+      setAnswerError(""); // Clear error if the field is not empty
+    }
+  };
+
+  // Submit handler
+  const handleSubmit = () => {
+    // Check if fields are valid before calling handleSave
+    if (formData.question.trim() === "") {
+      setQuestionError("Question is required");
+    }
+    if (formData.answer.trim() === "") {
+      setAnswerError("Answer is required");
+    }
+
+    // If both fields are valid, call handleSave
+    if (formData.question.trim() !== "" && formData.answer.trim() !== "") {
+      handleSave();
+    }
+  };
+
+  useEffect(() => {
+    // Reset error messages when modal is opened or formData changes
+    setQuestionError("");
+    setAnswerError("");
+  }, [open, formData]);
 
   return (
     open && (
@@ -26,13 +73,16 @@ const ModalOpenFaq = ({
                 Question
               </label>
               <input
-                className="w-full p-2 border rounded"
+                className={`w-full p-2 border rounded ${
+                  questionError ? "border-red-500" : ""
+                }`}
                 value={formData.question}
-                onChange={(e) =>
-                  setFormData({ ...formData, question: e.target.value })
-                }
+                onChange={handleQuestionChange}
                 placeholder="Enter question"
               />
+              {questionError && (
+                <p className="text-red-500 text-sm">{questionError}</p>
+              )}
             </div>
 
             <div>
@@ -40,14 +90,17 @@ const ModalOpenFaq = ({
                 Answer
               </label>
               <textarea
-                className="w-full p-2 border rounded"
+                className={`w-full p-2 border rounded ${
+                  answerError ? "border-red-500" : ""
+                }`}
                 value={formData.answer}
-                onChange={(e) =>
-                  setFormData({ ...formData, answer: e.target.value })
-                }
+                onChange={handleAnswerChange}
                 placeholder="Enter answer"
                 rows="4"
               />
+              {answerError && (
+                <p className="text-red-500 text-sm">{answerError}</p>
+              )}
             </div>
           </div>
 

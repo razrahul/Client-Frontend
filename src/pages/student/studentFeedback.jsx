@@ -184,7 +184,7 @@ function StudentFeedback() {
 
         <CardBody className="p-4">
           {tableRows.length === 0 ? (
-            <div>Loading... Feedback</div>
+            <div>No Data Found</div>
           ) : (
             <table className="w-full table-auto">
               <thead>

@@ -77,12 +77,18 @@ function StudentTable() {
   }, [students]);
 
   const filteredRows = tableRows.filter((student) => {
+    const searchTermLower = searchTerm.toLowerCase(); // To avoid repetitive toLowerCase calls
     return (
-      student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.class.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.gender.toLowerCase().includes(searchTerm.toLowerCase())
+      student.name?.toLowerCase().includes(searchTermLower) ||
+      String(student.phone)?.toLowerCase().includes(searchTermLower) || // Ensure phone is a string
+      student.class?.toLowerCase().includes(searchTermLower) ||
+      student.gender?.toLowerCase().includes(searchTermLower) ||
+      student.area?.name?.toLowerCase().includes(searchTermLower) ||
+      student.board?.toLowerCase().includes(searchTermLower) // Assuming board exists
     );
   });
+  
+  
 
   const sortedRows = [...filteredRows].sort((a, b) => {
     const getNestedValue = (obj, key) => {
@@ -158,7 +164,6 @@ function StudentTable() {
 
   // delete student function
   const handleDeleteStudent = (id) => {
-    console.log("Delete Student", id);
     dispatch(deleteStudentById(id)).then(() => {
       dispatch(getAllStudents()); // Re-fetch students after deletion
     });
@@ -225,7 +230,7 @@ function StudentTable() {
 
         <CardBody className="p-4">
           {tableRows.length === 0 ? (
-            <div>Loading... Students</div>
+            <div>No Data Found</div>
           ) : (
             <table className="w-full table-auto">
               <thead>

@@ -73,10 +73,12 @@ function TeacherTable() {
     }
   }, [teachers]);
 
-  const filteredRows = tableRows.filter((teacher) => {
+  const filteredRows = tableRows.filter((student) => {
+    const searchTermLower = searchTerm.toLowerCase(); // To avoid repetitive toLowerCase calls
     return (
-      teacher.name &&
-      teacher.name.toLowerCase().includes(searchTerm.toLowerCase())
+      student.name?.toLowerCase().includes(searchTermLower) ||
+      String(student.phone)?.toLowerCase().includes(searchTermLower) || // Ensure phone is a string
+      student.area?.name?.toLowerCase().includes(searchTermLower) 
     );
   });
 
@@ -209,7 +211,7 @@ function TeacherTable() {
 
         <CardBody className="p-4">
           {tableRows.length === 0 ? (
-            <div>Loading... Teachers.</div>
+            <div>No Data Found</div>
           ) : (
             <table className="w-full table-auto">
               <thead>
@@ -267,7 +269,7 @@ function TeacherTable() {
                         {teacher.area?.name || "Unknown"}
                       </td>
                       <td className="text-sm py-2 pl-2">
-                        <strong>B-{teacher.board || "Null"}</strong>
+                        <strong>{teacher.board || "Null"}</strong>
                         <br />
                         {teacher.subject?.length > 0
                           ? teacher.subject.map((sub) => sub.name).join(", ")
