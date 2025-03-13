@@ -136,7 +136,9 @@ const ModalOpenFeedbackStudent = ({
 
             <div className="grid grid-cols-1 gap-4">
               <div className="col-span-1">
-                <label className="block text-sm font-medium">Select Student</label>
+                <label className="block text-sm font-medium">
+                  Select Student
+                </label>
                 <div className="relative">
                   <Select
                     value={selectedStudent || null}
@@ -147,19 +149,25 @@ const ModalOpenFeedbackStudent = ({
                     className="w-full border rounded-lg text-sm"
                     isClearable={true}
                   />
-                  {userIdError && <p className="text-red-500 text-sm">{userIdError}</p>}
+                  {userIdError && (
+                    <p className="text-red-500 text-sm">{userIdError}</p>
+                  )}
                 </div>
               </div>
 
               <div className="col-span-1">
-                <label className="block text-sm font-medium">Teacher's Feedback</label>
+                <label className="block text-sm font-medium">
+                  Student's Feedback
+                </label>
                 <textarea
                   value={feedback}
                   onChange={handleFeedbackChange}
                   placeholder="Write your feedback here"
                   className="w-full min-h-[100px] bg-transparent text-blue-gray-700 font-sans font-normal resize-none disabled:bg-blue-gray-50 disabled:border-0 disabled:resize-none disabled:cursor-not-allowed transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 focus:border-gray-900"
                 />
-                {feedbackError && <p className="text-red-500 text-sm">{feedbackError}</p>}
+                {feedbackError && (
+                  <p className="text-red-500 text-sm">{feedbackError}</p>
+                )}
               </div>
             </div>
 
