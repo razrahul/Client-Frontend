@@ -55,7 +55,7 @@ function TeacherTable() {
 
   const [data, SetData] = useState("");
 
-  const rowsPerPage = 6;
+  const rowsPerPage = 5;
 
   const dispatch = useDispatch();
   const { teachers } = useSelector((state) => state.teacher);
